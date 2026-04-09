@@ -98,7 +98,10 @@ JSON格式：
     const jsonStr = rawContent.slice(jsonStart, lastBrace + 1);
     parsed = JSON.parse(jsonStr);
   } catch (e) {
-    throw new Error(`Failed to parse AI response: ${(e as Error).message} | Raw: ${rawContent.slice(-200)}`);
+    // Log the extraction bounds for debugging
+    const dbgJsonStart = rawContent.indexOf('{"narrative"');
+    const dbgLastBrace = rawContent.lastIndexOf('}');
+    throw new Error(`Failed to parse: ${(e as Error).message} | start=${dbgJsonStart} lastBrace=${dbgLastBrace} | json: ${rawContent.slice(dbgJsonStart, dbgJsonStart+120)} | raw_end: ${rawContent.slice(-200)}`);
   }
 
   return {
