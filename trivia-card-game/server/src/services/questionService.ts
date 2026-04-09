@@ -38,11 +38,18 @@ export async function generateQuestion(
   const systemPrompt = `你是"赛博空间知识对战游戏"的AI出题器。
 【强制规则】你只能输出一行纯JSON，不能输出任何其他文字、符号或格式。
 JSON格式：
-{"narrative":"赛博叙事(20字内)","question":"题目","answer":"答案"}
-不要输出markdown代码块，不要输出emoji，不要输出任何解释。`;
+{"narrative":"赛博叙事(20字内)","question":"题目（必须包含四个选项A/B/C/D，格式如下：题目内容
+A. 选项内容
+B. 选项内容
+C. 选项内容
+D. 选项内容）","answer":"正确选项字母（如B）","options":["A. 选项内容","B. 选项内容","C. 选项内容","D. 选项内容"]}
+注意：
+1. answer必须是A/B/C/D四个字母之一，对应正确选项
+2. options数组四个元素顺序必须与题目中A/B/C/D顺序一致
+3. 不要输出markdown代码块，不要输出emoji，不要输出任何解释`;
 
   const userPrompt = `学科=${subject},难度=${level},叙事=${getNarrativePrompt(subject)}
-严格输出一行纯JSON：{"narrative":"...","question":"...","answer":"..."}`;
+严格输出一行纯JSON：{"narrative":"...","question":"题目（必须包含A/B/C/D四个选项）","answer":"A或B或C或D","options":["A. ...","B. ...","C. ...","D. ..."]}`;
 
   // Minimax API call (OpenAI-compatible endpoint)
   const url = `${baseUrl}/chat/completions`;
@@ -88,7 +95,7 @@ JSON格式：
   }
 
   // Parse JSON - model outputs thinking text first (inside <Skip>...</Skip>), then JSON at the end
-  let parsed: { narrative: string; question: string; answer: string };
+  let parsed: { narrative: string; question: string; answer: string; options?: string[] };
   try {
     // Skip past the thinking block - find </Skip> and start searching AFTER it
     const skipEnd = rawContent.indexOf('</Skip>');
@@ -126,6 +133,7 @@ JSON格式：
     narrative: parsed.narrative,
     question: parsed.question,
     answer: parsed.answer,
+    options: parsed.options ?? [parsed.answer],
     timeLimit: getTimeLimit(level),
   };
 }

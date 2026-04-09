@@ -11,6 +11,7 @@ export interface GameState {
     narrative: string;
     question: string;
     answer: string;
+    options: string[];
     timeLimit: number;
   } | null;
   hand: Array<{

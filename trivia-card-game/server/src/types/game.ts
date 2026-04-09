@@ -58,6 +58,7 @@ export type GamePhase =
   | 'game_over';
 
 export interface Question {
+  options: string[];
   id: string;
   subject: Subject;
   level: Level;

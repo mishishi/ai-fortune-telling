@@ -10,7 +10,7 @@ const SUBJECT_CARDS = [
   { id: 'sub_history',  name: '历史',   color: '#c97bff' },
   { id: 'sub_geography',name: '地理',   color: '#74b9ff' },
   { id: 'sub_biology',  name: '生物',   color: '#55efc4' },
-  { id: 'sub_daofa',    name: '道法',   color: '#fd79a8' },
+  { id: 'sub_daofa',   name: '道法',   color: '#fd79a8' },
 ];
 
 const LEVEL_CARDS = [
@@ -20,13 +20,28 @@ const LEVEL_CARDS = [
   { id: 'lv_4', name: 'Lv4', timeLimit: 45 },
 ];
 
+interface PracticeQuestion {
+  narrative: string;
+  question: string;
+  answer: string;
+  options: string[];
+}
+
 interface PracticeBoardProps {
   onBack: () => void;
 }
 
-const IconBolt = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z"/>
+const IconArrow = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="19" y1="12" x2="5" y2="12"/>
+    <polyline points="12 19 5 12 12 5"/>
+  </svg>
+);
+
+const IconBook = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
   </svg>
 );
 
@@ -43,24 +58,12 @@ const IconX = () => (
   </svg>
 );
 
-const IconArrow = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <line x1="19" y1="12" x2="5" y2="12"/>
-    <polyline points="12 19 5 12 12 5"/>
-  </svg>
-);
-
-const IconBook = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
-    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-  </svg>
-);
+const OPTION_LETTERS = ['A', 'B', 'C', 'D'];
 
 export const PracticeBoard: React.FC<PracticeBoardProps> = ({ onBack }) => {
   const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
   const [selectedLevel, setSelectedLevel] = useState<string | null>(null);
-  const [question, setQuestion] = useState<any>(null);
+  const [question, setQuestion] = useState<PracticeQuestion | null>(null);
   const [answer, setAnswer] = useState('');
   const [result, setResult] = useState<'correct' | 'wrong' | null>(null);
   const [loading, setLoading] = useState(false);
@@ -90,11 +93,16 @@ export const PracticeBoard: React.FC<PracticeBoardProps> = ({ onBack }) => {
     setLoading(false);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!answer.trim() || !question) return;
-    const isCorrect = answer.trim().toLowerCase() === question.answer.trim().toLowerCase();
+  const handleSubmit = () => {
+    if (!answer || !question) return;
+    const isCorrect = answer === question.answer;
     setResult(isCorrect ? 'correct' : 'wrong');
+  };
+
+  const correctOptionText = () => {
+    if (!question) return '';
+    const opt = question.options.find(o => o.startsWith(question.answer + '.'));
+    return opt ? opt.substring(2).trim() : '';
   };
 
   return (
@@ -150,7 +158,7 @@ export const PracticeBoard: React.FC<PracticeBoardProps> = ({ onBack }) => {
                   type="level"
                   name={card.name}
                   color="var(--neon-yellow)"
-                  icon="Lv"
+                  icon=""
                   selected={selectedLevel === card.id}
                   onClick={() => setSelectedLevel(card.id)}
                   timeLimit={card.timeLimit}
@@ -178,12 +186,13 @@ export const PracticeBoard: React.FC<PracticeBoardProps> = ({ onBack }) => {
             alignItems: 'center',
             gap: '6px'
           }}>
-            <span style={{ width: 16, height: 16, display: 'inline-flex', color: 'var(--neon-pink)' }}><IconBolt /></span>
-            {question.narrative}
+            ⚡ {question.narrative}
           </div>
-          <div style={{ fontSize: '1.3rem', fontWeight: 700, marginBottom: '20px', color: '#fff', lineHeight: 1.5 }}>
+
+          <div style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '20px', color: '#fff', lineHeight: 1.6 }}>
             {question.question}
           </div>
+
           {result ? (
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
               <div style={{
@@ -191,14 +200,16 @@ export const PracticeBoard: React.FC<PracticeBoardProps> = ({ onBack }) => {
                 alignItems: 'center',
                 gap: '8px',
                 color: result === 'correct' ? 'var(--neon-green)' : 'var(--neon-pink)',
-                fontSize: '1.1rem',
+                fontSize: '1.05rem',
                 fontFamily: 'var(--font-display)',
                 fontWeight: 700,
               }}>
                 <span style={{ width: 18, height: 18, display: 'flex', color: 'inherit' }}>
                   {result === 'correct' ? <IconCheck /> : <IconX />}
                 </span>
-                {result === 'correct' ? '回答正确！' : `错误！正确答案：${question.answer}`}
+                {result === 'correct'
+                  ? '回答正确！'
+                  : `错误！正确答案：${question.answer} — ${correctOptionText()}`}
               </div>
               <button
                 className="btn-cyber"
@@ -208,26 +219,66 @@ export const PracticeBoard: React.FC<PracticeBoardProps> = ({ onBack }) => {
               </button>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} style={{ display: 'flex', gap: '10px' }}>
-              <input
-                value={answer}
-                onChange={e => setAnswer(e.target.value)}
-                placeholder="输入答案..."
-                style={{
-                  flex: 1,
-                  background: 'rgba(0,245,255,0.1)',
-                  border: '2px solid var(--neon-cyan)',
-                  borderRadius: '8px',
-                  padding: '10px 14px',
-                  color: '#fff',
-                  fontFamily: 'inherit',
-                  fontSize: '1rem',
-                  outline: 'none',
-                }}
-                autoFocus
-              />
-              <button type="submit" className="btn-cyber">提交</button>
-            </form>
+            <div>
+              {/* Multiple choice options */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '16px' }}>
+                {question.options.map((opt, idx) => {
+                  const letter = OPTION_LETTERS[idx];
+                  const isSelected = answer === letter;
+                  return (
+                    <button
+                      key={letter}
+                      type="button"
+                      onClick={() => setAnswer(letter)}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '10px',
+                        padding: '12px 14px',
+                        background: isSelected ? 'rgba(192,132,252,0.15)' : 'rgba(192,132,252,0.05)',
+                        border: `2px solid ${isSelected ? 'var(--neon-purple)' : 'rgba(192,132,252,0.2)'}`,
+                        borderRadius: '10px',
+                        cursor: 'pointer',
+                        transition: 'all 0.15s ease',
+                        textAlign: 'left',
+                        color: isSelected ? 'var(--neon-purple)' : '#c8d0e8',
+                        fontFamily: 'var(--font-mono)',
+                        fontSize: '0.9rem',
+                        boxShadow: isSelected ? '0 0 12px rgba(192,132,252,0.3)' : 'none',
+                      }}
+                    >
+                      <span style={{
+                        width: '28px', height: '28px', borderRadius: '50%',
+                        border: `2px solid ${isSelected ? 'var(--neon-purple)' : 'rgba(192,132,252,0.3)'}`,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.75rem',
+                        flexShrink: 0,
+                        background: isSelected ? 'var(--neon-purple)' : 'transparent',
+                        color: isSelected ? '#060912' : 'inherit',
+                        transition: 'all 0.15s ease',
+                      }}>{letter}</span>
+                      <span style={{ lineHeight: 1.4 }}>{opt.substring(2).trim()}</span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Confirm button */}
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <button
+                  className="btn-cyber"
+                  onClick={handleSubmit}
+                  disabled={!answer}
+                  style={{
+                    opacity: answer ? 1 : 0.4,
+                    cursor: answer ? 'pointer' : 'not-allowed',
+                    flex: 1,
+                  }}
+                >
+                  确认{answer ? ` (${answer})` : ''}
+                </button>
+              </div>
+            </div>
           )}
         </div>
       )}

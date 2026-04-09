@@ -155,6 +155,7 @@ export const GameBoard: React.FC = () => {
           narrative={currentQuestion.narrative}
           question={currentQuestion.question}
           answer={currentQuestion.answer}
+          options={currentQuestion.options}
           timeLimit={currentQuestion.timeLimit}
           active={true}
           onAnswer={handleAnswer}
