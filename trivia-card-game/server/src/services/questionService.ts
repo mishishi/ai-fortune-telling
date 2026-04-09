@@ -175,6 +175,6 @@ export async function generateExplanation(
     }),
   });
 
-  const data = await response.json();
-  return data.choices[0]?.message?.content?.trim() ?? '抱歉，无法生成讲解。';
+  const data = await response.json() as { choices?: { message?: { content?: string } }[] };
+  return data.choices?.[0]?.message?.content?.trim() ?? '抱歉，无法生成讲解。';
 }

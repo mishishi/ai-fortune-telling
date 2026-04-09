@@ -264,7 +264,7 @@ export function setupGameHandlers(io: Server) {
       sendState(io, room);
     });
 
-    socket.on('submit_answer', (data: { answer: string }) => {
+    socket.on('submit_answer', async (data: { answer: string }) => {
       const roomId = playerSockets.get(socket.id);
       if (!roomId) return;
       const room = rooms.get(roomId);
@@ -352,13 +352,14 @@ export function setupGameHandlers(io: Server) {
       // 每回合开始时清理事件状态
       room.state.eventActive = null;
       checkWinCondition(room);
-      if (room.state.phase !== 'game_over') {
+      const isGameOver = (room.state.phase as string) === 'game_over';
+      if (!isGameOver) {
         room.state.phase = 'play_card';
       }
       sendState(io, room);
 
       // 游戏结束时记录对局
-      if (room.state.phase === 'game_over') {
+      if (isGameOver) {
         try {
           const db = getDb();
           db.run(
@@ -444,7 +445,8 @@ export function setupGameHandlers(io: Server) {
           // 直接结束回合
           replenishHand(room);
           checkWinCondition(room);
-          if (room.state.phase !== 'game_over') {
+          const skipGameOver = (room.state.phase as string) === 'game_over';
+          if (!skipGameOver) {
             room.state.phase = 'play_card';
           }
           sendState(io, room);
