@@ -17,7 +17,12 @@ export const GameBoard: React.FC = () => {
   };
 
   const handlePlay = () => {
-    if (!selectedSubject || !selectedLevel) return;
+    console.log('[GameBoard] handlePlay called', { selectedSubject, selectedLevel });
+    if (!selectedSubject || !selectedLevel) {
+      console.warn('[GameBoard] selectedSubject or selectedLevel is null, returning early');
+      return;
+    }
+    console.log('[GameBoard] emitting play_cards', { subjectCardId: selectedSubject, levelCardId: selectedLevel });
     playCards(selectedSubject, selectedLevel);
     setSelectedSubject(null);
     setSelectedLevel(null);

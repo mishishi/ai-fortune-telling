@@ -28,9 +28,15 @@ export function useGameSocket() {
     const socket = io('http://localhost:3001');
     socketRef.current = socket;
 
-    socket.on('connect', () => console.log('Socket connected'));
-    socket.on('game_state', (state: GameState) => setGameState(state));
+    socket.on('connect', () => console.log('[Socket] connected:', socket.id));
+    socket.on('disconnect', (reason) => console.log('[Socket] disconnected:', reason));
+    socket.on('connect_error', (err) => console.error('[Socket] connection error:', err.message));
+    socket.on('game_state', (state: GameState) => {
+      console.log('[Socket] game_state received, phase:', state.phase);
+      setGameState(state);
+    });
     socket.on('error', (err: { message: string }) => {
+      console.error('[Socket] error:', err.message);
       setError(err.message);
       setTimeout(() => setError(null), 3000);
     });
