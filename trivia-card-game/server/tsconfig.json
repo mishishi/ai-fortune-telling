@@ -11,14 +11,15 @@
     "rootDir": "./src",
     "resolveJsonModule": true,
     "declaration": true,
-    "moduleResolution": "node",
+    "moduleResolution": "node10",
+    "ignoreDeprecations": "6.0",
+    "types": ["node"],
     "baseUrl": "..",
     "paths": {
       "socket.io": ["node_modules/socket.io"],
       "socket.io-client": ["node_modules/socket.io-client"],
       "express": ["node_modules/express"],
-      "cors": ["node_modules/cors"],
-      "better-sqlite3": ["node_modules/better-sqlite3"]
+      "cors": ["node_modules/cors"]
     }
   },
   "include": ["src/**/*"],
