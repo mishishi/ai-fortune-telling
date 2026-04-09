@@ -1,5 +1,5 @@
 import { Server, Socket } from 'socket.io';
-import { generateQuestion, generateHint } from '../services/questionService';
+import { generateQuestion, generateHint, generateExplanation } from '../services/questionService';
 import { judgeAnswer } from '../services/judgeService';
 import {
   GameState, GamePhase, Subject, Level,
@@ -133,7 +133,37 @@ function checkWinCondition(room: Room) {
 }
 
 function handleEventCard(room: Room, eventId: string) {
-  // Stub: Task 4 实现具体事件卡效果
+  const event = EVENT_CARDS.find(e => e.id === eventId);
+  if (!event) return;
+
+  room.state.eventActive = event.name;
+
+  switch (event.name) {
+    case '闪电快答':
+      // 将当前题目时限强制设为10秒（如果正在答题）
+      if (room.state.currentQuestion) {
+        room.state.currentQuestion = {
+          ...room.state.currentQuestion,
+          timeLimit: 10
+        };
+      }
+      break;
+
+    case '双人合作':
+      // 初始化合作状态
+      room.eventState.coop = { aiAnswered: false, playerAnswered: false };
+      break;
+
+    case '知识连击':
+      // 需要连续答对2题
+      room.eventState.combo = { answered: 0, required: 2 };
+      break;
+
+    case '错题讲堂':
+      // 标记为讲解模式
+      room.eventState.teaching = true;
+      break;
+  }
 }
 
 export function setupGameHandlers(io: Server) {
@@ -245,7 +275,66 @@ export function setupGameHandlers(io: Server) {
       const isCorrect = judgeAnswer(data.answer, q.answer, q.subject);
 
       const points = room.state.activeSkillEffects.double ? 2 : 1;
-      if (isCorrect) {
+
+      // 知识连击处理
+      if (room.eventState.combo) {
+        if (isCorrect) {
+          room.eventState.combo.answered += 1;
+          if (room.eventState.combo.answered < room.eventState.combo.required) {
+            // 还没答完连击，不给分，等待下一题
+            room.state.playerScore += points;
+            room.eventState.combo = null;
+            room.state.playerScore -= points;
+          } else {
+            // 连击完成，正常给分
+            room.state.playerScore += points;
+            room.eventState.combo = null;
+          }
+        } else {
+          // 答错，连击失败
+          room.eventState.combo = null;
+          room.state.playerScore += points;
+        }
+        room.state.eventActive = null;
+      }
+
+      // 双人合作处理
+      if (room.eventState.coop) {
+        room.eventState.coop.playerAnswered = true;
+        if (isCorrect) {
+          room.state.playerScore += 1;
+        }
+        // 等待AI答题（AI代答）
+        if (!room.eventState.coop.aiAnswered) {
+          // AI答题（简单模拟：50%正确率）
+          const aiCorrect = Math.random() > 0.5;
+          room.eventState.coop.aiAnswered = true;
+          if (aiCorrect) {
+            room.state.aiScore += 1;
+          }
+        }
+        // 双方都答完了，清理状态
+        if (room.eventState.coop.aiAnswered) {
+          room.eventState.coop = null;
+          room.state.eventActive = null;
+        }
+      }
+
+      // 错题讲堂处理
+      if (!isCorrect && room.eventState.teaching) {
+        // 生成讲解
+        const explanation = await generateExplanation(
+          room.state.currentQuestion,
+          process.env.MINIMAX_API_KEY!,
+          process.env.MINIMAX_BASE_URL!,
+          process.env.MINIMAX_MODEL!
+        );
+        socket.emit('explanation', { explanation });
+        room.eventState.teaching = false;
+        room.state.eventActive = null;
+      }
+
+      if (isCorrect && !room.eventState.combo) {
         room.state.playerScore += points;
       }
       // 清除双倍效果
@@ -264,6 +353,8 @@ export function setupGameHandlers(io: Server) {
       }
 
       room.state.currentQuestion = null;
+      // 每回合开始时清理事件状态
+      room.state.eventActive = null;
       checkWinCondition(room);
       if (room.state.phase !== 'game_over') {
         room.state.phase = 'play_card';
