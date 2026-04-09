@@ -62,8 +62,8 @@ export async function generateQuestion(
 
 请严格按 JSON 格式输出，不要输出其他内容。`;
 
-  // Minimax API call
-  const url = `${baseUrl}/text/chatcompletion_v2?GroupId=${apiKey}`;
+  // Minimax API call (OpenAI-compatible endpoint)
+  const url = `${baseUrl}/chat/completions`;
   const response = await fetch(url, {
     method: 'POST',
     headers: {
