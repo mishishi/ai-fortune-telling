@@ -80,6 +80,7 @@ export interface GameState {
     double: boolean;
     noEnemySkill: boolean;
     swap: boolean;
+    hintAvailable: boolean;
   };
   eventActive: string | null;
 }

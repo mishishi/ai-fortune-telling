@@ -1,15 +1,16 @@
 import React from 'react';
 import { Card } from './Card';
+import { SUBJECT_ICONS, SKILL_ICONS, EVENT_ICONS } from './Icons';
 
 const SUBJECT_CARDS = [
-  { id: 'sub_yuwen',    name: '语文',   color: '#ff6b6b', icon: '📜' },
-  { id: 'sub_math',     name: '数学',   color: '#4ecdc4', icon: '📐' },
-  { id: 'sub_english',  name: '英语',   color: '#a8e6cf', icon: '🔤' },
-  { id: 'sub_science',  name: '科学',   color: '#f7dc6f', icon: '🔬' },
-  { id: 'sub_history',  name: '历史',   color: '#bb8fce', icon: '📚' },
-  { id: 'sub_geography',name: '地理',   color: '#86b3d1', icon: '🌍' },
-  { id: 'sub_biology',  name: '生物',   color: '#82e0aa', icon: '🧬' },
-  { id: 'sub_daofa',    name: '道法',   color: '#f1948a', icon: '⚖️'  },
+  { id: 'sub_yuwen',    name: '语文',   color: '#00e5e5', icon: '📜' },
+  { id: 'sub_math',     name: '数学',   color: '#00c9a7', icon: '📐' },
+  { id: 'sub_english',  name: '英语',   color: '#7bed9f', icon: '🔤' },
+  { id: 'sub_science',  name: '科学',   color: '#ffd93d', icon: '🔬' },
+  { id: 'sub_history',  name: '历史',   color: '#c97bff', icon: '📚' },
+  { id: 'sub_geography',name: '地理',   color: '#74b9ff', icon: '🌍' },
+  { id: 'sub_biology',  name: '生物',   color: '#55efc4', icon: '🧬' },
+  { id: 'sub_daofa',    name: '道法',   color: '#fd79a8', icon: '⚖️'  },
 ];
 
 const LEVEL_CARDS = [
@@ -32,7 +33,7 @@ const EVENT_CARDS = [
   { id: 'event_flash',   name: '闪电快答', description: '必须在10秒内答完' },
   { id: 'event_coop',    name: '双人合作', description: '两人各答一题，都对各+1' },
   { id: 'event_combo',   name: '知识连击', description: '必须连续答对2题才能得分' },
-  { id: 'event_teach',  name: '错题讲堂', description: '答错后AI详细讲解' },
+  { id: 'event_teach',   name: '错题讲堂', description: '答错后AI详细讲解' },
 ];
 
 interface HandProps {
@@ -50,56 +51,81 @@ interface HandProps {
 }
 
 export const Hand: React.FC<HandProps> = ({
-  hand, selectedIndex, onSelectCard, onUseSkill, disabled
+  hand = [], selectedIndex, onSelectCard, onUseSkill, disabled
 }) => {
   const getCardInfo = (card: HandProps['hand'][0]) => {
     if (card.cardType === 'skill') {
       const skill = SKILL_CARDS.find(s => s.id === card.skillId);
-      return { type: 'skill' as const, name: skill?.name ?? '', color: '#b266ff', icon: '🎯', description: skill?.description };
+      const IconComp = card.skillId ? SKILL_ICONS[card.skillId] : null;
+      return {
+        type: 'skill' as const,
+        name: skill?.name ?? '',
+        color: '#c084fc',
+        icon: skill?.name ?? '',
+        subjectId: undefined,
+        skillId: card.skillId,
+        eventId: undefined,
+        description: skill?.description,
+      };
     }
     if (card.cardType === 'event') {
       const event = EVENT_CARDS.find(e => e.id === card.eventId);
-      return { type: 'event' as const, name: event?.name ?? '', color: '#ff6b6b', icon: '⚡', description: event?.description };
+      return {
+        type: 'event' as const,
+        name: event?.name ?? '',
+        color: '#ff00aa',
+        icon: event?.name ?? '',
+        subjectId: undefined,
+        skillId: undefined,
+        eventId: card.eventId,
+        description: event?.description,
+      };
     }
     // subject_level
     const sub = SUBJECT_CARDS.find(c => c.id === card.subjectId);
     const lv = LEVEL_CARDS.find(c => c.id === card.levelId);
-    return { type: 'subject' as const, name: `${sub?.name} + ${lv?.name}`, color: sub?.color ?? '#fff', icon: sub?.icon ?? '', timeLimit: lv?.timeLimit };
+    return {
+      type: 'subject' as const,
+      name: `${sub?.name} ${lv?.name}`,
+      color: sub?.color ?? '#00f5ff',
+      icon: '',
+      subjectId: card.subjectId,
+      skillId: undefined,
+      eventId: undefined,
+      timeLimit: lv?.timeLimit,
+    };
   };
 
   return (
     <div>
-      <div className="label" style={{ color: 'var(--neon-cyan)', marginBottom: '12px' }}>
-        ▶ 选择出牌
-      </div>
-      <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'center' }}>
+      <div className="hand-label">选择出牌</div>
+      <div className="hand-cards">
         {hand.map((card, idx) => {
           const info = getCardInfo(card);
           const isSelected = selectedIndex === idx;
 
           return (
-            <div key={`card_${idx}`} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+            <div key={`card_${idx}`}>
               <Card
                 type={info.type}
                 name={info.name}
                 color={info.color}
                 icon={info.icon}
+                subjectId={info.subjectId}
+                skillId={info.skillId}
+                eventId={info.eventId}
                 selected={isSelected}
                 disabled={disabled}
                 timeLimit={info.timeLimit}
+                description={info.description}
                 onClick={() => {
-                  if (card.cardType === 'skill' || card.cardType === 'event') {
+                  if (card.cardType === 'skill') {
                     onUseSkill(idx);
-                  } else {
+                  } else if (card.cardType === 'subject_level') {
                     onSelectCard(idx);
                   }
                 }}
               />
-              {info.description && (
-                <div style={{ fontSize: '0.65rem', color: '#aaa', maxWidth: '80px', textAlign: 'center' }}>
-                  {info.description}
-                </div>
-              )}
             </div>
           );
         })}

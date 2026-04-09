@@ -46,6 +46,10 @@ JSON格式：
 
   // Minimax API call (OpenAI-compatible endpoint)
   const url = `${baseUrl}/chat/completions`;
+
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s timeout
+
   const response = await fetch(url, {
     method: 'POST',
     headers: {
@@ -61,23 +65,29 @@ JSON格式：
       temperature: 0.3,
       max_tokens: 3000,
     }),
+    signal: controller.signal,
   });
+
+  clearTimeout(timeoutId);
 
   if (!response.ok) {
     const errorText = await response.text();
     throw new Error(`Minimax API error: ${response.status} ${response.statusText} - ${errorText}`);
   }
 
-  const data = await response.json() as { choices?: { finish_reason?: string; message?: { content?: string } }[] };
-
-  const rawContent = data.choices?.[0]?.message?.content?.trim() ?? '';
+  let rawContent: string;
+  try {
+    const data = await response.json() as { choices?: { finish_reason?: string; message?: { content?: string } }[] };
+    rawContent = data.choices?.[0]?.message?.content?.trim() ?? '';
+  } catch (e) {
+    throw new Error('Failed to parse API response');
+  }
 
   if (!rawContent) {
     throw new Error('Empty response from Minimax API');
   }
 
   // Parse JSON - model outputs thinking text first (inside <Skip>...</Skip>), then JSON at the end
-  // Strategy: skip past </Skip> tag, then find {"narrative" after it
   let parsed: { narrative: string; question: string; answer: string };
   try {
     // Skip past the thinking block - find </Skip> and start searching AFTER it

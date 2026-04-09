@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
 import { Card } from './Card';
+import { SUBJECT_ICONS } from './Icons';
 
 const SUBJECT_CARDS = [
-  { id: 'sub_yuwen',    name: '语文',   color: '#ff6b6b', icon: '📜' },
-  { id: 'sub_math',     name: '数学',   color: '#4ecdc4', icon: '📐' },
-  { id: 'sub_english',  name: '英语',   color: '#a8e6cf', icon: '🔤' },
-  { id: 'sub_science',  name: '科学',   color: '#f7dc6f', icon: '🔬' },
-  { id: 'sub_history',  name: '历史',   color: '#bb8fce', icon: '📚' },
-  { id: 'sub_geography',name: '地理',   color: '#86b3d1', icon: '🌍' },
-  { id: 'sub_biology',  name: '生物',   color: '#82e0aa', icon: '🧬' },
-  { id: 'sub_daofa',    name: '道法',   color: '#f1948a', icon: '⚖️'  },
+  { id: 'sub_yuwen',    name: '语文',   color: '#00e5e5' },
+  { id: 'sub_math',     name: '数学',   color: '#00c9a7' },
+  { id: 'sub_english',  name: '英语',   color: '#7bed9f' },
+  { id: 'sub_science',  name: '科学',   color: '#ffd93d' },
+  { id: 'sub_history',  name: '历史',   color: '#c97bff' },
+  { id: 'sub_geography',name: '地理',   color: '#74b9ff' },
+  { id: 'sub_biology',  name: '生物',   color: '#55efc4' },
+  { id: 'sub_daofa',    name: '道法',   color: '#fd79a8' },
 ];
 
 const LEVEL_CARDS = [
@@ -22,6 +23,39 @@ const LEVEL_CARDS = [
 interface PracticeBoardProps {
   onBack: () => void;
 }
+
+const IconBolt = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z"/>
+  </svg>
+);
+
+const IconCheck = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="20 6 9 17 4 12"/>
+  </svg>
+);
+
+const IconX = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="18" y1="6" x2="6" y2="18"/>
+    <line x1="6" y1="6" x2="18" y2="18"/>
+  </svg>
+);
+
+const IconArrow = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="19" y1="12" x2="5" y2="12"/>
+    <polyline points="12 19 5 12 12 5"/>
+  </svg>
+);
+
+const IconBook = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+  </svg>
+);
 
 export const PracticeBoard: React.FC<PracticeBoardProps> = ({ onBack }) => {
   const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
@@ -59,7 +93,6 @@ export const PracticeBoard: React.FC<PracticeBoardProps> = ({ onBack }) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!answer.trim() || !question) return;
-    // Simple answer comparison
     const isCorrect = answer.trim().toLowerCase() === question.answer.trim().toLowerCase();
     setResult(isCorrect ? 'correct' : 'wrong');
   };
@@ -69,25 +102,39 @@ export const PracticeBoard: React.FC<PracticeBoardProps> = ({ onBack }) => {
       <button
         className="btn-cyber"
         onClick={onBack}
-        style={{ marginBottom: '20px' }}
+        style={{ marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '6px' }}
       >
-        ← 返回
+        <IconArrow /> 返回
       </button>
 
-      <h2 style={{ color: 'var(--neon-cyan)', marginBottom: '20px' }}>📖 练习模式</h2>
+      <h2 style={{
+        color: 'var(--neon-purple)',
+        fontFamily: 'var(--font-display)',
+        fontSize: '1rem',
+        fontWeight: 700,
+        letterSpacing: '2px',
+        marginBottom: '20px',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px'
+      }}>
+        <span style={{ width: 20, height: 20, display: 'flex', color: 'var(--neon-purple)' }}><IconBook /></span>
+        练习模式
+      </h2>
 
       {!question ? (
         <>
           <div style={{ marginBottom: '16px' }}>
-            <div className="label" style={{ color: 'var(--neon-cyan)', marginBottom: '8px' }}>选择学科</div>
-            <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+            <div className="label" style={{ color: 'var(--neon-cyan)', marginBottom: '12px', display: 'block' }}>选择学科</div>
+            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'center' }}>
               {SUBJECT_CARDS.map(card => (
                 <Card
                   key={card.id}
                   type="subject"
                   name={card.name}
                   color={card.color}
-                  icon={card.icon}
+                  icon=""
+                  subjectId={card.id}
                   selected={selectedSubject === card.id}
                   onClick={() => setSelectedSubject(card.id)}
                 />
@@ -95,15 +142,15 @@ export const PracticeBoard: React.FC<PracticeBoardProps> = ({ onBack }) => {
             </div>
           </div>
           <div style={{ marginBottom: '16px' }}>
-            <div className="label" style={{ color: 'var(--neon-yellow)', marginBottom: '8px' }}>选择难度</div>
-            <div style={{ display: 'flex', gap: '10px' }}>
+            <div className="label" style={{ color: 'var(--neon-yellow)', marginBottom: '12px', display: 'block' }}>选择难度</div>
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
               {LEVEL_CARDS.map(card => (
                 <Card
                   key={card.id}
                   type="level"
                   name={card.name}
                   color="var(--neon-yellow)"
-                  icon="⚡"
+                  icon="Lv"
                   selected={selectedLevel === card.id}
                   onClick={() => setSelectedLevel(card.id)}
                   timeLimit={card.timeLimit}
@@ -121,19 +168,41 @@ export const PracticeBoard: React.FC<PracticeBoardProps> = ({ onBack }) => {
         </>
       ) : (
         <div className="question-panel">
-          <div style={{ color: 'var(--neon-pink)', fontSize: '0.85rem', marginBottom: '12px' }}>
-            ⚡ {question.narrative}
+          <div style={{
+            color: 'var(--neon-pink)',
+            fontSize: '0.8rem',
+            marginBottom: '12px',
+            fontFamily: 'var(--font-display)',
+            letterSpacing: '1px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px'
+          }}>
+            <span style={{ width: 16, height: 16, display: 'inline-flex', color: 'var(--neon-pink)' }}><IconBolt /></span>
+            {question.narrative}
           </div>
-          <div style={{ fontSize: '1.3rem', fontWeight: 700, marginBottom: '20px', color: '#fff' }}>
+          <div style={{ fontSize: '1.3rem', fontWeight: 700, marginBottom: '20px', color: '#fff', lineHeight: 1.5 }}>
             {question.question}
           </div>
           {result ? (
-            <div style={{ color: result === 'correct' ? 'var(--neon-green)' : 'var(--neon-pink)', fontSize: '1.2rem' }}>
-              {result === 'correct' ? '✅ 回答正确！' : `❌ 回答错误！正确答案是：${question.answer}`}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                color: result === 'correct' ? 'var(--neon-green)' : 'var(--neon-pink)',
+                fontSize: '1.1rem',
+                fontFamily: 'var(--font-display)',
+                fontWeight: 700,
+              }}>
+                <span style={{ width: 18, height: 18, display: 'flex', color: 'inherit' }}>
+                  {result === 'correct' ? <IconCheck /> : <IconX />}
+                </span>
+                {result === 'correct' ? '回答正确！' : `错误！正确答案：${question.answer}`}
+              </div>
               <button
                 className="btn-cyber"
                 onClick={() => { setQuestion(null); setAnswer(''); setResult(null); }}
-                style={{ marginLeft: '16px' }}
               >
                 下一题
               </button>

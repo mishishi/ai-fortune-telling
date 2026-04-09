@@ -73,7 +73,7 @@ function buildRoom(roomId: string, winScore: number, mode: GameMode): Room {
       usedSubjectLevels: [],
       winner: null,
       mode,
-      activeSkillEffects: { double: false, noEnemySkill: false, swap: false },
+      activeSkillEffects: { double: false, noEnemySkill: false, swap: false, hintAvailable: false },
       eventActive: null,
     },
     hand,
@@ -230,6 +230,9 @@ export function setupGameHandlers(io: Server) {
         return;
       }
 
+      // 设置当前题目
+      room.state.currentQuestion = q;
+
       // Only mark as used if we're NOT swapping to a new question
       if (!room.state.activeSkillEffects.swap) {
         room.usedSubjectLevels.add(key);
@@ -275,6 +278,7 @@ export function setupGameHandlers(io: Server) {
       const isCorrect = judgeAnswer(data.answer, q.answer, q.subject);
 
       const points = room.state.activeSkillEffects.double ? 2 : 1;
+      let eventScored = false; // 标记事件是否已经给过分了
 
       // 知识连击处理
       if (room.eventState.combo) {
@@ -283,6 +287,7 @@ export function setupGameHandlers(io: Server) {
           if (room.eventState.combo.answered >= room.eventState.combo.required) {
             // 连击完成，给分
             room.state.playerScore += points;
+            eventScored = true;
             room.eventState.combo = null;
           } else {
             // 第一题对了，等待第二题，不给分
@@ -299,6 +304,7 @@ export function setupGameHandlers(io: Server) {
         room.eventState.coop.playerAnswered = true;
         if (isCorrect) {
           room.state.playerScore += points;
+          eventScored = true;
         }
         // 等待AI答题（AI代答）
         if (!room.eventState.coop.aiAnswered) {
@@ -330,7 +336,8 @@ export function setupGameHandlers(io: Server) {
         room.state.eventActive = null;
       }
 
-      if (isCorrect && !room.eventState.combo) {
+      // 正常答对给分（如果事件没给过）
+      if (isCorrect && !eventScored) {
         room.state.playerScore += points;
       }
       // 清除双倍效果
@@ -399,7 +406,10 @@ export function setupGameHandlers(io: Server) {
       const roomId = playerSockets.get(socket.id);
       if (!roomId) return;
       const room = rooms.get(roomId);
-      if (!room || room.state.phase !== 'play_card') return;
+      if (!room || room.state.phase !== 'play_card') {
+        socket.emit('error', { message: '当前不是出牌阶段' });
+        return;
+      }
 
       const card = room.hand[data.cardIndex];
       if (!card || card.cardType !== 'skill') {
@@ -442,9 +452,13 @@ export function setupGameHandlers(io: Server) {
           socket.emit('skill_activated', { skillName: skill.name, description: skill.description });
           break;
         case '跳过':
-          // 直接结束回合
+          // 直接结束回合，清除所有技能效果
           replenishHand(room);
           checkWinCondition(room);
+          // 清除所有技能效果
+          room.state.activeSkillEffects.double = false;
+          room.state.activeSkillEffects.swap = false;
+          room.state.activeSkillEffects.hintAvailable = false;
           const skipGameOver = (room.state.phase as string) === 'game_over';
           if (!skipGameOver) {
             room.state.phase = 'play_card';
@@ -452,11 +466,13 @@ export function setupGameHandlers(io: Server) {
           sendState(io, room);
           return;
         case '求助':
+          // 设置求助标记，允许请求提示
+          room.state.activeSkillEffects.hintAvailable = true;
+          socket.emit('skill_activated', { skillName: skill.name, description: skill.description });
+          break;
         case '换题':
-          // 在答题阶段处理（求助存标记，换题设置 swap 效果）
-          if (skill.name === '换题') {
-            room.state.activeSkillEffects.swap = true;
-          }
+          // 设置换题效果
+          room.state.activeSkillEffects.swap = true;
           socket.emit('skill_activated', { skillName: skill.name, description: skill.description });
           break;
       }

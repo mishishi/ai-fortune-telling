@@ -24,7 +24,7 @@ export interface GameState {
   discardCount: number;
   winner: 'player' | 'ai' | null;
   mode: 'pvp' | 'practice';
-  activeSkillEffects: { double: boolean; noEnemySkill: boolean };
+  activeSkillEffects: { double: boolean; noEnemySkill: boolean; swap: boolean; hintAvailable: boolean };
   eventActive: string | null;
 }
 
@@ -32,6 +32,8 @@ export function useGameSocket() {
   const socketRef = useRef<Socket | null>(null);
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [hint, setHint] = useState<string | null>(null);
+  const [skillMessage, setSkillMessage] = useState<string | null>(null);
 
   useEffect(() => {
     const socket = io('http://localhost:3001');
@@ -48,6 +50,17 @@ export function useGameSocket() {
       console.error('[Socket] error:', err.message);
       setError(err.message);
       setTimeout(() => setError(null), 3000);
+    });
+    socket.on('hint_received', (data: { hint: string }) => {
+      setHint(data.hint);
+    });
+    socket.on('skill_activated', (data: { skillName: string; description: string }) => {
+      setSkillMessage(`${data.skillName}已激活：${data.description}`);
+      setTimeout(() => setSkillMessage(null), 3000);
+    });
+    socket.on('explanation', (data: { explanation: string }) => {
+      console.log('[Socket] explanation:', data.explanation);
+      // Could show explanation in a modal/toast
     });
 
     return () => { socket.disconnect(); };
@@ -69,5 +82,9 @@ export function useGameSocket() {
     socketRef.current?.emit('use_skill', { cardIndex });
   }, []);
 
-  return { gameState, error, startGame, playCards, submitAnswer, useSkill };
+  const requestHint = useCallback(() => {
+    socketRef.current?.emit('request_hint');
+  }, []);
+
+  return { gameState, error, startGame, playCards, submitAnswer, useSkill, requestHint, hint, setHint, skillMessage };
 }
