@@ -5,14 +5,25 @@ import { QuestionPanel } from './QuestionPanel';
 import { Timer } from './Timer';
 import { ScoreBoard } from './ScoreBoard';
 
+type SavedQuestion = {
+  id: string;
+  narrative: string;
+  question: string;
+  answer: string;
+  timeLimit: number;
+};
+
 export const GameBoard: React.FC = () => {
   const { gameState, error, startGame, playCards, submitAnswer } = useGameSocket();
   const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
   const [selectedLevel, setSelectedLevel] = useState<string | null>(null);
+  // Track last submitted question so we can show the answer after phase changes
+  const [lastQuestion, setLastQuestion] = useState<SavedQuestion | null>(null);
 
   const handleStart = () => {
     setSelectedSubject(null);
     setSelectedLevel(null);
+    setLastQuestion(null);
     startGame(10);
   };
 
@@ -29,12 +40,19 @@ export const GameBoard: React.FC = () => {
   };
 
   const handleAnswer = useCallback((answer: string) => {
+    // Save question so we can show answer after server responds
+    if (gameState?.currentQuestion) {
+      setLastQuestion(gameState.currentQuestion);
+    }
     submitAnswer(answer);
-  }, [submitAnswer]);
+  }, [submitAnswer, gameState]);
 
   const handleTimeout = useCallback(() => {
+    if (gameState?.currentQuestion) {
+      setLastQuestion(gameState.currentQuestion);
+    }
     submitAnswer('__TIMEOUT__');
-  }, [submitAnswer]);
+  }, [submitAnswer, gameState]);
 
   // 开始界面
   if (!gameState) {
@@ -102,11 +120,85 @@ export const GameBoard: React.FC = () => {
         <QuestionPanel
           narrative={currentQuestion.narrative}
           question={currentQuestion.question}
+          answer={currentQuestion.answer}
           timeLimit={currentQuestion.timeLimit}
           active={true}
           onAnswer={handleAnswer}
           onTimeout={handleTimeout}
         />
+      </div>
+    );
+  }
+
+  // 等待AI出题中
+  if (phase === 'answering' && !currentQuestion) {
+    return (
+      <div style={{
+        display: 'flex', flexDirection: 'column', alignItems: 'center',
+        justifyContent: 'center', minHeight: '100vh', gap: '32px'
+      }}>
+        <ScoreBoard playerScore={playerScore} aiScore={aiScore} winScore={10} />
+        <div style={{ textAlign: 'center' }}>
+          <div style={{
+            fontSize: '3rem', marginBottom: '16px',
+            animation: 'pulse 1.5s ease-in-out infinite'
+          }}>
+            ⚡🔮⚡
+          </div>
+          <h2 style={{ color: 'var(--neon-cyan)', letterSpacing: '3px' }}>
+            AI 正在生成题目
+          </h2>
+          <p style={{ color: '#888', marginTop: '8px' }}>
+            赛博空间数据传输中，请稍候...
+          </p>
+        </div>
+        <div style={{
+          color: '#555', fontSize: '0.85rem',
+          border: '1px solid #333', padding: '8px 16px', borderRadius: '8px'
+        }}>
+          难度越高，题目越复杂，生成时间稍长
+        </div>
+      </div>
+    );
+  }
+
+  // 答题结果界面（显示上一题答案，用户确认后消失）
+  if (lastQuestion) {
+    const lq = lastQuestion;
+    return (
+      <div style={{ padding: '20px', maxWidth: '700px', margin: '0 auto' }}>
+        <ScoreBoard playerScore={playerScore} aiScore={aiScore} winScore={10} />
+        <div style={{
+          border: '2px solid var(--neon-pink)',
+          borderRadius: '12px',
+          padding: '24px',
+          marginTop: '16px',
+          background: 'rgba(255,0,170,0.08)',
+        }}>
+          <div style={{ color: 'var(--neon-pink)', fontSize: '0.8rem', marginBottom: '8px', letterSpacing: '2px' }}>
+            ⚡ {lq.narrative}
+          </div>
+          <div style={{ fontSize: '1.2rem', color: '#fff', marginBottom: '20px', lineHeight: 1.5 }}>
+            {lq.question}
+          </div>
+          <div style={{
+            padding: '12px 16px',
+            background: 'rgba(255,100,100,0.15)',
+            border: '2px solid var(--neon-pink)',
+            borderRadius: '8px',
+            color: 'var(--neon-pink)',
+            fontSize: '1.1rem',
+          }}>
+            答案：<strong>{lq.answer}</strong>
+          </div>
+          <button
+            className="btn-cyber"
+            onClick={() => { setLastQuestion(null); }}
+            style={{ marginTop: '20px', width: '100%' }}
+          >
+            继续出牌
+          </button>
+        </div>
       </div>
     );
   }

@@ -1,5 +1,5 @@
 import { Server, Socket } from 'socket.io';
-import { generateQuestion } from '../services/questionService';
+import { generateQuestion, generateHint } from '../services/questionService';
 import { judgeAnswer } from '../services/judgeService';
 import {
   GameState, GamePhase, Subject, Level,
@@ -200,7 +200,10 @@ export function setupGameHandlers(io: Server) {
         return;
       }
 
-      room.usedSubjectLevels.add(key);
+      // Only mark as used if we're NOT swapping to a new question
+      if (!room.state.activeSkillEffects.swap) {
+        room.usedSubjectLevels.add(key);
+      }
 
       // 从手牌移除
       room.hand.splice(data.cardIndex, 1);
@@ -281,6 +284,26 @@ export function setupGameHandlers(io: Server) {
         }
         rooms.delete(roomId);
         playerSockets.delete(socket.id);
+      }
+    });
+
+    socket.on('request_hint', async () => {
+      const roomId = playerSockets.get(socket.id);
+      if (!roomId) return;
+      const room = rooms.get(roomId);
+      if (!room || room.state.phase !== 'answering') return;
+      if (!room.state.currentQuestion) return;
+
+      try {
+        const hint = await generateHint(
+          room.state.currentQuestion,
+          process.env.MINIMAX_API_KEY!,
+          process.env.MINIMAX_BASE_URL!,
+          process.env.MINIMAX_MODEL!
+        );
+        socket.emit('hint_received', { hint });
+      } catch (e) {
+        socket.emit('error', { message: '获取提示失败' });
       }
     });
 

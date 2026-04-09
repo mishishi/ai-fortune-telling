@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 interface QuestionPanelProps {
   narrative: string;
   question: string;
+  answer: string;
   timeLimit: number;
   active: boolean;
   onAnswer: (answer: string) => void;
@@ -10,7 +11,7 @@ interface QuestionPanelProps {
 }
 
 export const QuestionPanel: React.FC<QuestionPanelProps> = ({
-  narrative, question, timeLimit, active, onAnswer, onTimeout
+  narrative, question, answer, timeLimit, active, onAnswer, onTimeout
 }) => {
   const [input, setInput] = useState('');
 
@@ -21,11 +22,9 @@ export const QuestionPanel: React.FC<QuestionPanelProps> = ({
     setInput('');
   };
 
-  // Reset input when active becomes false (e.g., when a new question appears)
+  // Reset input when a new active question starts
   useEffect(() => {
-    if (!active) {
-      setInput('');
-    }
+    if (active) setInput('');
   }, [active]);
 
   return (
@@ -49,7 +48,7 @@ export const QuestionPanel: React.FC<QuestionPanelProps> = ({
         {question}
       </div>
       {active && (
-        <form onSubmit={handleSubmit} style={{ display: 'flex', gap: '10px' }}>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
           <input
             value={input}
             onChange={e => setInput(e.target.value)}
@@ -57,6 +56,7 @@ export const QuestionPanel: React.FC<QuestionPanelProps> = ({
             autoFocus
             style={{
               flex: 1,
+              minWidth: '120px',
               background: 'rgba(0,245,255,0.1)',
               border: '2px solid var(--neon-cyan)',
               borderRadius: '8px',
@@ -68,6 +68,21 @@ export const QuestionPanel: React.FC<QuestionPanelProps> = ({
             }}
           />
           <button type="submit" className="btn-cyber">提交</button>
+          <button
+            type="button"
+            onClick={() => onAnswer('__GIVE_UP__')}
+            style={{
+              background: 'rgba(255,100,100,0.15)',
+              border: '2px solid var(--neon-pink)',
+              borderRadius: '8px',
+              padding: '10px 16px',
+              color: 'var(--neon-pink)',
+              cursor: 'pointer',
+              fontSize: '0.9rem',
+            }}
+          >
+            放弃
+          </button>
         </form>
       )}
     </div>

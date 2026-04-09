@@ -10,6 +10,7 @@ export interface GameState {
     id: string;
     narrative: string;
     question: string;
+    answer: string;
     timeLimit: number;
   } | null;
   handSubjects: string[];
