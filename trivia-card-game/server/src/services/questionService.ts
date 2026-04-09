@@ -35,32 +35,14 @@ export async function generateQuestion(
   baseUrl: string,
   model: string
 ): Promise<Question> {
-  const systemPrompt = `你是"赛博空间知识对战游戏"的题目生成器。严格按以下规则出题：
+  const systemPrompt = `你是"赛博空间知识对战游戏"的AI出题器。
+【强制规则】你只能输出一行纯JSON，不能输出任何其他文字、符号或格式。
+JSON格式：
+{"narrative":"赛博叙事(20字内)","question":"题目","answer":"答案"}
+不要输出markdown代码块，不要输出emoji，不要输出任何解释。`;
 
-1. 每次出一道题，必须用中文。
-2. 题目必须以赛博朋克/黑客入侵叙事包裹，如"你正在破解..."，"入侵数据节点..."等。
-3. 题目要有唯一明确答案，答案不能模糊。
-4. 严格按以下难度边界出题，不要超出也不要低于：
-   - Lv1: ${getLevelGuidance('Lv1')}
-   - Lv2: ${getLevelGuidance('Lv2')}
-   - Lv3: ${getLevelGuidance('Lv3')}
-   - Lv4: ${getLevelGuidance('Lv4')}
-5. 答案如果是数字，精确到具体数值，不用"大约"、"左右"等模糊词。
-6. 不要在题目、提示或任何地方泄露答案。
-
-输出格式（严格按此 JSON 格式，不要有其他内容）：
-{
-  "narrative": "描述玩家正在进行的赛博叙事（20字以内）",
-  "question": "实际题目内容",
-  "answer": "标准答案（填空题为词语，选择题为选项字母，计算题为数字）"
-}`;
-
-  const userPrompt = `生成题目：
-学科: ${subject}
-难度: ${level}
-叙事背景: ${getNarrativePrompt(subject)}
-
-请严格按 JSON 格式输出，不要输出其他内容。`;
+  const userPrompt = `学科=${subject},难度=${level},叙事=${getNarrativePrompt(subject)}
+严格输出一行纯JSON：{"narrative":"...","question":"...","answer":"..."}`;
 
   // Minimax API call (OpenAI-compatible endpoint)
   const url = `${baseUrl}/chat/completions`;
@@ -77,7 +59,7 @@ export async function generateQuestion(
         { role: 'user', content: userPrompt }
       ],
       temperature: 0.3,
-      max_tokens: 500,
+      max_tokens: 150,
     }),
   });
 
@@ -94,13 +76,29 @@ export async function generateQuestion(
     throw new Error('Empty response from Minimax API');
   }
 
-  // Parse JSON from response
+  // Parse JSON - AI often ignores pure-JSON instruction, so extract from anywhere in text
   let parsed: { narrative: string; question: string; answer: string };
   try {
-    const jsonMatch = rawContent.match(/```json\n?([\s\S]*?)\n?```/) ?? rawContent.match(/\{[\s\S]*\}/);
-    const jsonStr = jsonMatch ? (jsonMatch[1] ?? jsonMatch[0]) : rawContent;
+    // Strategy: find the last { ... } block which contains the actual JSON
+    // This handles cases where AI prepends reasoning text before JSON
+    const firstBrace = rawContent.lastIndexOf('{');
+    const lastBrace = rawContent.lastIndexOf('}');
+    let jsonStr: string;
+
+    if (firstBrace !== -1 && lastBrace !== -1 && lastBrace >= firstBrace) {
+      jsonStr = rawContent.slice(firstBrace, lastBrace + 1);
+    } else {
+      jsonStr = rawContent.trim();
+    }
+
+    // Remove any trailing text after the JSON
+    const jsonEnd = jsonStr.indexOf('"}');
+    if (jsonEnd !== -1) {
+      jsonStr = jsonStr.slice(0, jsonEnd + 2);
+    }
+
     parsed = JSON.parse(jsonStr);
-  } catch {
+  } catch (e) {
     throw new Error(`Failed to parse AI response as JSON: ${rawContent.slice(0, 200)}`);
   }
 
