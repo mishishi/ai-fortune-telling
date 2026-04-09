@@ -38,11 +38,14 @@ export const Hand: React.FC<HandProps> = ({
   onSelectSubject, onSelectLevel,
   disabled
 }) => {
-  // filter(Boolean) removes undefined entries for IDs not found in the card registry.
-  // The ! assertion is a fallback - filter(Boolean) is the real safeguard.
-  const subjects = subjectIds.map(id => SUBJECT_CARDS.find(c => c.id === id)).filter(Boolean);
-  // levelIds may contain duplicates (e.g. two Lv1 cards), so use index in key to ensure uniqueness
-  const levels = levelIds.map((id, idx) => ({ card: LEVEL_CARDS.find(c => c.id === id), idx })).filter(x => x.card);
+  // subjectIds and levelIds may contain duplicates (same card can appear multiple times in hand),
+  // so we include the array index in the key to ensure uniqueness.
+  const subjects = subjectIds
+    .map((id, idx) => ({ card: SUBJECT_CARDS.find(c => c.id === id), idx }))
+    .filter(x => x.card);
+  const levels = levelIds
+    .map((id, idx) => ({ card: LEVEL_CARDS.find(c => c.id === id), idx }))
+    .filter(x => x.card);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -51,15 +54,15 @@ export const Hand: React.FC<HandProps> = ({
           ▶ 学科卡
         </div>
         <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-          {subjects.map(card => (
+          {subjects.map(({ card, idx }) => (
             <Card
-              key={card.id}
+              key={`${card!.id}_${idx}`}
               type="subject"
-              name={card.name}
-              color={card.color}
-              icon={card.icon}
-              selected={selectedSubject === card.id}
-              onClick={() => onSelectSubject(card.id)}
+              name={card!.name}
+              color={card!.color}
+              icon={card!.icon}
+              selected={selectedSubject === card!.id}
+              onClick={() => onSelectSubject(card!.id)}
               disabled={disabled}
             />
           ))}
