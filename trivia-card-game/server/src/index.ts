@@ -6,6 +6,7 @@ import cors from 'cors';
 import { initDb } from './db/init';
 import { generateQuestion } from './services/questionService';
 import { judgeAnswer } from './services/judgeService';
+import { Subject, Level } from './types/game';
 import { setupGameHandlers } from './socket/gameHandler';
 
 const app = express();
@@ -40,6 +41,29 @@ async function start() {
           process.env.MINIMAX_MODEL!
         );
         res.json(q);
+      } catch (e) {
+        res.status(500).json({ error: (e as Error).message });
+      }
+    });
+
+    // Practice mode - generate question without joining a game room
+    app.post('/api/practice-question', async (req, res) => {
+      const { subject, level } = req.body;
+
+      if (!subject || !level) {
+        res.status(400).json({ error: 'Missing subject or level' });
+        return;
+      }
+
+      try {
+        const q = await generateQuestion(
+          subject as Subject,
+          level as Level,
+          process.env.MINIMAX_API_KEY!,
+          process.env.MINIMAX_BASE_URL!,
+          process.env.MINIMAX_MODEL!
+        );
+        res.json({ question: q });
       } catch (e) {
         res.status(500).json({ error: (e as Error).message });
       }
