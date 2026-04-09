@@ -59,7 +59,7 @@ JSON格式：
         { role: 'user', content: userPrompt }
       ],
       temperature: 0.3,
-      max_tokens: 1000,
+      max_tokens: 3000,
     }),
   });
 
