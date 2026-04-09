@@ -76,21 +76,29 @@ JSON格式：
     throw new Error('Empty response from Minimax API');
   }
 
-  // Parse JSON - model outputs thinking text first, JSON at the end
-  // Strategy: find ALL occurrences of {"narrative" and use the LAST one
-  // (last occurrence is the actual JSON; earlier ones may appear in thinking)
+  // Parse JSON - model outputs thinking text first (inside <Skip>...</Skip>), then JSON at the end
+  // Strategy: skip past </Skip> tag, then find {"narrative" after it
   let parsed: { narrative: string; question: string; answer: string };
   try {
+    // Skip past the thinking block - find </Skip> and start searching AFTER it
+    const skipEnd = rawContent.indexOf('</Skip>');
+    const searchStart = skipEnd === -1 ? 0 : skipEnd + '</Skip>'.length;
+
+    // Now find the LAST {"narrative" from searchStart onwards
     let jsonStart = -1;
-    let searchFrom = 0;
-    // Find the LAST occurrence of {"narrative"
+    let searchFrom = searchStart;
     while (true) {
       const idx = rawContent.indexOf('{"narrative"', searchFrom);
       if (idx === -1) break;
       jsonStart = idx;
       searchFrom = idx + 1;
     }
-    if (jsonStart === -1) throw new Error('narrative key not found');
+
+    // Fallback: if no narrative found after </Skip>, try from beginning
+    if (jsonStart === -1) {
+      jsonStart = rawContent.lastIndexOf('{"narrative"');
+    }
+    if (jsonStart === -1) throw new Error('narrative key not found in response');
 
     const lastBrace = rawContent.lastIndexOf('}');
     if (lastBrace <= jsonStart) throw new Error('no closing brace after narrative');
@@ -98,10 +106,7 @@ JSON格式：
     const jsonStr = rawContent.slice(jsonStart, lastBrace + 1);
     parsed = JSON.parse(jsonStr);
   } catch (e) {
-    // Log the extraction bounds for debugging
-    const dbgJsonStart = rawContent.indexOf('{"narrative"');
-    const dbgLastBrace = rawContent.lastIndexOf('}');
-    throw new Error(`Failed to parse: ${(e as Error).message} | start=${dbgJsonStart} lastBrace=${dbgLastBrace} | json: ${rawContent.slice(dbgJsonStart, dbgJsonStart+120)} | raw_end: ${rawContent.slice(-200)}`);
+    throw new Error(`Failed to parse: ${(e as Error).message}`);
   }
 
   return {
