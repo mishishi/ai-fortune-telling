@@ -16,30 +16,31 @@ type SavedQuestion = {
 };
 
 export const GameBoard: React.FC = () => {
-  const { gameState, error, startGame, playCards, submitAnswer } = useGameSocket();
-  const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
-  const [selectedLevel, setSelectedLevel] = useState<string | null>(null);
+  const { gameState, error, startGame, playCards, submitAnswer, useSkill } = useGameSocket();
+  const [selectedCardIndex, setSelectedCardIndex] = useState<number | null>(null);
   // Track last submitted question so we can show the answer after phase changes
   const [lastQuestion, setLastQuestion] = useState<SavedQuestion | null>(null);
   const [mode, setMode] = useState<'select' | 'pvp' | 'practice'>('select');
 
   const handleStart = () => {
-    setSelectedSubject(null);
-    setSelectedLevel(null);
+    setSelectedCardIndex(null);
     setLastQuestion(null);
     startGame(10);
   };
 
+  const handleSelectCard = (index: number) => {
+    setSelectedCardIndex(index);
+  };
+
+  const handleUseSkill = (index: number) => {
+    useSkill(index);
+    setSelectedCardIndex(null);
+  };
+
   const handlePlay = () => {
-    console.log('[GameBoard] handlePlay called', { selectedSubject, selectedLevel });
-    if (!selectedSubject || !selectedLevel) {
-      console.warn('[GameBoard] selectedSubject or selectedLevel is null, returning early');
-      return;
-    }
-    console.log('[GameBoard] emitting play_cards', { subjectCardId: selectedSubject, levelCardId: selectedLevel });
-    playCards(selectedSubject, selectedLevel);
-    setSelectedSubject(null);
-    setSelectedLevel(null);
+    if (selectedCardIndex === null) return;
+    playCards(selectedCardIndex);
+    setSelectedCardIndex(null);
   };
 
   const handleAnswer = useCallback((answer: string) => {
@@ -243,12 +244,10 @@ export const GameBoard: React.FC = () => {
       </h3>
 
       <Hand
-        subjectIds={gameState.handSubjects}
-        levelIds={gameState.handLevels}
-        selectedSubject={selectedSubject}
-        selectedLevel={selectedLevel}
-        onSelectSubject={setSelectedSubject}
-        onSelectLevel={setSelectedLevel}
+        hand={gameState.hand}
+        selectedIndex={selectedCardIndex}
+        onSelectCard={handleSelectCard}
+        onUseSkill={handleUseSkill}
         disabled={phase !== 'play_card'}
       />
 
@@ -256,10 +255,10 @@ export const GameBoard: React.FC = () => {
         <button
           className="btn-cyber"
           onClick={handlePlay}
-          disabled={!selectedSubject || !selectedLevel}
+          disabled={selectedCardIndex === null}
           style={{
-            opacity: (!selectedSubject || !selectedLevel) ? 0.4 : 1,
-            cursor: (!selectedSubject || !selectedLevel) ? 'not-allowed' : 'pointer',
+            opacity: selectedCardIndex === null ? 0.4 : 1,
+            cursor: selectedCardIndex === null ? 'not-allowed' : 'pointer',
             fontSize: '1rem', padding: '12px 32px'
           }}
         >

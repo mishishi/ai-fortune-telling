@@ -57,8 +57,8 @@ export function useGameSocket() {
     socketRef.current?.emit('start_game', { winScore });
   }, []);
 
-  const playCards = useCallback((subjectCardId: string, levelCardId: string) => {
-    socketRef.current?.emit('play_cards', { subjectCardId, levelCardId });
+  const playCards = useCallback((cardIndex: number) => {
+    socketRef.current?.emit('play_cards', { cardIndex });
   }, []);
 
   const submitAnswer = useCallback((answer: string) => {
