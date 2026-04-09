@@ -19,7 +19,11 @@ const LEVEL_CARDS = [
   { id: 'lv_4', name: 'Lv4', timeLimit: 45 },
 ];
 
-export const PracticeBoard: React.FC = () => {
+interface PracticeBoardProps {
+  onBack: () => void;
+}
+
+export const PracticeBoard: React.FC<PracticeBoardProps> = ({ onBack }) => {
   const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
   const [selectedLevel, setSelectedLevel] = useState<string | null>(null);
   const [question, setQuestion] = useState<any>(null);
@@ -45,6 +49,9 @@ export const PracticeBoard: React.FC = () => {
       setResult(null);
     } catch (e) {
       console.error(e);
+      setLoading(false);
+      alert('获取题目失败，请重试');
+      return;
     }
     setLoading(false);
   };
@@ -61,7 +68,7 @@ export const PracticeBoard: React.FC = () => {
     <div style={{ padding: '20px', maxWidth: '700px', margin: '0 auto' }}>
       <button
         className="btn-cyber"
-        onClick={() => window.location.reload()}
+        onClick={onBack}
         style={{ marginBottom: '20px' }}
       >
         ← 返回

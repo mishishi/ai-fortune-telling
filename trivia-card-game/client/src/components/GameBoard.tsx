@@ -69,7 +69,7 @@ export const GameBoard: React.FC = () => {
   }
 
   if (mode === 'practice') {
-    return <PracticeBoard />;
+    return <PracticeBoard onBack={() => setMode('select')} />;
   }
 
   // 开始界面
