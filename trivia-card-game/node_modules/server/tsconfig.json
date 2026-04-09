@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "commonjs",
+    "lib": ["ES2020"],
+    "esModuleInterop": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "resolveJsonModule": true,
+    "declaration": true,
+    "moduleResolution": "node10",
+    "ignoreDeprecations": "6.0",
+    "types": ["node"],
+    "baseUrl": "..",
+    "paths": {
+      "socket.io": ["node_modules/socket.io"],
+      "socket.io-client": ["node_modules/socket.io-client"],
+      "express": ["node_modules/express"],
+      "cors": ["node_modules/cors"]
+    }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
+}
