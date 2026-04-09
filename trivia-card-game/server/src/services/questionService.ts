@@ -119,3 +119,35 @@ JSON格式：
     timeLimit: getTimeLimit(level),
   };
 }
+
+export async function generateHint(
+  question: Question,
+  apiKey: string,
+  baseUrl: string,
+  model: string
+): Promise<string> {
+  const url = `${baseUrl}/chat/completions`;
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${apiKey}`
+    },
+    body: JSON.stringify({
+      model,
+      messages: [{
+        role: 'user',
+        content: `题目：${question.question}\n答案：${question.answer}\n请给出一个提示（不能说答案），帮助玩家思考。回答格式：直接输出提示语，不超过30字。`
+      }],
+      temperature: 0.5,
+      max_tokens: 100,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Minimax API error: ${response.status}`);
+  }
+
+  const data = await response.json() as { choices?: { message?: { content?: string } }[] };
+  return data.choices?.[0]?.message?.content?.trim() ?? '提示：再想想';
+}
