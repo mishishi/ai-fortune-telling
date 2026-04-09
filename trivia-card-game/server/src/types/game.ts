@@ -79,6 +79,7 @@ export interface GameState {
   activeSkillEffects: {
     double: boolean;
     noEnemySkill: boolean;
+    swap: boolean;
   };
   eventActive: string | null;
 }
