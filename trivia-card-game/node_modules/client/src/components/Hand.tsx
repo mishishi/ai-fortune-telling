@@ -38,10 +38,11 @@ export const Hand: React.FC<HandProps> = ({
   onSelectSubject, onSelectLevel,
   disabled
 }) => {
-  // filter(Boolean) removes undefined entries for subject IDs that don't exist in SUBJECT_CARDS.
-// The ! assertion is a fallback - filter(Boolean) is the real safeguard.
-const subjects = subjectIds.map(id => SUBJECT_CARDS.find(c => c.id === id)!).filter(Boolean);
-  const levels = levelIds.map(id => LEVEL_CARDS.find(c => c.id === id)!).filter(Boolean);
+  // filter(Boolean) removes undefined entries for IDs not found in the card registry.
+  // The ! assertion is a fallback - filter(Boolean) is the real safeguard.
+  const subjects = subjectIds.map(id => SUBJECT_CARDS.find(c => c.id === id)).filter(Boolean);
+  // levelIds may contain duplicates (e.g. two Lv1 cards), so use index in key to ensure uniqueness
+  const levels = levelIds.map((id, idx) => ({ card: LEVEL_CARDS.find(c => c.id === id), idx })).filter(x => x.card);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -69,16 +70,16 @@ const subjects = subjectIds.map(id => SUBJECT_CARDS.find(c => c.id === id)!).fil
           ▶ 难度卡
         </div>
         <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-          {levels.map(card => (
+          {levels.map(({ card, idx }) => (
             <Card
-              key={card.id}
+              key={`${card!.id}_${idx}`}
               type="level"
               name={card.name}
               color="var(--neon-yellow)"
               icon="⚡"
-              selected={selectedLevel === card.id}
-              onClick={() => onSelectLevel(card.id)}
-              timeLimit={card.timeLimit}
+              selected={selectedLevel === card!.id}
+              onClick={() => onSelectLevel(card!.id)}
+              timeLimit={card!.timeLimit}
               disabled={disabled}
             />
           ))}
