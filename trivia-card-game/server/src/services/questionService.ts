@@ -76,19 +76,16 @@ JSON格式：
     throw new Error('Empty response from Minimax API');
   }
 
-  // Parse JSON - with high max_tokens, model returns clean JSON
+  // Parse JSON - model outputs thinking text first, JSON is always at the very end
   let parsed: { narrative: string; question: string; answer: string };
   try {
-    // Find JSON block (may have thinking text before it)
-    const firstBrace = rawContent.indexOf('{');
     const lastBrace = rawContent.lastIndexOf('}');
-    let jsonStr = rawContent.trim();
-    if (firstBrace !== -1 && lastBrace !== -1 && lastBrace >= firstBrace) {
-      jsonStr = rawContent.slice(firstBrace, lastBrace + 1);
-    }
+    const jsonSlice = rawContent.slice(0, lastBrace + 1);
+    const jsonStart = jsonSlice.lastIndexOf('{');
+    const jsonStr = jsonSlice.slice(jsonStart);
     parsed = JSON.parse(jsonStr);
   } catch (e) {
-    throw new Error(`Failed to parse AI response as JSON: ${rawContent.slice(0, 200)}`);
+    throw new Error(`Failed to parse AI response as JSON: ${rawContent.slice(-300)}`);
   }
 
   return {
