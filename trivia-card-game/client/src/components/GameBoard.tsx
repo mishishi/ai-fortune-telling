@@ -4,6 +4,8 @@ import { Hand } from './Hand';
 import { QuestionPanel } from './QuestionPanel';
 import { Timer } from './Timer';
 import { ScoreBoard } from './ScoreBoard';
+import { ModeSelect } from './ModeSelect';
+import { PracticeBoard } from './PracticeBoard';
 
 type SavedQuestion = {
   id: string;
@@ -19,6 +21,7 @@ export const GameBoard: React.FC = () => {
   const [selectedLevel, setSelectedLevel] = useState<string | null>(null);
   // Track last submitted question so we can show the answer after phase changes
   const [lastQuestion, setLastQuestion] = useState<SavedQuestion | null>(null);
+  const [mode, setMode] = useState<'select' | 'pvp' | 'practice'>('select');
 
   const handleStart = () => {
     setSelectedSubject(null);
@@ -53,6 +56,21 @@ export const GameBoard: React.FC = () => {
     }
     submitAnswer('__TIMEOUT__');
   }, [submitAnswer, gameState]);
+
+  if (mode === 'select') {
+    return <ModeSelect onSelect={(m) => {
+      if (m === 'pvp') {
+        setMode('pvp');
+        startGame(10);
+      } else {
+        setMode('practice');
+      }
+    }} />;
+  }
+
+  if (mode === 'practice') {
+    return <PracticeBoard />;
+  }
 
   // 开始界面
   if (!gameState) {
