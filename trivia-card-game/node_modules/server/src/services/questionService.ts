@@ -151,3 +151,30 @@ export async function generateHint(
   const data = await response.json() as { choices?: { message?: { content?: string } }[] };
   return data.choices?.[0]?.message?.content?.trim() ?? '提示：再想想';
 }
+
+export async function generateExplanation(
+  question: Question,
+  apiKey: string,
+  baseUrl: string,
+  model: string
+): Promise<string> {
+  const response = await fetch(`${baseUrl}/text/chatcompletion_v2?GroupId=${apiKey}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${apiKey}`
+    },
+    body: JSON.stringify({
+      model,
+      messages: [{
+        role: 'user',
+        content: `题目：${question.question}\n答案：${question.answer}\n请详细讲解这道题，涉及的知识点是什么，为什么答案是这个。讲解要清晰、有教育意义，适合初中生理解。`
+      }],
+      temperature: 0.7,
+      max_tokens: 500,
+    }),
+  });
+
+  const data = await response.json();
+  return data.choices[0]?.message?.content?.trim() ?? '抱歉，无法生成讲解。';
+}

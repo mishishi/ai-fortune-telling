@@ -280,20 +280,16 @@ export function setupGameHandlers(io: Server) {
       if (room.eventState.combo) {
         if (isCorrect) {
           room.eventState.combo.answered += 1;
-          if (room.eventState.combo.answered < room.eventState.combo.required) {
-            // 还没答完连击，不给分，等待下一题
+          if (room.eventState.combo.answered >= room.eventState.combo.required) {
+            // 连击完成，给分
             room.state.playerScore += points;
             room.eventState.combo = null;
-            room.state.playerScore -= points;
           } else {
-            // 连击完成，正常给分
-            room.state.playerScore += points;
-            room.eventState.combo = null;
+            // 第一题对了，等待第二题，不给分
           }
         } else {
-          // 答错，连击失败
+          // 答错了，连击失败，不给分
           room.eventState.combo = null;
-          room.state.playerScore += points;
         }
         room.state.eventActive = null;
       }
@@ -302,7 +298,7 @@ export function setupGameHandlers(io: Server) {
       if (room.eventState.coop) {
         room.eventState.coop.playerAnswered = true;
         if (isCorrect) {
-          room.state.playerScore += 1;
+          room.state.playerScore += points;
         }
         // 等待AI答题（AI代答）
         if (!room.eventState.coop.aiAnswered) {
