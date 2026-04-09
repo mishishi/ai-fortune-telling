@@ -76,16 +76,29 @@ JSON格式：
     throw new Error('Empty response from Minimax API');
   }
 
-  // Parse JSON - model outputs thinking text first, JSON is always at the very end
+  // Parse JSON - model outputs thinking text first, JSON at the end
+  // Strategy: find ALL occurrences of {"narrative" and use the LAST one
+  // (last occurrence is the actual JSON; earlier ones may appear in thinking)
   let parsed: { narrative: string; question: string; answer: string };
   try {
+    let jsonStart = -1;
+    let searchFrom = 0;
+    // Find the LAST occurrence of {"narrative"
+    while (true) {
+      const idx = rawContent.indexOf('{"narrative"', searchFrom);
+      if (idx === -1) break;
+      jsonStart = idx;
+      searchFrom = idx + 1;
+    }
+    if (jsonStart === -1) throw new Error('narrative key not found');
+
     const lastBrace = rawContent.lastIndexOf('}');
-    const jsonSlice = rawContent.slice(0, lastBrace + 1);
-    const jsonStart = jsonSlice.lastIndexOf('{');
-    const jsonStr = jsonSlice.slice(jsonStart);
+    if (lastBrace <= jsonStart) throw new Error('no closing brace after narrative');
+
+    const jsonStr = rawContent.slice(jsonStart, lastBrace + 1);
     parsed = JSON.parse(jsonStr);
   } catch (e) {
-    throw new Error(`Failed to parse AI response as JSON: ${rawContent.slice(-300)}`);
+    throw new Error(`Failed to parse AI response: ${(e as Error).message} | Raw: ${rawContent.slice(-200)}`);
   }
 
   return {
