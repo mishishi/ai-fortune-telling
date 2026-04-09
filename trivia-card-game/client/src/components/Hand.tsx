@@ -19,90 +19,87 @@ const LEVEL_CARDS = [
   { id: 'lv_4', name: 'Lv4', timeLimit: 45 },
 ];
 
+const SKILL_CARDS = [
+  { id: 'skill_help',    name: '求助',   description: 'AI给出提示（不说答案），本轮有效' },
+  { id: 'skill_swap',   name: '换题',   description: '本轮作废，重出同难度题' },
+  { id: 'skill_double', name: '双倍',   description: '本轮答对得2分' },
+  { id: 'skill_skip',   name: '跳过',   description: '跳过本轮，直接结束回合' },
+  { id: 'skill_ban',    name: '禁手',   description: '对方本回合不能使用技能' },
+  { id: 'skill_first',  name: '先手',   description: '本轮由你先答题' },
+];
+
+const EVENT_CARDS = [
+  { id: 'event_flash',   name: '闪电快答', description: '必须在10秒内答完' },
+  { id: 'event_coop',    name: '双人合作', description: '两人各答一题，都对各+1' },
+  { id: 'event_combo',   name: '知识连击', description: '必须连续答对2题才能得分' },
+  { id: 'event_teach',  name: '错题讲堂', description: '答错后AI详细讲解' },
+];
+
 interface HandProps {
-  subjectIds: string[];
-  levelIds: string[];
-  selectedSubject: string | null;
-  selectedLevel: string | null;
-  onSelectSubject: (id: string) => void;
-  onSelectLevel: (id: string) => void;
+  hand: Array<{
+    cardType: 'subject_level' | 'skill' | 'event';
+    subjectId?: string;
+    levelId?: string;
+    skillId?: string;
+    eventId?: string;
+  }>;
+  selectedIndex: number | null;
+  onSelectCard: (index: number) => void;
+  onUseSkill: (index: number) => void;
   disabled?: boolean;
 }
 
-/**
- * Hand displays cards in rows of subject+level PAIRS.
- * A row represents one playable combination from the user's actual hand.
- * Clicking any card in a row selects the whole pair.
- */
 export const Hand: React.FC<HandProps> = ({
-  subjectIds, levelIds,
-  selectedSubject, selectedLevel,
-  onSelectSubject, onSelectLevel,
-  disabled
+  hand, selectedIndex, onSelectCard, onUseSkill, disabled
 }) => {
-  // Each index is one card pair: subjects[i] + levels[i]
-  const pairs = subjectIds
-    .map((subId, idx) => {
-      const lvId = levelIds[idx];
-      const sub = SUBJECT_CARDS.find(c => c.id === subId);
-      const lv = LEVEL_CARDS.find(c => c.id === lvId);
-      return { sub, lv, idx };
-    })
-    .filter(p => p.sub && p.lv);
-
-  const isRowSelected = (subId: string, lvId: string) =>
-    selectedSubject === subId && selectedLevel === lvId;
+  const getCardInfo = (card: HandProps['hand'][0]) => {
+    if (card.cardType === 'skill') {
+      const skill = SKILL_CARDS.find(s => s.id === card.skillId);
+      return { type: 'skill' as const, name: skill?.name ?? '', color: '#b266ff', icon: '🎯', description: skill?.description };
+    }
+    if (card.cardType === 'event') {
+      const event = EVENT_CARDS.find(e => e.id === card.eventId);
+      return { type: 'event' as const, name: event?.name ?? '', color: '#ff6b6b', icon: '⚡', description: event?.description };
+    }
+    // subject_level
+    const sub = SUBJECT_CARDS.find(c => c.id === card.subjectId);
+    const lv = LEVEL_CARDS.find(c => c.id === card.levelId);
+    return { type: 'subject' as const, name: `${sub?.name} + ${lv?.name}`, color: sub?.color ?? '#fff', icon: sub?.icon ?? '', timeLimit: lv?.timeLimit };
+  };
 
   return (
     <div>
       <div className="label" style={{ color: 'var(--neon-cyan)', marginBottom: '12px' }}>
-        ▶ 选择一张学科+难度组合出牌
+        ▶ 选择出牌
       </div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-        {pairs.map(({ sub, lv, idx }) => {
-          const subId = sub!.id;
-          const lvId = lv!.id;
-          const selected = isRowSelected(subId, lvId);
+      <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'center' }}>
+        {hand.map((card, idx) => {
+          const info = getCardInfo(card);
+          const isSelected = selectedIndex === idx;
+
           return (
-            <div
-              key={`pair_${idx}`}
-              style={{
-                display: 'flex',
-                gap: '10px',
-                alignItems: 'center',
-                padding: '8px 12px',
-                borderRadius: '12px',
-                border: selected ? '2px solid var(--neon-pink)' : '2px solid transparent',
-                background: selected ? 'rgba(255,0,170,0.1)' : 'transparent',
-                cursor: disabled ? 'not-allowed' : 'pointer',
-                transition: 'all 0.15s',
-                boxShadow: selected ? '0 0 15px rgba(255,0,170,0.4)' : 'none',
-              }}
-              onClick={() => {
-                if (disabled) return;
-                onSelectSubject(subId);
-                onSelectLevel(lvId);
-              }}
-            >
+            <div key={`card_${idx}`} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
               <Card
-                type="subject"
-                name={sub!.name}
-                color={sub!.color}
-                icon={sub!.icon}
-                selected={selected}
+                type={info.type}
+                name={info.name}
+                color={info.color}
+                icon={info.icon}
+                selected={isSelected}
                 disabled={disabled}
+                timeLimit={info.timeLimit}
+                onClick={() => {
+                  if (card.cardType === 'skill' || card.cardType === 'event') {
+                    onUseSkill(idx);
+                  } else {
+                    onSelectCard(idx);
+                  }
+                }}
               />
-              <div style={{ color: '#555', fontSize: '1.2rem' }}>＋</div>
-              <Card
-                type="level"
-                name={lv!.name}
-                color="var(--neon-yellow)"
-                icon="⚡"
-                selected={selected}
-                onClick={() => {}}
-                timeLimit={lv!.timeLimit}
-                disabled={disabled}
-              />
+              {info.description && (
+                <div style={{ fontSize: '0.65rem', color: '#aaa', maxWidth: '80px', textAlign: 'center' }}>
+                  {info.description}
+                </div>
+              )}
             </div>
           );
         })}

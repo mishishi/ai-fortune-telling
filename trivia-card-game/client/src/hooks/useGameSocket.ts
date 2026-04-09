@@ -13,11 +13,19 @@ export interface GameState {
     answer: string;
     timeLimit: number;
   } | null;
-  handSubjects: string[];
-  handLevels: string[];
+  hand: Array<{
+    cardType: 'subject_level' | 'skill' | 'event';
+    subjectId?: string;
+    levelId?: string;
+    skillId?: string;
+    eventId?: string;
+  }>;
   deckCount: number;
   discardCount: number;
   winner: 'player' | 'ai' | null;
+  mode: 'pvp' | 'practice';
+  activeSkillEffects: { double: boolean; noEnemySkill: boolean };
+  eventActive: string | null;
 }
 
 export function useGameSocket() {
@@ -57,5 +65,9 @@ export function useGameSocket() {
     socketRef.current?.emit('submit_answer', { answer });
   }, []);
 
-  return { gameState, error, startGame, playCards, submitAnswer };
+  const useSkill = useCallback((cardIndex: number) => {
+    socketRef.current?.emit('use_skill', { cardIndex });
+  }, []);
+
+  return { gameState, error, startGame, playCards, submitAnswer, useSkill };
 }
