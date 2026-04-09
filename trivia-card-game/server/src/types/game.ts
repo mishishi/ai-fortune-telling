@@ -82,10 +82,10 @@ export const SUBJECT_CARDS: SubjectCard[] = [
 ];
 
 export const LEVEL_CARDS: LevelCard[] = [
-  { id: 'lv_1', type: 'level', level: 'Lv1', timeLimit: 30 },
+  { id: 'lv_1', type: 'level', level: 'Lv1', timeLimit: 15 },
   { id: 'lv_2', type: 'level', level: 'Lv2', timeLimit: 25 },
-  { id: 'lv_3', type: 'level', level: 'Lv3', timeLimit: 20 },
-  { id: 'lv_4', type: 'level', level: 'Lv4', timeLimit: 15 },
+  { id: 'lv_3', type: 'level', level: 'Lv3', timeLimit: 35 },
+  { id: 'lv_4', type: 'level', level: 'Lv4', timeLimit: 45 },
 ];
 
 export const WIN_SCORE_SIMPLE = 10;

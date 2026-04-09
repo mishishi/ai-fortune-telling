@@ -25,7 +25,7 @@ function getLevelGuidance(level: Level): string {
 }
 
 function getTimeLimit(level: Level): number {
-  return { Lv1: 15, Lv2: 12, Lv3: 10, Lv4: 8 }[level];
+  return { Lv1: 15, Lv2: 25, Lv3: 35, Lv4: 45 }[level];
 }
 
 export async function generateQuestion(

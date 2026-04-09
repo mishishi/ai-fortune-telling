@@ -13,10 +13,10 @@ const SUBJECT_CARDS = [
 ];
 
 const LEVEL_CARDS = [
-  { id: 'lv_1', name: 'Lv1', timeLimit: 30 },
+  { id: 'lv_1', name: 'Lv1', timeLimit: 15 },
   { id: 'lv_2', name: 'Lv2', timeLimit: 25 },
-  { id: 'lv_3', name: 'Lv3', timeLimit: 20 },
-  { id: 'lv_4', name: 'Lv4', timeLimit: 15 },
+  { id: 'lv_3', name: 'Lv3', timeLimit: 35 },
+  { id: 'lv_4', name: 'Lv4', timeLimit: 45 },
 ];
 
 interface HandProps {
