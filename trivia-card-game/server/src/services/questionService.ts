@@ -59,7 +59,7 @@ JSON格式：
         { role: 'user', content: userPrompt }
       ],
       temperature: 0.3,
-      max_tokens: 400,
+      max_tokens: 1000,
     }),
   });
 
@@ -76,27 +76,16 @@ JSON格式：
     throw new Error('Empty response from Minimax API');
   }
 
-  // Parse JSON - AI often ignores pure-JSON instruction, so extract from anywhere in text
+  // Parse JSON - with high max_tokens, model returns clean JSON
   let parsed: { narrative: string; question: string; answer: string };
   try {
-    // Strategy: find the last { ... } block which contains the actual JSON
-    // This handles cases where AI prepends reasoning text before JSON
-    const firstBrace = rawContent.lastIndexOf('{');
+    // Find JSON block (may have thinking text before it)
+    const firstBrace = rawContent.indexOf('{');
     const lastBrace = rawContent.lastIndexOf('}');
-    let jsonStr: string;
-
+    let jsonStr = rawContent.trim();
     if (firstBrace !== -1 && lastBrace !== -1 && lastBrace >= firstBrace) {
       jsonStr = rawContent.slice(firstBrace, lastBrace + 1);
-    } else {
-      jsonStr = rawContent.trim();
     }
-
-    // Remove any trailing text after the JSON
-    const jsonEnd = jsonStr.indexOf('"}');
-    if (jsonEnd !== -1) {
-      jsonStr = jsonStr.slice(0, jsonEnd + 2);
-    }
-
     parsed = JSON.parse(jsonStr);
   } catch (e) {
     throw new Error(`Failed to parse AI response as JSON: ${rawContent.slice(0, 200)}`);
