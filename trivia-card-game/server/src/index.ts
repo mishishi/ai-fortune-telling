@@ -1,10 +1,11 @@
 import express from 'express';
 import { createServer } from 'http';
-import { Server, Socket } from 'socket.io';
+import { Server } from 'socket.io';
 import cors from 'cors';
 import { initDb } from './db/init';
 import { generateQuestion } from './services/questionService';
 import { judgeAnswer } from './services/judgeService';
+import { setupGameHandlers } from './socket/gameHandler';
 
 const app = express();
 app.use(cors());
@@ -18,13 +19,7 @@ const io = new Server(httpServer, {
   }
 });
 
-io.on('connection', (socket: Socket) => {
-  console.log('Client connected:', socket.id);
-
-  socket.on('disconnect', () => {
-    console.log('Client disconnected:', socket.id);
-  });
-});
+setupGameHandlers(io);
 
 const PORT = parseInt(process.env.PORT || '3001');
 
