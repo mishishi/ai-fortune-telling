@@ -122,12 +122,11 @@ export function setupGameHandlers(io: Server) {
       const level = lvCard.level as Level;
       const key = `${subject}__${level}`;
 
-      // 防重复检查
+      // 防重复检查（不提前标记，留到出题成功后再添加）
       if (room.usedSubjectLevels.has(key)) {
         socket.emit('error', { message: '此学科+难度组合已在本题用过' });
         return;
       }
-      room.usedSubjectLevels.add(key);
 
       // 从手牌移除这两张卡（通过ID找到对应的另一张）
       // 手牌中学科卡和等级卡是配对的，通过索引关联
@@ -142,6 +141,25 @@ export function setupGameHandlers(io: Server) {
         socket.emit('error', { message: '学科卡和等级卡不匹配' });
         return;
       }
+
+      // AI 出题（可能失败）
+      let q;
+      try {
+        q = await generateQuestion(
+          subject, level,
+          process.env.MINIMAX_API_KEY!,
+          process.env.MINIMAX_BASE_URL!,
+          process.env.MINIMAX_MODEL!
+        );
+      } catch (e) {
+        socket.emit('error', { message: `出题失败: ${(e as Error).message}` });
+        room.state.phase = 'play_card';
+        sendState(io, room);
+        return; // 卡片没有移除，安全退出
+      }
+
+      // 出题成功后才修改状态
+      room.usedSubjectLevels.add(key);
 
       // 从手牌移除（通过 splice 找到并移除）
       // 由于 handSubjects 和 handLevels 是配对的，用索引操作
@@ -161,23 +179,8 @@ export function setupGameHandlers(io: Server) {
 
       // 进入答题阶段
       room.state.phase = 'answering';
+      room.state.currentQuestion = q;
       sendState(io, room);
-
-      // AI 出题
-      try {
-        const q = await generateQuestion(
-          subject, level,
-          process.env.MINIMAX_API_KEY!,
-          process.env.MINIMAX_BASE_URL!,
-          process.env.MINIMAX_MODEL!
-        );
-        room.state.currentQuestion = q;
-        sendState(io, room);
-      } catch (e) {
-        socket.emit('error', { message: `出题失败: ${(e as Error).message}` });
-        room.state.phase = 'play_card';
-        sendState(io, room);
-      }
     });
 
     socket.on('submit_answer', (data: { answer: string }) => {
@@ -233,6 +236,8 @@ export function setupGameHandlers(io: Server) {
         } catch (e) {
           console.error('Failed to save game record:', e);
         }
+        rooms.delete(roomId);
+        playerSockets.delete(socket.id);
       }
     });
 
