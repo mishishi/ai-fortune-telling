@@ -23,8 +23,9 @@ export function getActiveSeason(): Season | null {
  */
 export function getOrCreatePlayerSeason(playerId: string, seasonId: number): PlayerSeasonStats {
   const db = getDb();
+  const safePlayerId = playerId.replace(/'/g, "''");
   const existing = db.exec(
-    `SELECT tier, xp, rank FROM player_tiers WHERE player_id = '${playerId}' AND season_id = ${seasonId}`
+    `SELECT tier, xp, rank FROM player_tiers WHERE player_id = '${safePlayerId}' AND season_id = ${seasonId}`
   );
   if (existing.length > 0 && existing[0].values.length > 0) {
     const row = existing[0].values[0];
@@ -123,8 +124,9 @@ export function getLeaderboard(seasonId: number, limit = 20): PlayerSeasonStats[
  */
 export function getPlayerRank(playerId: string, seasonId: number): number {
   const db = getDb();
+  const safePlayerId = playerId.replace(/'/g, "''");
   const result = db.exec(
-    `SELECT rank FROM player_tiers WHERE player_id = '${playerId}' AND season_id = ${seasonId}`
+    `SELECT rank FROM player_tiers WHERE player_id = '${safePlayerId}' AND season_id = ${seasonId}`
   );
   if (result.length === 0 || result[0].values.length === 0) return 0;
   return result[0].values[0][0] as number;
@@ -135,8 +137,9 @@ export function getPlayerRank(playerId: string, seasonId: number): number {
  */
 export function getOrCreateBattlePass(playerId: string, seasonId: number) {
   const db = getDb();
+  const safePlayerId = playerId.replace(/'/g, "''");
   const existing = db.exec(
-    `SELECT free_claimed, unlocked_tiers FROM battle_pass WHERE player_id = '${playerId}' AND season_id = ${seasonId}`
+    `SELECT free_claimed, unlocked_tiers FROM battle_pass WHERE player_id = '${safePlayerId}' AND season_id = ${seasonId}`
   );
   if (existing.length > 0 && existing[0].values.length > 0) {
     const row = existing[0].values[0];
