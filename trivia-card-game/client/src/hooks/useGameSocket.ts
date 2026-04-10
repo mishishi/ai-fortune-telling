@@ -25,7 +25,7 @@ export interface GameState {
   deckCount: number;
   discardCount: number;
   winner: 'player' | 'ai' | null;
-  mode: 'pvp' | 'practice';
+  mode: 'pvp' | 'practice' | 'async';
   activeSkillEffects: { double: boolean; noEnemySkill: boolean; swap: boolean; hintAvailable: boolean };
   eventActive: string | null;
 }
@@ -38,6 +38,14 @@ export function useGameSocket() {
   const [skillMessage, setSkillMessage] = useState<string | null>(null);
   // 流式思考内容累积
   const [questionThinking, setQuestionThinking] = useState<{ narrative: string; text: string } | null>(null);
+
+  // Async game state
+  const [asyncRoom, setAsyncRoom] = useState<any | null>(null);
+  const [lastAiResult, setLastAiResult] = useState<any | null>(null);
+  const [lastXpGain, setLastXpGain] = useState<{ xpEarned: number; totalXp: number; tier: string; tierChanged: boolean } | null>(null);
+  const [tierUp, setTierUp] = useState<string | null>(null);
+  const [asyncGameOver, setAsyncGameOver] = useState<{ winner: string; finalScore: { player: number; ai: number } } | null>(null);
+  const [seasonState, setSeasonState] = useState<{ season: any; stats: any } | null>(null);
 
   useEffect(() => {
     const socket = io('http://localhost:3001');
@@ -77,6 +85,29 @@ export function useGameSocket() {
       setQuestionThinking(null);
     });
 
+    // Season events
+    socket.on('season_state', (data: { season: any; stats: any }) => {
+      setSeasonState(data);
+    });
+    socket.on('tier_up', (data: { newTier: string }) => {
+      setTierUp(data.newTier);
+      setTimeout(() => setTierUp(null), 5000);
+    });
+    socket.on('xp_gained', (data: { xpEarned: number; totalXp: number; tier: string; tierChanged: boolean }) => {
+      setLastXpGain(data);
+    });
+
+    // Async room events
+    socket.on('async_room_state', (data: any) => {
+      setAsyncRoom(data);
+    });
+    socket.on('ai_turn_result', (data: { turnCount: number; aiScore: number; aiAnswers: any[] }) => {
+      setLastAiResult(data);
+    });
+    socket.on('async_game_over', (data: { winner: string; finalScore: { player: number; ai: number } }) => {
+      setAsyncGameOver(data);
+    });
+
     return () => { socket.disconnect(); };
   }, []);
 
@@ -100,5 +131,13 @@ export function useGameSocket() {
     socketRef.current?.emit('request_hint');
   }, []);
 
-  return { gameState, error, startGame, playCards, submitAnswer, useSkill, requestHint, hint, setHint, skillMessage, questionThinking, setQuestionThinking };
+  const startAsyncGame = useCallback((maxTurns = 3) => {
+    socketRef.current?.emit('start_async_game', { maxTurns });
+  }, []);
+
+  const submitAsyncTurn = useCallback((answers: any[]) => {
+    socketRef.current?.emit('submit_async_turn', { answers });
+  }, []);
+
+  return { gameState, error, startGame, playCards, submitAnswer, useSkill, requestHint, hint, setHint, skillMessage, questionThinking, setQuestionThinking, startAsyncGame, submitAsyncTurn, asyncRoom, lastAiResult, lastXpGain, tierUp, asyncGameOver, seasonState, setAsyncGameOver };
 }
