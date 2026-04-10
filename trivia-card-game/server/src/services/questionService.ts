@@ -139,8 +139,24 @@ interface ParsedQuestion {
 }
 
 /**
+ * 从文本中提取所有 A.x / B.x / C.x / D.x 格式的选项
+ * 处理 "A.1 B.4 C.7 D.9" 或 "A.1\nB.4\nC.7\nD.9" 等各种格式
+ */
+function extractInlineOptions(text: string): string[] {
+  // 匹配 "A.x" 到 "D.x" 的模式，支持 . 、 或 、 分隔
+  const matches = text.match(/[A-D][\.．、][^A-D\n]*/g);
+  if (!matches) return [];
+  return matches.map(m => {
+    const letter = m.charAt(0).toUpperCase();
+    const rest = m.slice(1).trim();
+    return `${letter}. ${rest}`;
+  });
+}
+
+/**
  * 解析纯文本格式的题目输出
- * AI 可能用全角冒号（：）或半角冒号（:），题目内容也可能跨多行
+ * AI 可能用全角冒号（：）或半角冒号（:），题目内容也可能跨多行，
+ * 选项也可能和题目文本在同一行（如 "题目：xxx A.1 B.4 C.7 D.9"）
  */
 export function parseTextFormat(raw: string): ParsedQuestion {
   const clean = stripThinkingBlocks(raw);
@@ -157,6 +173,14 @@ export function parseTextFormat(raw: string): ParsedQuestion {
     // 题目行：支持全角或半角冒号；冒号后为题目文本
     if (/^题目[：:]/.test(line)) {
       question = line.replace(/^题目[：:]/, '').trim();
+      // 题目行中可能混杂选项（如 "题目：xxx A.1 B.4 C.7 D.9"），
+      // 提取这些选项并从题目文本中移除
+      const extracted = extractInlineOptions(question);
+      if (extracted.length > 0) {
+        options.push(...extracted);
+        // 移除题目文本中的选项残留
+        question = question.replace(/[A-D][\.．、][^A-D\n]*/g, '').trim();
+      }
       continue;
     }
 
@@ -193,7 +217,7 @@ export function parseTextFormat(raw: string): ParsedQuestion {
     // 处理跨多行的题目文本：当前行既不是题目/答案/解析，也不是选项开头，
     // 且前面已有题目但尚未遇到选项或答案时，说明题目内容跨了多行
     if (question && !answer && options.length === 0) {
-      // 排除明显是选项但格式不规范的行（如只有ABCD字母开头）
+      // 排除单字母行（如只有 "A" 或 "B"）
       if (!/^[A-D]$/.test(line)) {
         question += ' ' + line;
         continue;
