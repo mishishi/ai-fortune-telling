@@ -5,7 +5,7 @@ import { judgeAnswer } from '../services/judgeService';
 import { generateQuestion } from '../services/questionService';
 import { simulateAiTurn } from '../services/aiStrategyService';
 import { processTurnEnd, getPlayerSeasonState } from '../services/seasonService';
-import { createAsyncRoom, getAsyncRoom, updateAsyncRoom, refreshExpiresAt } from '../services/asyncRoomService';
+import { createAsyncRoom, getAsyncRoom, getLatestAsyncRoom, updateAsyncRoom, refreshExpiresAt } from '../services/asyncRoomService';
 
 export function setupAsyncGameHandlers(io: Server) {
   const playerAsyncRoom = new Map<string, string>(); // socketId -> roomId
