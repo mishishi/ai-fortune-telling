@@ -85,7 +85,7 @@ export async function generateQuestion(
         { role: 'user', content: userPrompt }
       ],
       temperature: 0.4,
-      max_tokens: 800,  // 回复字数硬限制：题目格式仅需6行，约800 tokens 足够
+      max_tokens: 1500,
     }),
     signal: controller.signal,
   });
@@ -230,7 +230,7 @@ export async function generateHint(
         content: `题目：${question.question}\n请给出一个提示（不能说答案），帮助玩家思考。回答格式：直接输出提示语，不超过30字。`
       }],
       temperature: 0.5,
-      max_tokens: 50,  // 提示不超过50字
+      max_tokens: 100,
     }),
   });
 
@@ -265,7 +265,7 @@ export async function generateExplanation(
         content: `题目：${question.question}\n正确答案：${question.answer}\n请详细讲解这道题，涉及的知识点是什么，为什么答案是${question.answer}。讲解要清晰、有教育意义，适合初中生理解，不超过100字。`
       }],
       temperature: 0.7,
-      max_tokens: 150,  // 讲解不超过150字
+      max_tokens: 200,
     }),
   });
 
@@ -307,7 +307,7 @@ export async function generateQuestionStream(
         { role: 'user', content: userPrompt },
       ],
       temperature: 0.4,
-      max_tokens: 800,  // 回复字数硬限制：题目格式仅需6行，约800 tokens 足够
+      max_tokens: 1500,
       stream: true,
       extra_body: { reasoning_split: true },
     }),
