@@ -81,7 +81,7 @@ async function start() {
     app.get('/api/season/current', (req, res) => {
       const season = getActiveSeason();
       if (!season) {
-        res.json({ error: 'No active season' });
+        res.status(404).json({ error: 'No active season' });
         return;
       }
       res.json({ season });
@@ -92,7 +92,7 @@ async function start() {
       const { playerId } = req.params;
       const season = getActiveSeason();
       if (!season) {
-        res.json({ error: 'No active season' });
+        res.status(404).json({ error: 'No active season' });
         return;
       }
       const stats = getOrCreatePlayerSeason(playerId, season.id);
