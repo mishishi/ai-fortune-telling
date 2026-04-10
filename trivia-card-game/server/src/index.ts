@@ -10,6 +10,7 @@ import { Subject, Level } from './types/game';
 import { setupGameHandlers } from './socket/gameHandler';
 import { getActiveSeason, getLeaderboard, getPlayerRank, getOrCreatePlayerSeason } from './db/seasonDb';
 import { getPlayerSeasonState } from './services/seasonService';
+import { startContextCleanup } from './services/contextService';
 
 const app = express();
 app.use(cors());
@@ -30,6 +31,9 @@ const PORT = parseInt(process.env.PORT || '3001');
 async function start() {
   try {
     await initDb();
+
+    // 启动低活跃上下文自动清理
+    startContextCleanup();
 
     // Test routes for AI question generation
     app.get('/api/test-question', async (req, res) => {

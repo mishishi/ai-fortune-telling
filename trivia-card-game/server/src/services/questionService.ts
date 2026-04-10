@@ -12,6 +12,38 @@ export function getTimeLimit(level: Level): number {
  * 移除 MiniMax 模型思考标签内容（字符串操作，避免正则特殊字符问题）
  * 支持格式：<think>...</think>
  */
+// ---------------------------------------------------------------------------
+// 系统提示词缓存 — 服务器启动时预生成，避免每次 API 调用重复拼接字符串
+// ---------------------------------------------------------------------------
+
+function buildSystemPrompt(): string {
+  return `你是《知识闯关卡牌》的AI出题官，严格按照以下要求出题，适配初中学生，语言简单易懂，解析简洁明了：
+
+【格式示例 — 严格模仿以下格式输出，不做任何更改】
+题目：世界上面积最大的大洲是哪一个？
+A. 北美洲
+B. 非洲
+C. 亚洲
+D. 南美洲
+答案：C
+解析：亚洲是世界上面积最大的大洲，约占全球陆地总面积的30%。
+
+【必须严格遵守】
+- 题型：单选题，必须生成4个选项（A/B/C/D），不允许填空题、不允许简答题、不允许多选题；
+- 选项必须是有实际内容的文字，不能是"以上都不对"或"以上都对"；
+- 答案必须是且仅是A/B/C/D中的一个字母；
+- 输出只能是上述格式的6行，不要markdown代码块、不要加粗、不要任何额外内容；
+- 题目要完整，选项要有区分度，错误选项要看起来合理（贴近正确答案）；
+- 每次只出1题，不重复出题。`;
+}
+
+/** 预缓存的 systemPrompt，模块加载时生成 */
+const CACHED_SYSTEM_PROMPT = buildSystemPrompt();
+
+// ---------------------------------------------------------------------------
+// 辅助函数
+// ---------------------------------------------------------------------------
+
 function stripThinkingBlocks(s: string): string {
   let result = s;
   const openTag = '<think>';
@@ -33,27 +65,7 @@ export async function generateQuestion(
   baseUrl: string,
   model: string
 ): Promise<Question> {
-  const stage = getLevelStage(level);
-  const schoolLevel = '初中';
-
-  const systemPrompt = `你是《知识闯关卡牌》的AI出题官，严格按照以下要求出题，适配${schoolLevel}学生，语言简单易懂，解析简洁明了：
-
-【格式示例 — 严格模仿以下格式输出，不做任何更改】
-题目：世界上面积最大的大洲是哪一个？
-A. 北美洲
-B. 非洲
-C. 亚洲
-D. 南美洲
-答案：C
-解析：亚洲是世界上面积最大的大洲，约占全球陆地总面积的30%。
-
-【必须严格遵守】
-- 题型：单选题，必须生成4个选项（A/B/C/D），不允许填空题、不允许简答题、不允许多选题；
-- 选项必须是有实际内容的文字，不能是"以上都不对"或"以上都对"；
-- 答案必须是且仅是A/B/C/D中的一个字母；
-- 输出只能是上述格式的6行，不要markdown代码块、不要加粗、不要任何额外内容；
-- 题目要完整，选项要有区分度，错误选项要看起来合理（贴近正确答案）；
-- 每次只出1题，不重复出题。`;
+  const userPrompt = `学科：${subject}，难度：${level}（${getLevelStage(level)}），出一题`;
 
   const url = `${baseUrl}/chat/completions`;
 
@@ -69,11 +81,11 @@ D. 南美洲
     body: JSON.stringify({
       model,
       messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: `学科：${subject}，难度：${level}（${stage}），出一题` }
+        { role: 'system', content: CACHED_SYSTEM_PROMPT },
+        { role: 'user', content: userPrompt }
       ],
       temperature: 0.4,
-      max_tokens: 1500,
+      max_tokens: 800,  // 回复字数硬限制：题目格式仅需6行，约800 tokens 足够
     }),
     signal: controller.signal,
   });
@@ -218,7 +230,7 @@ export async function generateHint(
         content: `题目：${question.question}\n请给出一个提示（不能说答案），帮助玩家思考。回答格式：直接输出提示语，不超过30字。`
       }],
       temperature: 0.5,
-      max_tokens: 100,
+      max_tokens: 50,  // 提示不超过50字
     }),
   });
 
@@ -253,7 +265,7 @@ export async function generateExplanation(
         content: `题目：${question.question}\n正确答案：${question.answer}\n请详细讲解这道题，涉及的知识点是什么，为什么答案是${question.answer}。讲解要清晰、有教育意义，适合初中生理解，不超过100字。`
       }],
       temperature: 0.7,
-      max_tokens: 200,
+      max_tokens: 150,  // 讲解不超过150字
     }),
   });
 
@@ -278,27 +290,7 @@ export async function generateQuestionStream(
   model: string,
   onChunk: (text: string) => void,
 ): Promise<Question> {
-  const stage = getLevelStage(level);
-  const schoolLevel = '初中';
-
-  const systemPrompt = `你是《知识闯关卡牌》的AI出题官，严格按照以下要求出题，适配${schoolLevel}学生，语言简单易懂，解析简洁明了：
-
-【格式示例 — 严格模仿以下格式输出，不做任何更改】
-题目：世界上面积最大的大洲是哪一个？
-A. 北美洲
-B. 非洲
-C. 亚洲
-D. 南美洲
-答案：C
-解析：亚洲是世界上面积最大的大洲，约占全球陆地总面积的30%。
-
-【必须严格遵守】
-- 题型：单选题，必须生成4个选项（A/B/C/D），不允许填空题、不允许简答题、不允许多选题；
-- 选项必须是有实际内容的文字，不能是"以上都不对"或"以上都对"；
-- 答案必须是且仅是A/B/C/D中的一个字母；
-- 输出只能是上述格式的6行，不要markdown代码块、不要加粗、不要任何额外内容；
-- 题目要完整，选项要有区分度，错误选项要看起来合理（贴近正确答案）；
-- 每次只出1题，不重复出题。`;
+  const userPrompt = `学科：${subject}，难度：${level}（${getLevelStage(level)}），出一题`;
 
   const url = `${baseUrl}/chat/completions`;
 
@@ -311,11 +303,11 @@ D. 南美洲
     body: JSON.stringify({
       model,
       messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: `学科：${subject}，难度：${level}（${stage}），出一题` },
+        { role: 'system', content: CACHED_SYSTEM_PROMPT },
+        { role: 'user', content: userPrompt },
       ],
       temperature: 0.4,
-      max_tokens: 1500,
+      max_tokens: 800,  // 回复字数硬限制：题目格式仅需6行，约800 tokens 足够
       stream: true,
       extra_body: { reasoning_split: true },
     }),
