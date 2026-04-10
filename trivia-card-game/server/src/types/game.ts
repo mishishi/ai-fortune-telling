@@ -48,7 +48,7 @@ export type HandCard =
   | { cardType: 'skill'; skillId: string }
   | { cardType: 'event'; eventId: string };
 
-export type GameMode = 'pvp' | 'practice';
+export type GameMode = 'pvp' | 'practice' | 'async';
 
 export type GamePhase =
   | 'idle'
