@@ -8,6 +8,7 @@ import {
   WIN_SCORE_SIMPLE, WIN_SCORE_STANDARD
 } from '../types/game';
 import { getDb, saveDb } from '../db/sqlite';
+import { setupAsyncGameHandlers } from './asyncGameHandler';
 
 // ---------------------------------------------------------------------------
 // 题库预取缓存 — 游戏开始时后台生成，保证出牌响应速度
@@ -654,4 +655,7 @@ export function setupGameHandlers(io: Server) {
       console.log(`Client disconnected: ${socket.id}`);
     });
   });
+
+  // 注册异步对战 handler
+  setupAsyncGameHandlers(io);
 }
