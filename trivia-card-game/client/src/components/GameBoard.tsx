@@ -9,6 +9,8 @@ import { PracticeBoard } from './PracticeBoard';
 import { AsyncGameBoard } from './AsyncGameBoard';
 import { GameLogo } from './Icons';
 import { DeckDisplay } from './DeckDisplay';
+import { BattlePassPanel } from './BattlePassPanel';
+import { Leaderboard } from './Leaderboard';
 
 type SavedQuestion = {
   id: string;
@@ -449,6 +451,26 @@ export const GameBoard: React.FC = () => {
           ⚡ 出牌并开始答题
         </button>
         <DeckDisplay deckCount={gameState.deckCount} discardCount={gameState.discardCount} />
+      </div>
+
+      <div style={{
+        position: 'fixed', bottom: '20px', right: '20px',
+        display: 'flex', flexDirection: 'column', gap: '8px'
+      }}>
+        <button
+          className="btn-cyber"
+          onClick={() => { /* 打开 Battle Pass 面板 */ }}
+          style={{ fontSize: '0.85rem', padding: '8px 16px' }}
+        >
+          ⚡ Battle Pass
+        </button>
+        <button
+          className="btn-cyber"
+          onClick={() => { /* 打开排行榜 */ }}
+          style={{ fontSize: '0.85rem', padding: '8px 16px' }}
+        >
+          🏆 排行榜
+        </button>
       </div>
     </div>
   );
