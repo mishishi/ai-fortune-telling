@@ -6,6 +6,7 @@ import { Timer } from './Timer';
 import { ScoreBoard } from './ScoreBoard';
 import { ModeSelect } from './ModeSelect';
 import { PracticeBoard } from './PracticeBoard';
+import { AsyncGameBoard } from './AsyncGameBoard';
 import { GameLogo } from './Icons';
 import { DeckDisplay } from './DeckDisplay';
 
@@ -27,7 +28,7 @@ export const GameBoard: React.FC = () => {
   const [lastAnswer, setLastAnswer] = useState<string>('');
   // Track last submitted question so we can show the answer after phase changes
   const [lastQuestion, setLastQuestion] = useState<SavedQuestion | null>(null);
-  const [mode, setMode] = useState<'select' | 'pvp' | 'practice'>('select');
+  const [mode, setMode] = useState<'select' | 'pvp' | 'practice' | 'async'>('select');
   // Local loading state - set immediately when user clicks play
   const [waitingForQuestion, setWaitingForQuestion] = useState(false);
 
@@ -86,6 +87,8 @@ export const GameBoard: React.FC = () => {
       if (m === 'pvp') {
         setMode('pvp');
         startGame(10);
+      } else if (m === 'async') {
+        setMode('async');
       } else {
         setMode('practice');
       }
@@ -94,6 +97,10 @@ export const GameBoard: React.FC = () => {
 
   if (mode === 'practice') {
     return <PracticeBoard onBack={() => setMode('select')} />;
+  }
+
+  if (mode === 'async') {
+    return <AsyncGameBoard />;
   }
 
   // 开始界面
