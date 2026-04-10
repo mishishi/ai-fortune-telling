@@ -36,10 +36,10 @@ export const GameBoard: React.FC = () => {
   // Record when loading started, for minimum duration enforcement
   const [loadingStartTime, setLoadingStartTime] = useState<number | null>(null);
 
-  // Minimum 2s loading duration before showing question
+  // Minimum 1s loading duration before showing question (regardless of AI speed)
   useEffect(() => {
     if (!gameState?.currentQuestion) return;
-    const MIN_LOADING = 2000;
+    const MIN_LOADING = 1000;
     const elapsed = Date.now() - (loadingStartTime ?? Date.now());
     if (elapsed >= MIN_LOADING) {
       setWaitingForQuestion(false);
