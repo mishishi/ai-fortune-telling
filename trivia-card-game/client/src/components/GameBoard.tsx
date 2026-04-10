@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { useGameSocket } from '../hooks/useGameSocket';
 import { Hand } from './Hand';
 import { QuestionPanel } from './QuestionPanel';
@@ -33,22 +33,26 @@ export const GameBoard: React.FC = () => {
   const [mode, setMode] = useState<'select' | 'pvp' | 'practice' | 'async'>('select');
   // Local loading state - set immediately when user clicks play
   const [waitingForQuestion, setWaitingForQuestion] = useState(false);
-  // Record when loading started, for minimum duration enforcement
-  const [loadingStartTime, setLoadingStartTime] = useState<number | null>(null);
+  // Use a ref to track loading start time (avoids stale closure issues)
+  const loadingStartRef = useRef<number | null>(null);
+  // Timer ref to cancel pending clears
+  const loadingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Minimum 1s loading duration before showing question (regardless of AI speed)
+  // Always show loading for at least 2s once started
   useEffect(() => {
     if (!gameState?.currentQuestion) return;
-    const MIN_LOADING = 1000;
-    const elapsed = Date.now() - (loadingStartTime ?? Date.now());
+    if (!waitingForQuestion) return; // already cleared, skip
+    const MIN_LOADING = 2000;
+    const start = loadingStartRef.current ?? Date.now();
+    const elapsed = Date.now() - start;
     if (elapsed >= MIN_LOADING) {
       setWaitingForQuestion(false);
     } else {
       const remaining = MIN_LOADING - elapsed;
-      const tid = setTimeout(() => setWaitingForQuestion(false), remaining);
-      return () => clearTimeout(tid);
+      if (loadingTimerRef.current) clearTimeout(loadingTimerRef.current);
+      loadingTimerRef.current = setTimeout(() => setWaitingForQuestion(false), remaining);
     }
-  }, [gameState?.currentQuestion, loadingStartTime]);
+  }, [gameState?.currentQuestion, waitingForQuestion]);
 
   const handleStart = () => {
     setSelectedCardIndex(null);
@@ -67,8 +71,9 @@ export const GameBoard: React.FC = () => {
 
   const handlePlay = () => {
     if (selectedCardIndex === null) return;
-    // Immediately show loading
-    setLoadingStartTime(Date.now());
+    // Immediately show loading, record start time via ref
+    loadingStartRef.current = Date.now();
+    if (loadingTimerRef.current) clearTimeout(loadingTimerRef.current);
     setWaitingForQuestion(true);
     playCards(selectedCardIndex);
     setSelectedCardIndex(null);

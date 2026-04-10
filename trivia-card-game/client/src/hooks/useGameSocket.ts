@@ -56,9 +56,7 @@ export function useGameSocket() {
     socket.on('connect_error', (err) => console.error('[Socket] connection error:', err.message));
     socket.on('game_state', (state: GameState) => {
       console.log('[Socket] game_state received, phase:', state.phase);
-      // Defer by one microtask so the loading UI (waitingForQuestion=true)
-      // has a chance to paint before the question arrives
-      queueMicrotask(() => setGameState(state));
+      setGameState(state);
     });
     socket.on('error', (err: { message: string }) => {
       console.error('[Socket] error:', err.message);
