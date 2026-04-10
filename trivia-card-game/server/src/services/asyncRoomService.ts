@@ -3,13 +3,21 @@ import { AsyncRoom, AsyncAnswer } from '../types/season';
 
 const DEFAULT_TURN_HOURS = 48;
 
+function safeJsonParse<T>(str: string, fallback: T): T {
+  try {
+    return JSON.parse(str);
+  } catch {
+    return fallback;
+  }
+}
+
 function rowToAsyncRoom(row: any[]): AsyncRoom {
   return {
     id: row[0] as string,
     playerId: row[1] as string,
     state: row[2] as AsyncRoom['state'],
-    playerAnswers: JSON.parse(row[3] as string),
-    aiAnswers: JSON.parse(row[4] as string),
+    playerAnswers: safeJsonParse(row[3] as string, []),
+    aiAnswers: safeJsonParse(row[4] as string, []),
     turnCount: row[5] as number,
     maxTurns: row[6] as number,
     playerScore: row[7] as number,
