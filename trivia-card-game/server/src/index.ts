@@ -8,6 +8,8 @@ import { generateQuestion } from './services/questionService';
 import { judgeAnswer } from './services/judgeService';
 import { Subject, Level } from './types/game';
 import { setupGameHandlers } from './socket/gameHandler';
+import { getActiveSeason, getLeaderboard, getPlayerRank, getOrCreatePlayerSeason } from './db/seasonDb';
+import { getPlayerSeasonState } from './services/seasonService';
 
 const app = express();
 app.use(cors());
@@ -73,6 +75,41 @@ async function start() {
       const { playerAnswer, correctAnswer, subject } = req.body;
       const correct = judgeAnswer(playerAnswer, correctAnswer, subject);
       res.json({ correct });
+    });
+
+    // 获取当前赛季信息
+    app.get('/api/season/current', (req, res) => {
+      const season = getActiveSeason();
+      if (!season) {
+        res.json({ error: 'No active season' });
+        return;
+      }
+      res.json({ season });
+    });
+
+    // 获取玩家赛季数据
+    app.get('/api/player/:playerId/season-stats', (req, res) => {
+      const { playerId } = req.params;
+      const season = getActiveSeason();
+      if (!season) {
+        res.json({ error: 'No active season' });
+        return;
+      }
+      const stats = getOrCreatePlayerSeason(playerId, season.id);
+      const rank = getPlayerRank(playerId, season.id);
+      res.json({ stats: { ...stats, rank } });
+    });
+
+    // 获取排行榜
+    app.get('/api/leaderboard', (req, res) => {
+      const season = getActiveSeason();
+      if (!season) {
+        res.json({ entries: [], playerRank: 0 });
+        return;
+      }
+      const limit = parseInt(req.query.limit as string) || 20;
+      const entries = getLeaderboard(season.id, limit);
+      res.json({ entries, seasonId: season.id });
     });
 
     httpServer.listen(PORT, () => {
