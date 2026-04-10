@@ -107,29 +107,37 @@ export const PracticeBoard: React.FC<PracticeBoardProps> = ({ onBack }) => {
   const [result, setResult] = useState<{ correct: boolean; correctAnswer: string } | null>(null);
   const [loading, setLoading] = useState(false);
   const [showLoading, setShowLoading] = useState(false);
+  const loadingStartRef = useRef<number | null>(null);
   const loadingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useEffect(() => {
-    if (loading) {
-      setShowLoading(true);
-    } else {
-      if (loadingTimerRef.current) { clearTimeout(loadingTimerRef.current); loadingTimerRef.current = null; }
-      setShowLoading(false);
-    }
-  }, [loading]);
-
-  useEffect(() => {
-    if (!showLoading) return;
+  // Start loading: show spinner and record start time
+  const startLoading = () => {
     if (loadingTimerRef.current) { clearTimeout(loadingTimerRef.current); loadingTimerRef.current = null; }
-    loadingTimerRef.current = setTimeout(() => setShowLoading(false), 1000);
-    return () => { if (loadingTimerRef.current) { clearTimeout(loadingTimerRef.current); loadingTimerRef.current = null; } };
-  }, [showLoading]);
+    loadingStartRef.current = Date.now();
+    setShowLoading(true);
+  };
+
+  // Called when question arrives — hide loading only after min 1s has passed
+  const finishLoading = () => {
+    if (!loadingStartRef.current) { setShowLoading(false); return; }
+    const elapsed = Date.now() - loadingStartRef.current;
+    if (elapsed >= 1000) {
+      setShowLoading(false);
+      loadingStartRef.current = null;
+    } else {
+      loadingTimerRef.current = setTimeout(() => {
+        setShowLoading(false);
+        loadingStartRef.current = null;
+      }, 1000 - elapsed);
+    }
+  };
 
   const handleStart = async () => {
     if (!selectedSubject || !selectedLevel) return;
     setLoading(true);
     setResult(null);
     setAnswer('');
+    startLoading();
     try {
       const res = await fetch('http://localhost:3001/api/practice-question', {
         method: 'POST',
@@ -145,6 +153,7 @@ export const PracticeBoard: React.FC<PracticeBoardProps> = ({ onBack }) => {
       alert('获取题目失败，请重试');
     }
     setLoading(false);
+    finishLoading();
   };
 
   const handleSubmit = () => {
