@@ -33,13 +33,22 @@ export const GameBoard: React.FC = () => {
   const [mode, setMode] = useState<'select' | 'pvp' | 'practice' | 'async'>('select');
   // Local loading state - set immediately when user clicks play
   const [waitingForQuestion, setWaitingForQuestion] = useState(false);
+  // Record when loading started, for minimum duration enforcement
+  const [loadingStartTime, setLoadingStartTime] = useState<number | null>(null);
 
-  // Clear waiting when question arrives
+  // Minimum 2s loading duration before showing question
   useEffect(() => {
-    if (gameState?.currentQuestion) {
+    if (!gameState?.currentQuestion) return;
+    const MIN_LOADING = 2000;
+    const elapsed = Date.now() - (loadingStartTime ?? Date.now());
+    if (elapsed >= MIN_LOADING) {
       setWaitingForQuestion(false);
+    } else {
+      const remaining = MIN_LOADING - elapsed;
+      const tid = setTimeout(() => setWaitingForQuestion(false), remaining);
+      return () => clearTimeout(tid);
     }
-  }, [gameState?.currentQuestion]);
+  }, [gameState?.currentQuestion, loadingStartTime]);
 
   const handleStart = () => {
     setSelectedCardIndex(null);
@@ -59,6 +68,7 @@ export const GameBoard: React.FC = () => {
   const handlePlay = () => {
     if (selectedCardIndex === null) return;
     // Immediately show loading
+    setLoadingStartTime(Date.now());
     setWaitingForQuestion(true);
     playCards(selectedCardIndex);
     setSelectedCardIndex(null);
