@@ -127,8 +127,8 @@ export function setupAsyncGameHandlers(io: Server) {
       const allAiAnswers = [...room.aiAnswers, ...aiAnswers];
 
       // 检查胜负
-      let newState: 'waiting' | 'playing' | 'completed' | 'expired' = 'playing';
-      let winner: 'player' | 'ai' | 'expired' | null = null;
+      let newState: 'playing' | 'completed' = 'playing';
+      let winner: 'player' | 'ai' | null = null;
 
       if (newTurnCount >= room.maxTurns) {
         newState = 'completed';
@@ -138,7 +138,7 @@ export function setupAsyncGameHandlers(io: Server) {
       }
 
       updateAsyncRoom(roomId, {
-        state: newState,
+        state: newState as 'waiting' | 'playing' | 'completed' | 'expired',
         playerAnswers: allPlayerAnswers,
         aiAnswers: allAiAnswers,
         turnCount: newTurnCount,
@@ -174,7 +174,7 @@ export function setupAsyncGameHandlers(io: Server) {
         socket.emit('tier_up', { newTier: turnResult.newTier });
       }
 
-      if (newState === 'completed' || newState === 'expired') {
+      if (newState === 'completed') {
         socket.emit('async_game_over', {
           winner,
           finalScore: { player: newPlayerScore, ai: newAiScore },
