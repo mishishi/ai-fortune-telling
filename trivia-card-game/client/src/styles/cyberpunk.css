@@ -585,3 +585,39 @@ body::before {
    LEGACY COMPAT (GameBoard old classes)
    ============================== */
 .card { display: none; } /* hide any old .card elements */
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* ==============================
+   DECK DISPLAY ANIMATIONS
+   ============================== */
+
+/* 扫描线效果 */
+@keyframes scanline {
+  0% { top: -100%; }
+  100% { top: 100%; }
+}
+
+/* 弃牌堆抖动 */
+@keyframes discardGlitch {
+  0%   { transform: translate(0, 0) rotate(0deg); filter: drop-shadow(0 0 12px rgba(255,0,170,0.9)); }
+  20%  { transform: translate(-3px, 1px) rotate(-1.5deg); filter: drop-shadow(2px 0 0 rgba(0,245,255,0.8)); }
+  40%  { transform: translate(3px, -1px) rotate(1.5deg); filter: drop-shadow(-2px 0 0 rgba(255,0,170,0.9)); }
+  60%  { transform: translate(-2px, 2px) rotate(-0.5deg); filter: drop-shadow(0 0 8px rgba(255,0,170,0.6)); }
+  80%  { transform: translate(2px, 0) rotate(0.5deg); filter: drop-shadow(0 0 4px rgba(255,0,170,0.4)); }
+  100% { transform: translate(0, 0) rotate(0deg); filter: drop-shadow(0 0 6px rgba(255,0,170,0.4)); }
+}
+
+.discard-glitch {
+  animation: discardGlitch 0.5s ease-out;
+}
+
+/* 弃牌时闪烁线条 */
+@keyframes glitchLine {
+  0%   { opacity: 1; transform: scaleX(1) translateX(0); }
+  50%  { opacity: 0.8; transform: scaleX(1.1) translateX(-3px); }
+  100% { opacity: 0; transform: scaleX(0.8) translateX(5px); }
+}

@@ -64,7 +64,7 @@ export const QuestionPanel: React.FC<QuestionPanelProps> = ({
       </div>
 
       {/* Option buttons */}
-      {active && (
+      {active && options && (
         <div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '16px' }}>
             {options.map((opt, idx) => {

@@ -1,13 +1,128 @@
 import { Server, Socket } from 'socket.io';
-import { generateQuestion, generateHint, generateExplanation } from '../services/questionService';
+import { generateQuestion, generateQuestionStream, generateHint, generateExplanation } from '../services/questionService';
 import { judgeAnswer } from '../services/judgeService';
 import {
-  GameState, GamePhase, Subject, Level,
+  GameState, GamePhase, Subject, Level, Question,
   HandCard, GameMode,
   SUBJECT_CARDS, LEVEL_CARDS, SKILL_CARDS, EVENT_CARDS,
   WIN_SCORE_SIMPLE, WIN_SCORE_STANDARD
 } from '../types/game';
 import { getDb, saveDb } from '../db/sqlite';
+
+// ---------------------------------------------------------------------------
+// 题库预取缓存 — 游戏开始时后台生成，保证出牌响应速度
+// ---------------------------------------------------------------------------
+
+/** 预取缓存：key = "学科__Lv等级" → 题目数组 */
+const questionCache = new Map<string, Question[]>();
+
+/** 每个 key 最多缓存几道题 */
+const CACHE_MAX = 3;
+
+/** 通用兜底题（选项经过充分打散，各学科通用） */
+const FALLBACK_QUESTION: Question = {
+  id: 'fallback',
+  subject: '语文',
+  level: 'Lv1',
+  narrative: '知识闯关',
+  question: '以下哪个是中国的首都？',
+  options: ['A. 北京', 'B. 上海', 'C. 广州', 'D. 深圳'],
+  answer: 'A',
+  explanation: '北京是中华人民共和国的首都。',
+  timeLimit: 15,
+};
+
+/**
+ * 带超时的题目光生成（8秒超时，API 响应约 2s）
+ */
+function generateQuestionWithTimeout(
+  subject: Subject,
+  level: Level,
+  apiKey: string,
+  baseUrl: string,
+  model: string,
+  timeoutMs = 15000
+): Promise<Question | null> {
+  return new Promise((resolve) => {
+    const tid = setTimeout(() => resolve(null), timeoutMs);
+    generateQuestion(subject, level, apiKey, baseUrl, model)
+      .then((q) => { clearTimeout(tid); resolve(q); })
+      .catch(() => { clearTimeout(tid); resolve(null); });
+  });
+}
+
+/**
+ * 分批并行预取，限制并发数，避免 API 过载
+ */
+async function prefetchBatched(
+  items: Array<{ subject: Subject; level: Level }>,
+  apiKey: string,
+  baseUrl: string,
+  model: string,
+  concurrency = 4,
+  timeoutMs = 15000
+): Promise<void> {
+  for (let i = 0; i < items.length; i += concurrency) {
+    const batch = items.slice(i, i + concurrency);
+    await Promise.allSettled(
+      batch.map(({ subject, level }) =>
+        generateQuestionWithTimeout(subject, level, apiKey, baseUrl, model, timeoutMs)
+          .then((q) => {
+            if (!q) return;
+            const key = `${subject}__${level}`;
+            const cached = questionCache.get(key) ?? [];
+            if (cached.length < CACHE_MAX) {
+              cached.push(q);
+              questionCache.set(key, cached);
+            }
+          })
+      )
+    );
+  }
+}
+
+/**
+ * 游戏开始时批量预取所有 32 种学科+难度组合
+ * 4并发，8秒超时，预计约 16 秒完成（8批×2秒）
+ */
+async function prefetchAll(apiKey: string, baseUrl: string, model: string): Promise<void> {
+  const items: Array<{ subject: Subject; level: Level }> = [];
+  for (const sub of SUBJECT_CARDS) {
+    for (const lv of LEVEL_CARDS) {
+      items.push({ subject: sub.name as Subject, level: lv.level as Level });
+    }
+  }
+  await prefetchBatched(items, apiKey, baseUrl, model);
+}
+
+/**
+ * 从缓存弹出一道题；缓存空时返回 null
+ */
+function popFromCache(subject: Subject, level: Level): Question | null {
+  const key = `${subject}__${level}`;
+  const cached = questionCache.get(key);
+  if (!cached || cached.length === 0) return null;
+  return cached.shift()!;
+}
+
+/**
+ * 后台补充指定学科+难度的缓存
+ */
+async function refillCache(subject: Subject, level: Level): Promise<void> {
+  const key = `${subject}__${level}`;
+  const cached = questionCache.get(key) ?? [];
+  if (cached.length >= CACHE_MAX) return;
+  const q = await generateQuestionWithTimeout(
+    subject, level,
+    process.env.MINIMAX_API_KEY!,
+    process.env.MINIMAX_BASE_URL!,
+    process.env.MINIMAX_MODEL!
+  );
+  if (q && cached.length < CACHE_MAX) {
+    cached.push(q);
+    questionCache.set(key, cached);
+  }
+}
 
 interface Room {
   state: GameState;
@@ -24,6 +139,8 @@ interface Room {
     coop: { aiAnswered: boolean; playerAnswered: boolean } | null;
     teaching: boolean;
   };
+  // 挂起题：API慢时先用FALLBACK题响应，真实题目生成后替换
+  pendingQuestion: { resolve: (q: Question) => void } | null;
 }
 
 function shuffle<T>(arr: T[]): T[] {
@@ -83,6 +200,7 @@ function buildRoom(roomId: string, winScore: number, mode: GameMode): Room {
     winScore,
     skillUses: {},
     eventState: { combo: null, coop: null, teaching: false },
+    pendingQuestion: null,
   };
 }
 
@@ -182,6 +300,13 @@ export function setupGameHandlers(io: Server) {
       playerSockets.set(socket.id, roomId);
       socket.join(roomId);
       sendState(io, room);
+
+      // 游戏开始时后台预取所有题库，1秒超时
+      prefetchAll(
+        process.env.MINIMAX_API_KEY!,
+        process.env.MINIMAX_BASE_URL!,
+        process.env.MINIMAX_MODEL!
+      );
     });
 
     socket.on('play_cards', async (data: { cardIndex: number }) => {
@@ -208,63 +333,90 @@ export function setupGameHandlers(io: Server) {
       const level = lvCard.level as Level;
       const key = `${subject}__${level}`;
 
-      // 防重复检查
       if (room.usedSubjectLevels.has(key)) {
         socket.emit('error', { message: '此学科+难度组合已在本题用过' });
         return;
       }
 
-      // AI 出题
-      let q;
-      try {
-        q = await generateQuestion(
-          subject, level,
-          process.env.MINIMAX_API_KEY!,
-          process.env.MINIMAX_BASE_URL!,
-          process.env.MINIMAX_MODEL!
-        );
-      } catch (e) {
-        socket.emit('error', { message: `出题失败: ${(e as Error).message}` });
-        room.state.phase = 'play_card';
+      // 从缓存获取（同步路径，<1ms）
+      const cachedQ = popFromCache(subject, level);
+
+      if (cachedQ) {
+        // --- 缓存命中：同步响应 ---
+        room.hand.splice(data.cardIndex, 1);
+        room.discard.push(card);
+        replenishHand(room);
+        room.usedSubjectLevels.add(key);
+        room.state.currentQuestion = { ...cachedQ, narrative: `${subCard.name} · ${lvCard.level}` };
+        room.state.phase = 'answering';
         sendState(io, room);
+        refillCache(subject, level);
         return;
       }
 
-      // 设置当前题目
-      room.state.currentQuestion = q;
-
-      // Only mark as used if we're NOT swapping to a new question
-      if (!room.state.activeSkillEffects.swap) {
-        room.usedSubjectLevels.add(key);
-      }
-
-      // 从手牌移除
+      // --- 缓存未命中：流式生成，边推送思考过程边等待结果 ---
       room.hand.splice(data.cardIndex, 1);
       room.discard.push(card);
-
-      // 补牌
       replenishHand(room);
+      room.usedSubjectLevels.add(key);
 
-      // 检查是否有换题卡效果
       if (room.state.activeSkillEffects.swap) {
+        // 换题卡：直接 await（换题应快）
         room.state.activeSkillEffects.swap = false;
-        try {
-          const newQ = await generateQuestion(subject, level,
-            process.env.MINIMAX_API_KEY!,
-            process.env.MINIMAX_BASE_URL!,
-            process.env.MINIMAX_MODEL!
-          );
-          room.state.currentQuestion = newQ;
-        } catch (e) {
-          socket.emit('error', { message: '换题失败' });
-          room.state.phase = 'play_card';
-          sendState(io, room);
-          return;
-        }
+        const swapQ = await generateQuestionWithTimeout(
+          subject, level,
+          process.env.MINIMAX_API_KEY!,
+          process.env.MINIMAX_BASE_URL!,
+          process.env.MINIMAX_MODEL!,
+          15000
+        );
+        room.state.currentQuestion = swapQ
+          ? { ...swapQ, narrative: `${subCard.name} · ${lvCard.level}` }
+          : { ...FALLBACK_QUESTION, subject, level, narrative: `${subCard.name} · ${lvCard.level}` };
+        room.state.phase = 'answering';
+        sendState(io, room);
+        refillCache(subject, level);
+        return;
+      }
+
+      // 发送思考中状态（保持 play_card 阶段，前端显示思考面板）
+      // 立即发送，让前端立即显示"思考中..."（不等首批 chunk 到达）
+      socket.emit('question_thinking', {
+        narrative: `${subCard.name} · ${lvCard.level}`,
+        chunk: '🤖 AI 正在思考中...\n\n',
+      });
+
+      let questionToUse: Question | null = null;
+      try {
+        questionToUse = await generateQuestionStream(
+          subject, level,
+          process.env.MINIMAX_API_KEY!,
+          process.env.MINIMAX_BASE_URL!,
+          process.env.MINIMAX_MODEL!,
+          (chunk) => {
+            // 每收到一块思考内容就推给前端
+            socket.emit('question_thinking', { chunk, narrative: '' });
+          }
+        );
+      } catch {
+        questionToUse = null;
+      }
+
+      if (questionToUse) {
+        room.state.currentQuestion = { ...questionToUse, narrative: `${subCard.name} · ${lvCard.level}` };
+      } else {
+        room.state.currentQuestion = {
+          ...FALLBACK_QUESTION,
+          subject,
+          level,
+          narrative: `${subCard.name} · ${lvCard.level}`,
+        };
       }
 
       room.state.phase = 'answering';
+      socket.emit('question_ready', { question: room.state.currentQuestion });
       sendState(io, room);
+      refillCache(subject, level);
     });
 
     socket.on('submit_answer', async (data: { answer: string }) => {

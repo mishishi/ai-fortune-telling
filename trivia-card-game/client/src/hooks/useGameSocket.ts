@@ -12,6 +12,7 @@ export interface GameState {
     question: string;
     answer: string;
     options: string[];
+    explanation?: string;
     timeLimit: number;
   } | null;
   hand: Array<{
@@ -35,6 +36,8 @@ export function useGameSocket() {
   const [error, setError] = useState<string | null>(null);
   const [hint, setHint] = useState<string | null>(null);
   const [skillMessage, setSkillMessage] = useState<string | null>(null);
+  // 流式思考内容累积
+  const [questionThinking, setQuestionThinking] = useState<{ narrative: string; text: string } | null>(null);
 
   useEffect(() => {
     const socket = io('http://localhost:3001');
@@ -61,7 +64,17 @@ export function useGameSocket() {
     });
     socket.on('explanation', (data: { explanation: string }) => {
       console.log('[Socket] explanation:', data.explanation);
-      // Could show explanation in a modal/toast
+    });
+    // 流式思考：每块追加到累积文本
+    socket.on('question_thinking', (data: { narrative?: string; chunk?: string }) => {
+      setQuestionThinking(prev => ({
+        narrative: data.narrative ?? prev?.narrative ?? '',
+        text: (prev?.text ?? '') + (data.chunk ?? ''),
+      }));
+    });
+    // 题目就绪，清除思考状态
+    socket.on('question_ready', () => {
+      setQuestionThinking(null);
     });
 
     return () => { socket.disconnect(); };
@@ -87,5 +100,5 @@ export function useGameSocket() {
     socketRef.current?.emit('request_hint');
   }, []);
 
-  return { gameState, error, startGame, playCards, submitAnswer, useSkill, requestHint, hint, setHint, skillMessage };
+  return { gameState, error, startGame, playCards, submitAnswer, useSkill, requestHint, hint, setHint, skillMessage, questionThinking, setQuestionThinking };
 }

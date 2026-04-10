@@ -602,7 +602,7 @@ const ALIAS_GROUPS: AliasGroup[] = [
 ];
 
 /** 规范化：去除标点、空白、大小写 */
-function normalize(s: string): string {
+export function normalize(s: string): string {
   return s.trim()
     .toLowerCase()
     .replace(/[（）()【】[\]「」『』《》〈〉""'']/g, '')

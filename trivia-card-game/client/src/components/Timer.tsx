@@ -7,11 +7,17 @@ interface TimerProps {
 }
 
 export const Timer: React.FC<TimerProps> = ({ seconds, onTimeout, active }) => {
-  const [remaining, setRemaining] = useState(seconds);
+  // 懒初始化，避免任何 setState during render
+  const [remaining, setRemaining] = useState(() => seconds);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const secondsRef = useRef(seconds);
 
+  // 当 seconds prop 变化时（题目切换），重置计时器
   useEffect(() => {
-    setRemaining(seconds);
+    if (seconds !== secondsRef.current) {
+      secondsRef.current = seconds;
+      setRemaining(seconds);
+    }
   }, [seconds]);
 
   useEffect(() => {
@@ -22,6 +28,8 @@ export const Timer: React.FC<TimerProps> = ({ seconds, onTimeout, active }) => {
       }
       return;
     }
+    // active 变为 true 时，重置并启动
+    setRemaining(secondsRef.current);
     timerRef.current = setInterval(() => {
       setRemaining(prev => {
         if (prev <= 1) {
@@ -29,7 +37,8 @@ export const Timer: React.FC<TimerProps> = ({ seconds, onTimeout, active }) => {
             clearInterval(timerRef.current);
             timerRef.current = null;
           }
-          onTimeout();
+          // 延迟调用 onTimeout，避免在 interval 回调中 setState
+          setTimeout(onTimeout, 0);
           return 0;
         }
         return prev - 1;
