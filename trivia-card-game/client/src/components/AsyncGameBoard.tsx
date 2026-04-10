@@ -27,6 +27,7 @@ interface TurnAnswer {
   questionId: string;
   answer: string;
   timeUsed?: number;
+  timeLimit?: number;
 }
 
 export const AsyncGameBoard: React.FC = () => {
@@ -56,9 +57,11 @@ export const AsyncGameBoard: React.FC = () => {
   const handleAddQuestion = useCallback(() => {
     if (!selectedSubject || !selectedLevel) return;
     if (turnAnswers.length >= 3) return;
+    const levelCard = LEVEL_CARDS.find(c => c.id === selectedLevel);
+    const timeLimit = levelCard?.timeLimit ?? 15;
     setTurnAnswers(prev => [
       ...prev,
-      { subjectId: selectedSubject, levelId: selectedLevel, questionId: `q_${Date.now()}`, answer: '' }
+      { subjectId: selectedSubject, levelId: selectedLevel, questionId: `q_${Date.now()}`, answer: '', timeLimit }
     ]);
     setSelectedSubject(null);
     setSelectedLevel(null);
@@ -67,7 +70,7 @@ export const AsyncGameBoard: React.FC = () => {
   const handleSubmitTurn = useCallback(() => {
     if (turnAnswers.length === 0) return;
     const timeUsed = turnStartTime ? Math.floor((Date.now() - turnStartTime) / 1000) : undefined;
-    const answersWithTime = turnAnswers.map(a => ({ ...a, timeUsed, timeLimit: 15 }));
+    const answersWithTime = turnAnswers.map(a => ({ ...a, timeUsed }));
     setShowingResult(true);
     submitAsyncTurn(answersWithTime);
   }, [turnAnswers, turnStartTime, submitAsyncTurn]);
