@@ -131,7 +131,10 @@ interface ParsedQuestion {
   explanation: string;
 }
 
-/** 解析纯文本格式的题目输出 */
+/**
+ * 解析纯文本格式的题目输出
+ * AI 可能用全角冒号（：）或半角冒号（:），题目内容也可能跨多行
+ */
 export function parseTextFormat(raw: string): ParsedQuestion {
   const clean = stripThinkingBlocks(raw);
   const lines = clean.split('\n').map(l => l.trim()).filter(Boolean);
@@ -141,20 +144,29 @@ export function parseTextFormat(raw: string): ParsedQuestion {
   let explanation = '';
   const options: string[] = [];
 
-  for (const line of lines) {
-    if (line.startsWith('题目：')) {
-      question = line.slice(line.indexOf('：') + 1).trim();
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+
+    // 题目行：支持全角或半角冒号；冒号后为题目文本
+    if (/^题目[：:]/.test(line)) {
+      question = line.replace(/^题目[：:]/, '').trim();
       continue;
     }
-    if (line.startsWith('答案：')) {
-      const val = line.slice(line.indexOf('：') + 1).trim();
+
+    // 答案行：同上
+    if (/^答案[：:]/.test(line)) {
+      const val = line.replace(/^答案[：:]/, '').trim();
       answer = val.charAt(0).toUpperCase();
       continue;
     }
-    if (line.startsWith('解析：')) {
-      explanation = line.slice(line.indexOf('：') + 1).trim();
+
+    // 解析行
+    if (/^解析[：:]/.test(line)) {
+      explanation = line.replace(/^解析[：:]/, '').trim();
       continue;
     }
+
+    // 选项行 A./B./C./D.
     if (/^[A-D][\.．、]/.test(line)) {
       const multiMatch = line.match(/([A-D])[\.．、]\s*([^A-D]+?)(?=[A-D][\.．、]|$)/g);
       if (multiMatch && multiMatch.length >= 4) {
@@ -170,18 +182,19 @@ export function parseTextFormat(raw: string): ParsedQuestion {
       options.push(`${letter}. ${text}`);
       continue;
     }
-    if (options.length === 0 && /[A-D][\.．、]/.test(line)) {
-      const parts = line.split(/(?=[A-D][\.．、])/);
-      for (const p of parts) {
-        const trimmed = p.trim();
-        if (/^[A-D][\.．、]/.test(trimmed)) {
-          const letter = trimmed.charAt(0).toUpperCase();
-          const text = trimmed.slice(2).trim();
-          options.push(`${letter}. ${text}`);
-        }
+
+    // 处理跨多行的题目文本：当前行既不是题目/答案/解析，也不是选项开头，
+    // 且前面已有题目但尚未遇到选项或答案时，说明题目内容跨了多行
+    if (question && !answer && options.length === 0) {
+      // 排除明显是选项但格式不规范的行（如只有ABCD字母开头）
+      if (!/^[A-D]$/.test(line)) {
+        question += ' ' + line;
+        continue;
       }
     }
   }
+
+  question = question.trim();
 
   if (!explanation) {
     explanation = '（暂无解析）';
@@ -200,6 +213,11 @@ export function parseTextFormat(raw: string): ParsedQuestion {
 
   if (!['A','B','C','D'].includes(answer)) {
     answer = cleanOptions.length > 0 ? cleanOptions[0].charAt(0) : 'A';
+  }
+
+  // 如果题目为空但有选项，说明 AI 格式异常，尝试从选项重构题目
+  if (!question && cleanOptions.length > 0) {
+    question = `请回答以下问题（${cleanOptions[0].charAt(0)} 至 ${cleanOptions[cleanOptions.length - 1].charAt(0)} 选择）`;
   }
 
   return {
