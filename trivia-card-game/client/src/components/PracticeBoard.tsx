@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { GameLogo } from './Icons';
 
 /* =====================================================
@@ -236,23 +236,42 @@ export const PracticeBoard: React.FC<PracticeBoardProps> = ({ onBack }) => {
   const [result, setResult] = useState<{ correct: boolean; correctAnswer: string } | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // Auto-apply loading minimum
-  const [loadingStartTime, setLoadingStartTime] = useState<number | null>(null);
+  // Auto-apply loading minimum — always show loading for at least 1s
   const [showLoading, setShowLoading] = useState(false);
+  const loadingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    if (!loading) { setShowLoading(false); return; }
-    setShowLoading(true);
-    setLoadingStartTime(Date.now());
+    if (loading) {
+      // Start showing loading and record start time
+      setShowLoading(true);
+    } else {
+      // Done: clear any pending timer, hide loading
+      if (loadingTimerRef.current) {
+        clearTimeout(loadingTimerRef.current);
+        loadingTimerRef.current = null;
+      }
+      setShowLoading(false);
+    }
   }, [loading]);
 
+  // Enforce minimum 1s loading after showLoading first becomes true
   useEffect(() => {
-    if (!loading || !loadingStartTime) return;
-    if (showLoading) return;
-    const elapsed = Date.now() - loadingStartTime;
-    if (elapsed >= 1000) setShowLoading(false);
-    else setTimeout(() => setShowLoading(false), 1000 - elapsed);
-  }, [loading, loadingStartTime, showLoading]);
+    if (!showLoading) return;
+    // Clear any existing timer
+    if (loadingTimerRef.current) {
+      clearTimeout(loadingTimerRef.current);
+      loadingTimerRef.current = null;
+    }
+    loadingTimerRef.current = setTimeout(() => {
+      setShowLoading(false);
+    }, 1000);
+    return () => {
+      if (loadingTimerRef.current) {
+        clearTimeout(loadingTimerRef.current);
+        loadingTimerRef.current = null;
+      }
+    };
+  }, [showLoading]);
 
   const handleStart = async () => {
     if (!selectedSubject || !selectedLevel) return;
