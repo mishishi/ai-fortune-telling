@@ -172,7 +172,9 @@ export const ModeSelect: React.FC<ModeSelectProps> = ({ onSelect }) => {
             e.currentTarget.style.transform = 'none';
           }}
         >
-          <div style={{ fontSize: '1.5rem' }}>🕐</div>
+          <div style={{ width: 28, height: 28 }}>
+            <IconClock />
+          </div>
           <div style={{
             fontFamily: 'var(--font-display)',
             fontSize: '0.8rem',
