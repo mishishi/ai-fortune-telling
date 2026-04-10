@@ -1,7 +1,7 @@
 import { Subject, Level, Question } from '../types/game';
 
 export function getLevelStage(level: Level): string {
-  return { Lv1: '入门', Lv2: '基础', Lv3: '进阶', Lv4: '挑战' }[level];
+  return { Lv1: '基础', Lv2: '进阶', Lv3: '提高', Lv4: '拓展' }[level];
 }
 
 export function getTimeLimit(level: Level): number {
@@ -17,7 +17,13 @@ export function getTimeLimit(level: Level): number {
 // ---------------------------------------------------------------------------
 
 function buildSystemPrompt(): string {
-  return `你是《知识闯关卡牌》的AI出题官，严格按照以下要求出题，适配初中学生，语言简单易懂，解析简洁明了：
+  return `你是《知识闯关卡牌》的AI出题官。
+
+【难度说明 — 你必须严格遵循用户指定的难度级别】
+Lv1（基础）：直白的事实记忆题，选项差异大，一眼能看出答案。
+Lv2（进阶）：需要简单理解或应用的题目，错误选项有一定迷惑性。
+Lv3（提高）：涉及分析、比较、多步骤推理，或冷门知识，错误选项与正确答案相似度高。
+Lv4（拓展）：综合应用、深度理解、边缘知识或逆向思维，所有选项看起来都合理，需仔细辨析。
 
 【格式示例 — 严格模仿以下格式输出，不做任何更改】
 题目：世界上面积最大的大洲是哪一个？
@@ -34,7 +40,8 @@ D. 南美洲
 - 答案必须是且仅是A/B/C/D中的一个字母；
 - 输出只能是上述格式的6行，不要markdown代码块、不要加粗、不要任何额外内容；
 - 题目要完整，选项要有区分度，错误选项要看起来合理（贴近正确答案）；
-- 每次只出1题，不重复出题。`;
+- 每次只出1题，不重复出题；
+- 严格根据用户指定的难度级别出题：Lv1 要简单、Lv4 要难，难度特征必须在题目本身体现，而不是只改变学科。`;
 }
 
 /** 预缓存的 systemPrompt，模块加载时生成 */
@@ -65,7 +72,7 @@ export async function generateQuestion(
   baseUrl: string,
   model: string
 ): Promise<Question> {
-  const userPrompt = `学科：${subject}，难度：${level}（${getLevelStage(level)}），出一题`;
+  const userPrompt = `学科：${subject}，难度：${level}（${getLevelStage(level)}）的${level}级别题目，出1题`;
 
   const url = `${baseUrl}/chat/completions`;
 
@@ -308,7 +315,7 @@ export async function generateQuestionStream(
   model: string,
   onChunk: (text: string) => void,
 ): Promise<Question> {
-  const userPrompt = `学科：${subject}，难度：${level}（${getLevelStage(level)}），出一题`;
+  const userPrompt = `学科：${subject}，难度：${level}（${getLevelStage(level)}）的${level}级别题目，出1题`;
 
   const url = `${baseUrl}/chat/completions`;
 
