@@ -2,7 +2,7 @@ import React from 'react';
 import { GameLogo, IconPlayer, IconAI } from './Icons';
 
 interface ModeSelectProps {
-  onSelect: (mode: 'pvp' | 'practice') => void;
+  onSelect: (mode: 'pvp' | 'practice' | 'async') => void;
 }
 
 const IconGamepad = () => (
@@ -21,6 +21,13 @@ const IconBook = () => (
     <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
     <line x1="8" y1="7" x2="16" y2="7"/>
     <line x1="8" y1="11" x2="14" y2="11"/>
+  </svg>
+);
+
+const IconClock = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="10"/>
+    <polyline points="12 6 12 12 16 14"/>
   </svg>
 );
 
@@ -134,6 +141,49 @@ export const ModeSelect: React.FC<ModeSelectProps> = ({ onSelect }) => {
           </div>
           <div style={{ fontSize: '0.72rem', color: '#5a6a8a', letterSpacing: '1px' }}>
             自由练习 · 无压力
+          </div>
+        </button>
+
+        {/* Async mode */}
+        <button
+          onClick={() => onSelect('async')}
+          style={{
+            background: 'rgba(255,215,0,0.05)',
+            border: '1.5px solid rgba(255,215,0,0.3)',
+            borderRadius: '16px',
+            padding: '28px 36px',
+            cursor: 'pointer',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '16px',
+            color: 'var(--neon-yellow)',
+            transition: 'all 0.2s ease',
+            minWidth: '180px',
+          }}
+          onMouseEnter={e => {
+            e.currentTarget.style.borderColor = 'var(--neon-yellow)';
+            e.currentTarget.style.boxShadow = '0 0 20px rgba(255,215,0,0.3)';
+            e.currentTarget.style.transform = 'translateY(-4px)';
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.borderColor = 'rgba(255,215,0,0.3)';
+            e.currentTarget.style.boxShadow = 'none';
+            e.currentTarget.style.transform = 'none';
+          }}
+        >
+          <div style={{ fontSize: '1.5rem' }}>🕐</div>
+          <div style={{
+            fontFamily: 'var(--font-display)',
+            fontSize: '0.8rem',
+            fontWeight: 700,
+            letterSpacing: '2px',
+            textTransform: 'uppercase'
+          }}>
+            异步对战
+          </div>
+          <div style={{ fontSize: '0.72rem', color: '#5a6a8a', letterSpacing: '1px' }}>
+            48小时回合制 · 排位赛
           </div>
         </button>
       </div>
