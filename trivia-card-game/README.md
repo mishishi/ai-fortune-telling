@@ -123,9 +123,15 @@ cd ../client && npm install
 
 ```bash
 # server/.env
+# DeepSeek (优先使用，如果配置了DeepSeek则忽略MiniMax)
+# DEEPSEEK_API_KEY=your_deepseek_api_key_here
+# DEEPSEEK_BASE_URL=https://api.deepseek.com
+# DEEPSEEK_MODEL=deepseek-chat
+
+# MiniMax (向后兼容，如果未配置DeepSeek则使用)
 MINIMAX_API_KEY=your_api_key_here
-MINIMAX_BASE_URL=https://api.minimax.chat
-MINIMAX_MODEL=abab6.5s-chat
+MINIMAX_BASE_URL=https://api.minimaxi.com/v1
+MINIMAX_MODEL=MiniMax-M2.7
 ```
 
 ### 启动

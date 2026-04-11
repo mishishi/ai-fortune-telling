@@ -27,9 +27,15 @@ npm run build --workspace=client
 
 **Environment variables** (server `.env`):
 ```
+# DeepSeek (优先使用，如果配置了DeepSeek则忽略MiniMax)
+DEEPSEEK_API_KEY=your_key
+DEEPSEEK_BASE_URL=https://api.deepseek.com
+DEEPSEEK_MODEL=deepseek-chat
+
+# MiniMax (向后兼容，如果未配置DeepSeek则使用)
 MINIMAX_API_KEY=your_key
-MINIMAX_BASE_URL=https://api.minimax.chat
-MINIMAX_MODEL=abab6.5s-chat
+MINIMAX_BASE_URL=https://api.minimaxi.com/v1
+MINIMAX_MODEL=MiniMax-M2.7
 ```
 
 ## Architecture
@@ -105,7 +111,7 @@ type HandCard =
 | File | Purpose |
 |------|---------|
 | `server/src/socket/gameHandler.ts` | Room management, phase transitions, skill/event effects, AI opponent logic |
-| `server/src/services/questionService.ts` | Minimax API call, system prompt, `parseTextFormat()` plain-text parser |
+| `server/src/services/questionService.ts` | AI question generation (DeepSeek优先，MiniMax向后兼容), system prompt, `parseTextFormat()` plain-text parser |
 | `server/src/services/judgeService.ts` | `judgeAnswer()` with alias groups + token coverage matching |
 | `server/src/types/game.ts` | All types: `Question`, `HandCard`, `GamePhase`, card constants (`SUBJECT_CARDS`, `SKILL_CARDS`, `EVENT_CARDS`) |
 | `client/src/components/GameBoard.tsx` | Main game UI state machine, renders phase-appropriate panels |
