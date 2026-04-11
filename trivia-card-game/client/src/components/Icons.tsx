@@ -346,38 +346,184 @@ export const IconTeach = () => (
 /* ---------- GAME LOGO ---------- */
 
 export const GameLogo = () => (
-  <svg viewBox="0 0 240 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-    {/* Left card */}
-    <g transform="translate(10, 10)">
-      <rect width="50" height="65" rx="6" stroke="#00f5ff" strokeWidth="2" fill="rgba(0,245,255,0.05)"/>
-      <rect x="3" y="3" width="44" height="59" rx="4" stroke="#00f5ff" strokeWidth="1" fill="none" opacity="0.4"/>
-      <text x="25" y="38" fontFamily="Orbitron, monospace" fontSize="20" fontWeight="900" fill="#00f5ff" textAnchor="middle">知</text>
-      <text x="25" y="54" fontFamily="Orbitron, monospace" fontSize="10" fill="#00f5ff" textAnchor="middle" opacity="0.6">识</text>
-    </g>
+  <svg
+    viewBox="0 0 400 200"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    style={{ overflow: 'visible' }}
+  >
+    <defs>
+      {/* Neon glow filters */}
+      <filter id="glow-cyan" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur stdDeviation="4" result="blur"/>
+        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+      <filter id="glow-purple" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur stdDeviation="4" result="blur"/>
+        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+      <filter id="glow-pink" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur stdDeviation="4" result="blur"/>
+        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+      <filter id="glow-soft" x="-80%" y="-80%" width="260%" height="260%">
+        <feGaussianBlur stdDeviation="12" result="blur"/>
+        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
 
-    {/* Middle card (center, slightly in front) */}
-    <g transform="translate(95, 0)">
-      <rect width="50" height="65" rx="6" stroke="#c084fc" strokeWidth="2.5" fill="rgba(192,132,252,0.08)"/>
-      <rect x="3" y="3" width="44" height="59" rx="4" stroke="#c084fc" strokeWidth="1" fill="none" opacity="0.4"/>
-      <text x="25" y="38" fontFamily="Orbitron, monospace" fontSize="20" fontWeight="900" fill="#c084fc" textAnchor="middle">对</text>
-      <text x="25" y="54" fontFamily="Orbitron, monospace" fontSize="10" fill="#c084fc" textAnchor="middle" opacity="0.6">战</text>
-    </g>
+      {/* Scanline pattern */}
+      <pattern id="scanlines" patternUnits="userSpaceOnUse" width="4" height="4">
+        <line x1="0" y1="0" x2="4" y2="0" stroke="rgba(255,255,255,0.06)" strokeWidth="1"/>
+      </pattern>
 
-    {/* Right card */}
-    <g transform="translate(180, 10)">
-      <rect width="50" height="65" rx="6" stroke="#ff00aa" strokeWidth="2" fill="rgba(255,0,170,0.05)"/>
-      <rect x="3" y="3" width="44" height="59" rx="4" stroke="#ff00aa" strokeWidth="1" fill="none" opacity="0.4"/>
-      <text x="25" y="38" fontFamily="Orbitron, monospace" fontSize="20" fontWeight="900" fill="#ff00aa" textAnchor="middle">卡</text>
-      <text x="25" y="54" fontFamily="Orbitron, monospace" fontSize="10" fill="#ff00aa" textAnchor="middle" opacity="0.6">牌</text>
-    </g>
+      {/* Clip path for card scanline overlay */}
+      <clipPath id="card-left">
+        <rect x="18" y="18" width="90" height="130" rx="8"/>
+      </clipPath>
+      <clipPath id="card-mid">
+        <rect x="155" y="8" width="90" height="145" rx="8"/>
+      </clipPath>
+      <clipPath id="card-right">
+        <rect x="292" y="18" width="90" height="130" rx="8"/>
+      </clipPath>
+    </defs>
 
-    {/* Connecting lines / circuit traces */}
-    <line x1="60" y1="42" x2="95" y2="42" stroke="#c084fc" strokeWidth="1.5" strokeDasharray="4 3" opacity="0.5"/>
-    <line x1="145" y1="42" x2="180" y2="42" stroke="#c084fc" strokeWidth="1.5" strokeDasharray="4 3" opacity="0.5"/>
+    {/* ── Background ambient glow ─────────────────────────── */}
+    {/* Large soft cyan glow behind left card */}
+    <ellipse cx="63" cy="83" rx="70" ry="80" fill="rgba(0,245,255,0.07)" filter="url(#glow-soft)"/>
+    {/* Large soft purple glow behind middle card */}
+    <ellipse cx="200" cy="83" rx="80" ry="90" fill="rgba(192,132,252,0.08)" filter="url(#glow-soft)"/>
+    {/* Large soft pink glow behind right card */}
+    <ellipse cx="337" cy="83" rx="70" ry="80" fill="rgba(255,0,170,0.06)" filter="url(#glow-soft)"/>
 
-    {/* Decorative dots at circuit endpoints */}
-    <circle cx="60" cy="42" r="2.5" fill="#c084fc" opacity="0.6"/>
-    <circle cx="145" cy="42" r="2.5" fill="#c084fc" opacity="0.6"/>
+    {/* ── Circuit traces connecting cards ────────────────── */}
+    <line x1="108" y1="83" x2="155" y2="83" stroke="url(#trace-grad)" strokeWidth="1.5" strokeDasharray="6 4" opacity="0.5"/>
+    <line x1="245" y1="83" x2="292" y2="83" stroke="url(#trace-grad)" strokeWidth="1.5" strokeDasharray="6 4" opacity="0.5"/>
+    <linearGradient id="trace-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stopColor="#00f5ff" stopOpacity="0.6"/>
+      <stop offset="50%" stopColor="#c084fc" stopOpacity="0.8"/>
+      <stop offset="100%" stopColor="#ff00aa" stopOpacity="0.6"/>
+    </linearGradient>
+
+    {/* Endpoint dots on circuit traces */}
+    <circle cx="108" cy="83" r="3" fill="#c084fc" opacity="0.7" filter="url(#glow-purple)"/>
+    <circle cx="245" cy="83" r="3" fill="#c084fc" opacity="0.7" filter="url(#glow-purple)"/>
+
+    {/* ── LEFT CARD: 知识 ────────────────────────────────── */}
+    {/* Outer glow ring */}
+    <rect x="18" y="18" width="90" height="130" rx="8"
+      fill="rgba(0,245,255,0.03)"
+      stroke="rgba(0,245,255,0.2)" strokeWidth="1"
+    />
+    {/* Main card body */}
+    <rect x="18" y="18" width="90" height="130" rx="8"
+      fill="rgba(6,9,18,0.9)"
+      stroke="#00f5ff" strokeWidth="2"
+      filter="url(#glow-cyan)"
+    />
+    {/* Inner decorative border */}
+    <rect x="23" y="23" width="80" height="120" rx="5"
+      fill="none" stroke="rgba(0,245,255,0.25)" strokeWidth="1"
+    />
+    {/* Scanline overlay */}
+    <rect x="18" y="18" width="90" height="130" rx="8" fill="url(#scanlines)" clipPath="url(#card-left)"/>
+    {/* Card label: top */}
+    <text x="63" y="50" fontFamily="'Share Tech Mono', monospace" fontSize="9"
+      fill="rgba(0,245,255,0.6)" textAnchor="middle" letterSpacing="3">KNOWLEDGE</text>
+    {/* Main Chinese character */}
+    <text x="63" y="105" fontFamily="'Orbitron', 'Microsoft YaHei', 'PingFang SC', sans-serif"
+      fontSize="44" fontWeight="900" fill="#00f5ff" textAnchor="middle"
+      filter="url(#glow-cyan)">知</text>
+    {/* Sub character */}
+    <text x="63" y="132" fontFamily="'Orbitron', 'Microsoft YaHei', 'PingFang SC', sans-serif"
+      fontSize="20" fontWeight="700" fill="rgba(0,245,255,0.7)" textAnchor="middle">识</text>
+    {/* Card decorative corner lines */}
+    <line x1="18" y1="28" x2="28" y2="18" stroke="#00f5ff" strokeWidth="1.5" opacity="0.4"/>
+    <line x1="98" y1="18" x2="108" y2="28" stroke="#00f5ff" strokeWidth="1.5" opacity="0.4"/>
+    <line x1="108" y1="148" x2="98" y2="138" stroke="#00f5ff" strokeWidth="1.5" opacity="0.4"/>
+    <line x1="28" y1="138" x2="18" y2="148" stroke="#00f5ff" strokeWidth="1.5" opacity="0.4"/>
+    {/* Bottom accent bar */}
+    <rect x="38" y="143" width="50" height="2" rx="1" fill="#00f5ff" opacity="0.5"/>
+
+    {/* ── MIDDLE CARD: 对战 (largest, in front) ─────────── */}
+    {/* Outer glow ring */}
+    <rect x="155" y="8" width="90" height="145" rx="8"
+      fill="rgba(192,132,252,0.04)"
+      stroke="rgba(192,132,252,0.25)" strokeWidth="1"
+    />
+    {/* Main card body */}
+    <rect x="155" y="8" width="90" height="145" rx="8"
+      fill="rgba(6,9,18,0.95)"
+      stroke="#c084fc" strokeWidth="2.5"
+      filter="url(#glow-purple)"
+    />
+    {/* Inner decorative border */}
+    <rect x="160" y="13" width="80" height="135" rx="5"
+      fill="none" stroke="rgba(192,132,252,0.3)" strokeWidth="1"
+    />
+    {/* Scanline overlay */}
+    <rect x="155" y="8" width="90" height="145" rx="8" fill="url(#scanlines)" clipPath="url(#card-mid)"/>
+    {/* Card label: top */}
+    <text x="200" y="42" fontFamily="'Share Tech Mono', monospace" fontSize="9"
+      fill="rgba(192,132,252,0.6)" textAnchor="middle" letterSpacing="3">BATTLE</text>
+    {/* Main Chinese character */}
+    <text x="200" y="100" fontFamily="'Orbitron', 'Microsoft YaHei', 'PingFang SC', sans-serif"
+      fontSize="48" fontWeight="900" fill="#c084fc" textAnchor="middle"
+      filter="url(#glow-purple)">对</text>
+    {/* Sub character */}
+    <text x="200" y="130" fontFamily="'Orbitron', 'Microsoft YaHei', 'PingFang SC', sans-serif"
+      fontSize="24" fontWeight="700" fill="rgba(192,132,252,0.8)" textAnchor="middle">战</text>
+    {/* Card decorative corner lines */}
+    <line x1="155" y1="18" x2="165" y2="8" stroke="#c084fc" strokeWidth="2" opacity="0.5"/>
+    <line x1="235" y1="8" x2="245" y2="18" stroke="#c084fc" strokeWidth="2" opacity="0.5"/>
+    <line x1="245" y1="143" x2="235" y2="153" stroke="#c084fc" strokeWidth="2" opacity="0.5"/>
+    <line x1="165" y1="153" x2="155" y2="143" stroke="#c084fc" strokeWidth="2" opacity="0.5"/>
+    {/* Bottom accent bar — thicker for center card */}
+    <rect x="175" y="148" width="50" height="2.5" rx="1.25" fill="#c084fc" opacity="0.6"/>
+
+    {/* ── RIGHT CARD: 卡牌 ───────────────────────────────── */}
+    {/* Outer glow ring */}
+    <rect x="292" y="18" width="90" height="130" rx="8"
+      fill="rgba(255,0,170,0.03)"
+      stroke="rgba(255,0,170,0.2)" strokeWidth="1"
+    />
+    {/* Main card body */}
+    <rect x="292" y="18" width="90" height="130" rx="8"
+      fill="rgba(6,9,18,0.9)"
+      stroke="#ff00aa" strokeWidth="2"
+      filter="url(#glow-pink)"
+    />
+    {/* Inner decorative border */}
+    <rect x="297" y="23" width="80" height="120" rx="5"
+      fill="none" stroke="rgba(255,0,170,0.25)" strokeWidth="1"
+    />
+    {/* Scanline overlay */}
+    <rect x="292" y="18" width="90" height="130" rx="8" fill="url(#scanlines)" clipPath="url(#card-right)"/>
+    {/* Card label: top */}
+    <text x="337" y="50" fontFamily="'Share Tech Mono', monospace" fontSize="9"
+      fill="rgba(255,0,170,0.6)" textAnchor="middle" letterSpacing="3">CARDS</text>
+    {/* Main Chinese character */}
+    <text x="337" y="105" fontFamily="'Orbitron', 'Microsoft YaHei', 'PingFang SC', sans-serif"
+      fontSize="44" fontWeight="900" fill="#ff00aa" textAnchor="middle"
+      filter="url(#glow-pink)">卡</text>
+    {/* Sub character */}
+    <text x="337" y="132" fontFamily="'Orbitron', 'Microsoft YaHei', 'PingFang SC', sans-serif"
+      fontSize="20" fontWeight="700" fill="rgba(255,0,170,0.7)" textAnchor="middle">牌</text>
+    {/* Card decorative corner lines */}
+    <line x1="292" y1="28" x2="302" y2="18" stroke="#ff00aa" strokeWidth="1.5" opacity="0.4"/>
+    <line x1="372" y1="18" x2="382" y2="28" stroke="#ff00aa" strokeWidth="1.5" opacity="0.4"/>
+    <line x1="382" y1="148" x2="372" y2="138" stroke="#ff00aa" strokeWidth="1.5" opacity="0.4"/>
+    <line x1="302" y1="138" x2="292" y2="148" stroke="#ff00aa" strokeWidth="1.5" opacity="0.4"/>
+    {/* Bottom accent bar */}
+    <rect x="312" y="143" width="50" height="2" rx="1" fill="#ff00aa" opacity="0.5"/>
+
+    {/* ── Floating holographic sparks ────────────────────── */}
+    <circle cx="30" cy="25" r="1.5" fill="#00f5ff" opacity="0.8"/>
+    <circle cx="95" cy="140" r="1" fill="#00f5ff" opacity="0.5"/>
+    <circle cx="168" cy="12" r="1.5" fill="#c084fc" opacity="0.8"/>
+    <circle cx="248" cy="145" r="1" fill="#c084fc" opacity="0.5"/>
+    <circle cx="305" cy="22" r="1.5" fill="#ff00aa" opacity="0.8"/>
+    <circle cx="375" cy="135" r="1" fill="#ff00aa" opacity="0.5"/>
   </svg>
 );
 

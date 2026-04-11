@@ -1,6 +1,5 @@
 import React from 'react';
 import { Card } from './Card';
-import { SUBJECT_ICONS, SKILL_ICONS, EVENT_ICONS } from './Icons';
 
 const SUBJECT_CARDS = [
   { id: 'sub_yuwen',    name: '语文',   color: '#00e5e5', icon: '📜' },
@@ -56,7 +55,6 @@ export const Hand: React.FC<HandProps> = ({
   const getCardInfo = (card: HandProps['hand'][0]) => {
     if (card.cardType === 'skill') {
       const skill = SKILL_CARDS.find(s => s.id === card.skillId);
-      const IconComp = card.skillId ? SKILL_ICONS[card.skillId] : null;
       return {
         type: 'skill' as const,
         name: skill?.name ?? '',
@@ -121,7 +119,7 @@ export const Hand: React.FC<HandProps> = ({
                 onClick={() => {
                   if (card.cardType === 'skill') {
                     onUseSkill(idx);
-                  } else if (card.cardType === 'subject_level') {
+                  } else {
                     onSelectCard(idx);
                   }
                 }}

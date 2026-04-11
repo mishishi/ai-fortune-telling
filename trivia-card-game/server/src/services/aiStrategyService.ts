@@ -15,16 +15,29 @@ const AI_CORRECTION_RATES: Record<Level, number> = {
 export function simulateAiAnswer(
   subject: string,
   level: Level,
-  questionId: string
+  questionId: string,
+  aiQuestion: string,
+  aiOptions: string[],
+  aiCorrectAnswer: string
 ): AsyncAnswer {
   const rate = AI_CORRECTION_RATES[level];
   const correct = Math.random() < rate;
+
+  // AI 选错时，从剩余选项中随机选一个
+  const allLetters = ['A', 'B', 'C', 'D'];
+  const aiAnswer = correct
+    ? aiCorrectAnswer
+    : allLetters.filter(l => l !== aiCorrectAnswer)[Math.floor(Math.random() * 3)];
 
   return {
     subject,
     level,
     questionId,
     answer: correct ? 'AI_CORRECT' : 'AI_WRONG',
+    aiAnswer,
+    aiQuestion,
+    aiOptions,
+    aiCorrectAnswer,
     correct,
     xpEarned: 0, // AI 不获取 XP
   };
@@ -34,9 +47,16 @@ export function simulateAiAnswer(
  * 批量模拟 AI 本回合所有题目的作答
  */
 export function simulateAiTurn(
-  playerAnswers: Array<{ subject: string; level: Level; questionId: string }>
+  questions: Array<{
+    subject: string;
+    level: Level;
+    questionId: string;
+    aiQuestion: string;
+    aiOptions: string[];
+    aiCorrectAnswer: string;
+  }>
 ): AsyncAnswer[] {
-  return playerAnswers.map(({ subject, level, questionId }) =>
-    simulateAiAnswer(subject, level, questionId)
+  return questions.map(({ subject, level, questionId, aiQuestion, aiOptions, aiCorrectAnswer }) =>
+    simulateAiAnswer(subject, level, questionId, aiQuestion, aiOptions, aiCorrectAnswer)
   );
 }

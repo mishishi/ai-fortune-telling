@@ -8,6 +8,7 @@ import { generateQuestion } from './services/questionService';
 import { judgeAnswer } from './services/judgeService';
 import { Subject, Level } from './types/game';
 import { setupGameHandlers } from './socket/gameHandler';
+import { setupAsyncGameHandlers } from './socket/asyncGameHandler';
 import { getActiveSeason, getLeaderboard, getPlayerRank, getOrCreatePlayerSeason } from './db/seasonDb';
 import { getPlayerSeasonState } from './services/seasonService';
 import { startContextCleanup } from './services/contextService';
@@ -25,6 +26,7 @@ const io = new Server(httpServer, {
 });
 
 setupGameHandlers(io);
+setupAsyncGameHandlers(io);
 
 const PORT = parseInt(process.env.PORT || '3001');
 

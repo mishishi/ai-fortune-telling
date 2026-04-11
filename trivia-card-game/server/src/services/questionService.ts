@@ -73,7 +73,18 @@ export async function generateQuestion(
   baseUrl: string,
   model: string
 ): Promise<Question> {
-  const userPrompt = `学科：${subject}，难度：${level}（${getLevelStage(level)}）的${level}级别题目，出1题`;
+  // 添加随机提示词，鼓励 AI 生成不同题目
+  const randomHints = [
+    '出一道经典名题',
+    '出一道常考题型',
+    '出一道新颖有趣的题目',
+    '出一道容易被忽略的知识点题目',
+    '出一道经典考题',
+  ];
+  const randomHint = randomHints[Math.floor(Math.random() * randomHints.length)];
+  // 添加时间戳后缀避免 API 缓存相同请求
+  const timestamp = Date.now();
+  const userPrompt = `学科：${subject}，难度：${level}（${getLevelStage(level)}）的${level}级别题目，${randomHint}，出1题 [${timestamp}]`;
 
   const url = `${baseUrl}/chat/completions`;
 
@@ -92,7 +103,7 @@ export async function generateQuestion(
         { role: 'system', content: CACHED_SYSTEM_PROMPT },
         { role: 'user', content: userPrompt }
       ],
-      temperature: 0.4,
+      temperature: 0.8,
       max_tokens: 1500,
     }),
     signal: controller.signal,

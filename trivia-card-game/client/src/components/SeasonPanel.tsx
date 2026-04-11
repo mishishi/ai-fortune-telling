@@ -7,7 +7,7 @@ const TIER_NEXT: Record<string, string | null> = {
   bronze: 'silver', silver: 'gold', gold: 'platinum', platinum: 'diamond', diamond: null,
 };
 const TIER_COLORS: Record<string, string> = {
-  bronze: '#cd7f32', silver: '#c0c0c0', gold: '#ffd700', platinum: '#e5e4e2', diamond: '#b9f2ff',
+  bronze: '#cd7f32', silver: '#b8c4ce', gold: '#ffd43b', platinum: '#e8f4f8', diamond: '#b4f0ff',
 };
 
 interface SeasonPanelProps {
@@ -18,9 +18,15 @@ interface SeasonPanelProps {
 export const SeasonPanel: React.FC<SeasonPanelProps> = ({ seasonState, compact = false }) => {
   if (!seasonState || !seasonState.stats) {
     return (
-      <div style={{
-        background: 'var(--glass-bg)', border: '2px solid var(--neon-cyan)',
-        borderRadius: '12px', padding: '16px', textAlign: 'center', color: '#aaa'
+      <div className="glass-panel" style={{
+        padding: '14px 20px',
+        textAlign: 'center',
+        color: 'rgba(0, 229, 255, 0.4)',
+        fontSize: '0.82rem',
+        minHeight: compact ? '40px' : 'auto',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
       }}>
         赛季信息加载中...
       </div>
@@ -43,59 +49,108 @@ export const SeasonPanel: React.FC<SeasonPanelProps> = ({ seasonState, compact =
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
         <div style={{
           background: TIER_COLORS[tier] ?? '#888',
-          borderRadius: '8px', padding: '4px 12px', fontWeight: 700, color: '#000', fontSize: '0.9rem'
+          borderRadius: '8px',
+          padding: '4px 12px',
+          fontWeight: 700,
+          color: '#060912',
+          fontSize: '0.82rem',
+          fontFamily: 'var(--font-display)',
+          letterSpacing: '0.5px',
+          textTransform: 'uppercase',
         }}>
-          {(tier ?? 'bronze').toUpperCase()}
+          {tier}
         </div>
-        <div style={{ color: '#aaa', fontSize: '0.85rem' }}>
-          {xp} XP | 排名 #{rank}
+        <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.82rem' }}>
+          {xp} XP · 排名 #{rank}
         </div>
       </div>
     );
   }
 
   return (
-    <div style={{
-      background: 'var(--glass-bg)', border: '2px solid var(--neon-cyan)',
-      borderRadius: '12px', padding: '16px', marginBottom: '16px'
-    }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+    <div className="glass-panel animate-fade-in-up" style={{ padding: '20px 24px' }}>
+      {/* Header row */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
         <div>
-          <div style={{ color: 'var(--neon-cyan)', fontSize: '0.8rem' }}>{season?.name ?? 'S1 2026'}</div>
           <div style={{
-            fontSize: '1.2rem', fontWeight: 700, color: TIER_COLORS[tier] ?? '#fff',
-            textTransform: 'uppercase'
+            color: 'rgba(0, 229, 255, 0.6)',
+            fontSize: '0.65rem',
+            fontFamily: 'var(--font-display)',
+            letterSpacing: '1px',
+            textTransform: 'uppercase',
+            marginBottom: '4px',
+          }}>
+            {season?.name ?? 'S1 2026'}
+          </div>
+          <div style={{
+            fontFamily: 'var(--font-display)',
+            fontSize: '1.3rem',
+            fontWeight: 700,
+            color: TIER_COLORS[tier] ?? '#fff',
+            textTransform: 'uppercase',
+            letterSpacing: '1px',
           }}>
             {tier}
           </div>
         </div>
         <div style={{ textAlign: 'right' }}>
-          <div style={{ color: 'var(--neon-yellow)', fontSize: '1.5rem', fontWeight: 700 }}>{xp}</div>
-          <div style={{ color: '#aaa', fontSize: '0.8rem' }}>XP</div>
+          <div style={{
+            fontFamily: 'var(--font-display)',
+            fontSize: '1.6rem',
+            fontWeight: 700,
+            color: 'var(--neon-yellow)',
+            lineHeight: 1,
+          }}>
+            {xp}
+          </div>
+          <div style={{
+            color: 'rgba(255,255,255,0.4)',
+            fontSize: '0.65rem',
+            fontFamily: 'var(--font-display)',
+            letterSpacing: '1px',
+            textTransform: 'uppercase',
+            marginTop: '2px',
+          }}>
+            Total XP
+          </div>
         </div>
       </div>
 
+      {/* Progress bar */}
       {nextTier && (
-        <>
-          <div style={{ height: '8px', background: 'rgba(255,255,255,0.1)', borderRadius: '4px', overflow: 'hidden', marginBottom: '4px' }}>
-            <div style={{
-              height: '100%',
-              width: `${progress}%`,
-              background: `linear-gradient(90deg, ${TIER_COLORS[tier] ?? '#fff'}, ${TIER_COLORS[nextTier] ?? '#fff'})`,
-              borderRadius: '4px',
-              transition: 'width 0.3s ease',
-            }} />
+        <div>
+          <div style={{ marginBottom: '6px' }}>
+            <div className="progress-bar">
+              <div className="progress-bar__fill" style={{
+                width: `${progress}%`,
+                background: `linear-gradient(90deg, ${TIER_COLORS[tier]}, ${TIER_COLORS[nextTier]})`,
+              }} />
+            </div>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: '#aaa' }}>
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            fontSize: '0.68rem',
+            color: 'rgba(255,255,255,0.4)',
+            fontFamily: 'var(--font-display)',
+            letterSpacing: '0.5px',
+          }}>
             <span>{xp} / {nextThreshold} XP</span>
-            <span>→ {nextTier}</span>
+            <span style={{ color: TIER_COLORS[nextTier] }}>→ {nextTier}</span>
           </div>
-        </>
+        </div>
       )}
 
       {tier === 'diamond' && (
-        <div style={{ color: 'var(--neon-yellow)', fontSize: '0.85rem', marginTop: '4px' }}>
-          🌟 已达最高段位！
+        <div style={{
+          color: 'var(--neon-yellow)',
+          fontSize: '0.82rem',
+          fontFamily: 'var(--font-display)',
+          letterSpacing: '1px',
+          marginTop: '10px',
+          textAlign: 'center',
+        }}>
+          🌟 已达最高段位
         </div>
       )}
     </div>

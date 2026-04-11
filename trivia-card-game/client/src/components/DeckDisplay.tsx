@@ -125,10 +125,10 @@ export const DeckDisplay: React.FC<DeckDisplayProps> = ({ deckCount, discardCoun
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1px' }}>
           <span style={{
             fontSize: deckCount > 10 ? '0.9rem' : '1rem',
-            fontFamily: 'Orbitron, monospace',
+            fontFamily: 'var(--font-display)',
             fontWeight: 700,
-            color: deckCount > 10 ? 'rgba(0,245,255,0.55)' : 'var(--neon-cyan)',
-            textShadow: deckCount > 10 ? '0 0 8px rgba(0,245,255,0.3)' : '0 0 8px var(--neon-cyan)',
+            color: deckCount > 10 ? 'rgba(0,229,255,0.55)' : 'var(--neon-cyan)',
+            textShadow: deckCount > 10 ? '0 0 8px rgba(0,229,255,0.3)' : '0 0 8px var(--neon-cyan)',
             lineHeight: 1,
           }}>
             {deckCount}
@@ -194,7 +194,7 @@ export const DeckDisplay: React.FC<DeckDisplayProps> = ({ deckCount, discardCoun
               position: 'absolute',
               top: -4,
               right: -8,
-              background: 'rgba(255,0,170,0.9)',
+              background: 'rgba(255,45,149,0.9)',
               borderRadius: '50%',
               width: 18,
               height: 18,
@@ -202,11 +202,11 @@ export const DeckDisplay: React.FC<DeckDisplayProps> = ({ deckCount, discardCoun
               alignItems: 'center',
               justifyContent: 'center',
               fontSize: '0.55rem',
-              fontFamily: 'Orbitron, monospace',
+              fontFamily: 'var(--font-display)',
               fontWeight: 700,
               color: '#fff',
-              boxShadow: '0 0 6px rgba(255,0,170,0.7)',
-              border: '1.5px solid rgba(255,0,170,1)',
+              boxShadow: '0 0 6px rgba(255,45,149,0.7)',
+              border: '1.5px solid rgba(255,45,149,1)',
             }}>
               {discardCount > 99 ? '99+' : discardCount}
             </div>
@@ -233,7 +233,7 @@ export const DeckDisplay: React.FC<DeckDisplayProps> = ({ deckCount, discardCoun
             <>
               <span style={{
                 fontSize: '1rem',
-                fontFamily: 'Orbitron, monospace',
+                fontFamily: 'var(--font-display)',
                 fontWeight: 700,
                 color: 'var(--neon-pink)',
                 textShadow: '0 0 8px var(--neon-pink)',

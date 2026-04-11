@@ -145,6 +145,15 @@ export function refreshExpiresAt(roomId: string) {
 }
 
 /**
+ * 放弃异步房间
+ */
+export function abandonAsyncRoom(roomId: string): void {
+  const db = getDb();
+  db.run(`DELETE FROM async_rooms WHERE id = ?`, [roomId]);
+  saveDb();
+}
+
+/**
  * 将过期的异步房间标记为 expired
  */
 export function expireOldRooms(): string[] {

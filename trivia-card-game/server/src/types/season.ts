@@ -35,6 +35,11 @@ export interface AsyncAnswer {
   answer: string;
   correct: boolean;
   xpEarned: number;
+  // AI 专用字段
+  aiAnswer: string;       // AI 选择的答案字母 A/B/C/D
+  aiQuestion: string;      // AI 的题目文本
+  aiOptions: string[];   // AI 题目的选项
+  aiCorrectAnswer?: string; // AI 题目的正确答案（用于显示）
 }
 
 export interface AsyncRoom {

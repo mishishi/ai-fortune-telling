@@ -14,7 +14,7 @@ interface QuestionPanelProps {
 const OPTION_LETTERS = ['A', 'B', 'C', 'D'];
 
 export const QuestionPanel: React.FC<QuestionPanelProps> = ({
-  narrative, question, answer, options, timeLimit, active, onAnswer, onTimeout
+  narrative, question, options, active, onAnswer
 }) => {
   const [selected, setSelected] = useState<string | null>(null);
 

@@ -320,7 +320,20 @@ export function setupGameHandlers(io: Server) {
       }
 
       const card = room.hand[data.cardIndex];
-      if (!card || card.cardType !== 'subject_level') {
+      if (!card) return;
+
+      // 事件卡
+      if (card.cardType === 'event') {
+        room.hand.splice(data.cardIndex, 1);
+        room.discard.push(card);
+        replenishHand(room);
+        handleEventCard(room, card.eventId!);
+        sendState(io, room);
+        return;
+      }
+
+      // 学科+难度卡
+      if (card.cardType !== 'subject_level') {
         socket.emit('error', { message: '请选择一张学科+难度组合卡' });
         return;
       }

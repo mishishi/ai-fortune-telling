@@ -1,9 +1,50 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { Card } from './Card';
-import { SUBJECT_ICONS } from './Icons';
+import { LoadingAI } from './LoadingAI';
 
 /* =====================================================
-   SAME CARD DATA AS Hand.tsx (reused for consistency)
+   ICONS
+   ===================================================== */
+const IconArrow = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="15 18 9 12 15 6" />
+  </svg>
+);
+
+const NavHeader: React.FC<{
+  title: string;
+  subtitle: string;
+  onBack?: () => void;
+}> = ({ title, subtitle, onBack }) => (
+  <div className="nav-header">
+    {onBack && (
+      <button className="btn-ghost" onClick={onBack} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+        <IconArrow />
+        <span>返回</span>
+      </button>
+    )}
+    <div>
+      <div className="nav-title" style={{ color: 'var(--neon-purple)' }}>{title}</div>
+      <div className="nav-subtitle">{subtitle}</div>
+    </div>
+  </div>
+);
+
+const IconCheck = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="20 6 9 17 4 12"/>
+  </svg>
+);
+
+const IconX = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="18" y1="6" x2="6" y2="18"/>
+    <line x1="6" y1="6" x2="18" y2="18"/>
+  </svg>
+);
+
+/* =====================================================
+   CARD DATA
    ===================================================== */
 const SUBJECT_CARDS = [
   { id: 'sub_yuwen',    name: '语文',   color: '#00e5e5' },
@@ -13,7 +54,7 @@ const SUBJECT_CARDS = [
   { id: 'sub_history',  name: '历史',   color: '#c97bff' },
   { id: 'sub_geography',name: '地理',   color: '#74b9ff' },
   { id: 'sub_biology',  name: '生物',   color: '#55efc4' },
-  { id: 'sub_daofa',    name: '道法',   color: '#fd79a8' },
+  { id: 'sub_daofa',   name: '道法',   color: '#fd79a8' },
 ];
 
 const LEVEL_CARDS = [
@@ -23,68 +64,60 @@ const LEVEL_CARDS = [
   { id: 'lv_4', name: 'Lv4', timeLimit: 45 },
 ];
 
-/* =====================================================
-   ICONS
-   ===================================================== */
-const IconArrow = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <line x1="19" y1="12" x2="5" y2="12"/>
-    <polyline points="12 19 5 12 12 5"/>
-  </svg>
-);
-const IconCheck = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <polyline points="20 6 9 17 4 12"/>
-  </svg>
-);
-const IconX = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <line x1="18" y1="6" x2="6" y2="18"/>
-    <line x1="6" y1="6" x2="18" y2="18"/>
-  </svg>
-);
-
 const OPTION_LETTERS = ['A', 'B', 'C', 'D'];
 
 /* =====================================================
    RESULT BADGE
    ===================================================== */
-const ResultBadge: React.FC<{ correct: boolean; correctAnswer: string }> =
-  ({ correct, correctAnswer }) => {
-    const color = correct ? '#39ff14' : '#ff3b7a';
-    return (
+const ResultBadge: React.FC<{ correct: boolean; correctAnswer: string }> = ({ correct, correctAnswer }) => {
+  const color = correct ? 'var(--neon-green)' : 'var(--neon-pink)';
+  return (
+    <div className="animate-fade-in-up" style={{
+      display: 'flex', alignItems: 'center', gap: '12px',
+      padding: '14px 18px',
+      background: `${color}10`,
+      border: `1px solid ${color}40`,
+      borderRadius: '12px',
+      marginTop: '16px',
+    }}>
       <div style={{
-        display: 'flex', alignItems: 'center', gap: '14px',
-        padding: '14px 18px',
-        background: `rgba(${hexToRgb(color)},0.08)`,
-        border: `1.5px solid ${color}`,
-        borderRadius: '14px',
-        animation: 'fadeInUp 0.3s ease-out',
-        boxShadow: `0 0 20px rgba(${hexToRgb(color)},0.2)`,
+        width: '36px', height: '36px', borderRadius: '50%',
+        background: color, display: 'flex', alignItems: 'center', justifyContent: 'center',
+        flexShrink: 0, color: '#060912',
       }}>
-        <div style={{
-          width: '40px', height: '40px', borderRadius: '50%',
-          background: color, display: 'flex', alignItems: 'center', justifyContent: 'center',
-          flexShrink: 0, boxShadow: `0 0 14px ${color}`,
-        }}>
-          {correct ? <IconCheck /> : <IconX />}
-        </div>
-        <div>
-          <div style={{
-            fontFamily: 'var(--font-display)', fontWeight: 700,
-            fontSize: '0.95rem', color, letterSpacing: '1px',
-          }}>
-            {correct ? '✓ 正确！' : '✗ 错误'}
-          </div>
-          {!correct && (
-            <div style={{ fontSize: '0.78rem', color: 'rgba(200,208,232,0.55)', marginTop: '2px' }}>
-              正确答案：{correctAnswer}
-            </div>
-          )}
-        </div>
+        {correct ? <IconCheck /> : <IconX />}
       </div>
-    );
-  };
+      <div>
+        <div style={{
+          fontFamily: 'var(--font-display)', fontWeight: 700,
+          fontSize: '0.9rem', color, letterSpacing: '1px',
+        }}>
+          {correct ? '正确' : '错误'}
+        </div>
+        {!correct && (
+          <div style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.4)', marginTop: '2px' }}>
+            正确答案：{correctAnswer}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+/* =====================================================
+   SECTION LABEL
+   ===================================================== */
+const SectionLabel: React.FC<{ color: string; text: string }> = ({ color, text }) => (
+  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+    <div style={{ width: '3px', height: '14px', background: color, borderRadius: '2px' }} />
+    <span style={{
+      color, fontSize: '0.72rem', fontWeight: 600,
+      fontFamily: 'var(--font-display)', letterSpacing: '2px', textTransform: 'uppercase'
+    }}>
+      {text}
+    </span>
+  </div>
+);
 
 /* =====================================================
    MAIN COMPONENT
@@ -110,14 +143,12 @@ export const PracticeBoard: React.FC<PracticeBoardProps> = ({ onBack }) => {
   const loadingStartRef = useRef<number | null>(null);
   const loadingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Start loading: show spinner and record start time
   const startLoading = () => {
     if (loadingTimerRef.current) { clearTimeout(loadingTimerRef.current); loadingTimerRef.current = null; }
     loadingStartRef.current = Date.now();
     setShowLoading(true);
   };
 
-  // Called when question arrives — hide loading only after min 1s has passed
   const finishLoading = () => {
     if (!loadingStartRef.current) { setShowLoading(false); return; }
     const elapsed = Date.now() - loadingStartRef.current;
@@ -171,290 +202,210 @@ export const PracticeBoard: React.FC<PracticeBoardProps> = ({ onBack }) => {
   const selectedLevelData = LEVEL_CARDS.find(l => l.id === selectedLevel);
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      background: 'linear-gradient(180deg, #060912 0%, #0a0f1e 100%)',
-      padding: '0 20px 40px',
-    }}>
-      {/* ── Header ── */}
-      <div style={{
-        display: 'flex', alignItems: 'center', gap: '14px',
-        padding: '20px 0 20px',
-        borderBottom: '1px solid rgba(0,245,255,0.08)',
-        marginBottom: '28px',
-      }}>
-        <button
-          onClick={onBack}
-          style={{
-            display: 'flex', alignItems: 'center', gap: '6px',
-            background: 'rgba(0,245,255,0.06)', border: '1px solid rgba(0,245,255,0.2)',
-            borderRadius: '10px', padding: '8px 14px',
-            color: 'var(--neon-cyan)', cursor: 'pointer',
-            fontSize: '0.78rem', fontFamily: 'var(--font-display)', letterSpacing: '1px',
-            transition: 'all 0.2s',
-          }}
-          onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--neon-cyan)'; e.currentTarget.style.boxShadow = '0 0 12px rgba(0,245,255,0.25)'; }}
-          onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(0,245,255,0.2)'; e.currentTarget.style.boxShadow = 'none'; }}
-        >
-          <IconArrow /> 返回
-        </button>
-
-        <div>
-          <div style={{
-            fontFamily: 'var(--font-display)', fontWeight: 700,
-            fontSize: '0.9rem', color: 'var(--neon-purple)', letterSpacing: '3px', textTransform: 'uppercase',
-          }}>
-            练习模式
-          </div>
-          <div style={{ fontSize: '0.62rem', color: 'rgba(200,208,232,0.35)', letterSpacing: '0.5px' }}>
-            自由出题 · 无压力练习
-          </div>
-        </div>
-
+    <div style={{ minHeight: '100vh', padding: '24px 20px' }}>
+      <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+        {/* Header */}
+        <NavHeader
+          title="练习模式"
+          subtitle="自由出题 · 无压力练习"
+          onBack={onBack}
+        />
         {selectedSubjectData && (
           <div style={{
-            marginLeft: 'auto',
-            padding: '5px 12px',
-            background: `rgba(${hexToRgb(selectedSubjectData.color)},0.1)`,
-            border: `1px solid rgba(${hexToRgb(selectedSubjectData.color)},0.3)`,
+            display: 'flex', justifyContent: 'flex-end',
+            padding: '4px 12px',
+            background: `${selectedSubjectData.color}15`,
+            border: `1px solid ${selectedSubjectData.color}40`,
             borderRadius: '20px',
             fontSize: '0.68rem', fontFamily: 'var(--font-display)',
-            color: selectedSubjectData.color, letterSpacing: '1px',
+            color: selectedSubjectData.color, letterSpacing: '0.5px',
+            marginTop: '-16px', marginBottom: '24px',
           }}>
             {selectedSubjectData.name}{selectedLevelData ? ` · ${selectedLevelData.name}` : ''}
           </div>
         )}
-      </div>
 
-      {/* ── Question area ── */}
-      {question ? (
-        <div style={{ maxWidth: '680px', margin: '0 auto', animation: 'fadeInUp 0.35s ease-out' }}>
-
-          {/* Narrative */}
-          {question.narrative && (
-            <div style={{
-              display: 'inline-flex', alignItems: 'center', gap: '5px',
-              padding: '3px 10px',
-              background: 'rgba(255,59,122,0.08)',
-              border: '1px solid rgba(255,59,122,0.25)',
-              borderRadius: '20px',
-              fontSize: '0.68rem', color: '#ff3b7a', letterSpacing: '0.5px',
-              marginBottom: '14px',
-            }}>
-              ⚡ {question.narrative}
-            </div>
-          )}
-
-          {/* Question panel */}
-          <div style={{
-            background: 'rgba(10,15,30,0.85)',
-            border: '1.5px solid rgba(0,245,255,0.18)',
-            borderRadius: '18px',
-            padding: '26px 26px 22px',
-            backdropFilter: 'blur(14px)',
-            WebkitBackdropFilter: 'blur(14px)',
-            boxShadow: '0 8px 32px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.04)',
-            marginBottom: '18px',
-          }}>
-            <div style={{
-              fontSize: '1.1rem', fontWeight: 600, color: '#e8eaf0',
-              lineHeight: 1.7, marginBottom: '22px',
-            }}>
-              {question.question}
-            </div>
-
-            {/* Options */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '18px' }}>
-              {question.options.map((opt, idx) => {
-                const letter = OPTION_LETTERS[idx];
-                const isSelected = answer === letter;
-                const isCorrectAnswer = question.answer === letter;
-                const showCorrect = result && isCorrectAnswer;
-                const showWrong = result && isSelected && !result.correct;
-
-                let borderColor = 'rgba(192,132,252,0.12)';
-                let bg = 'rgba(192,132,252,0.04)';
-                let textColor = 'rgba(200,208,232,0.65)';
-                let labelBg = 'transparent';
-                let labelColor = 'rgba(200,208,232,0.35)';
-
-                if (showCorrect) {
-                  borderColor = '#39ff14'; bg = 'rgba(57,255,20,0.08)'; textColor = '#39ff14';
-                  labelBg = '#39ff14'; labelColor = '#060912';
-                } else if (showWrong) {
-                  borderColor = '#ff3b7a'; bg = 'rgba(255,59,122,0.08)'; textColor = '#ff3b7a';
-                  labelBg = '#ff3b7a'; labelColor = '#060912';
-                } else if (isSelected) {
-                  borderColor = 'var(--neon-purple)'; bg = 'rgba(192,132,252,0.1)'; textColor = 'var(--neon-purple)';
-                  labelBg = 'var(--neon-purple)'; labelColor = '#060912';
-                }
-
-                return (
-                  <button
-                    key={letter}
-                    onClick={() => !result && setAnswer(letter)}
-                    disabled={!!result}
-                    style={{
-                      display: 'flex', alignItems: 'center', gap: '10px',
-                      padding: '12px 14px',
-                      background: bg,
-                      border: `2px solid ${borderColor}`,
-                      borderRadius: '10px',
-                      cursor: result ? 'default' : 'pointer',
-                      transition: 'all 0.18s ease',
-                      boxShadow: isSelected && !result ? '0 0 12px rgba(192,132,252,0.25)' : 'none',
-                      textAlign: 'left',
-                    }}
-                  >
-                    <span style={{
-                      width: '28px', height: '28px', borderRadius: '50%',
-                      border: `2px solid ${labelBg}`,
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.78rem',
-                      flexShrink: 0, background: labelBg, color: labelColor,
-                      transition: 'all 0.18s',
-                    }}>
-                      {letter}
-                    </span>
-                    <span style={{ fontSize: '0.86rem', lineHeight: 1.4, color: textColor }}>
-                      {opt.substring(2).trim()}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Explanation */}
-            {result?.correct && question.explanation && (
+        {/* Question area */}
+        {question ? (
+          <div className="animate-fade-in-up">
+            {/* Narrative */}
+            {question.narrative && (
               <div style={{
-                padding: '10px 14px',
-                background: 'rgba(0,245,255,0.05)',
-                border: '1px solid rgba(0,245,255,0.18)',
-                borderRadius: '10px', marginBottom: '14px',
-                animation: 'fadeInUp 0.25s ease-out',
+                display: 'inline-flex', alignItems: 'center', gap: '6px',
+                padding: '4px 12px',
+                background: 'rgba(255,45,149,0.08)',
+                border: '1px solid rgba(255,45,149,0.2)',
+                borderRadius: '20px',
+                fontSize: '0.68rem', color: 'var(--neon-pink)',
+                marginBottom: '16px',
               }}>
-                <div style={{ fontSize: '0.62rem', color: 'var(--neon-cyan)', letterSpacing: '2px', marginBottom: '4px', fontFamily: 'var(--font-display)' }}>💡 解析</div>
-                <div style={{ fontSize: '0.83rem', color: 'rgba(200,208,232,0.65)', lineHeight: 1.6 }}>{question.explanation}</div>
+                ⚡ {question.narrative}
               </div>
             )}
 
-            {/* Actions */}
-            <div style={{ display: 'flex', gap: '10px' }}>
-              {!result ? (
-                <button
-                  className="btn-cyber"
-                  onClick={handleSubmit}
-                  disabled={!answer}
-                  style={{ flex: 1, opacity: answer ? 1 : 0.35, cursor: answer ? 'pointer' : 'not-allowed', fontSize: '0.88rem', padding: '12px' }}
-                >
-                  确认 {answer ? `(${answer})` : ''}
-                </button>
-              ) : (
-                <button className="btn-cyber" onClick={handleNext} style={{ flex: 1, fontSize: '0.88rem', padding: '12px' }}>
-                  下一题 →
-                </button>
+            {/* Question card */}
+            <div className="glass-panel" style={{ padding: '24px', marginBottom: '16px' }}>
+              <div style={{
+                fontSize: '1.05rem', fontWeight: 600, color: '#e8ecf4',
+                lineHeight: 1.6, marginBottom: '20px',
+              }}>
+                {question.question}
+              </div>
+
+              {/* Options */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '16px' }}>
+                {question.options.map((opt, idx) => {
+                  const letter = OPTION_LETTERS[idx];
+                  const isSelected = answer === letter;
+                  const isCorrectAnswer = question.answer === letter;
+                  const showCorrect = result && isCorrectAnswer;
+                  const showWrong = result && isSelected && !result.correct;
+
+                  let borderColor = 'rgba(255,255,255,0.08)';
+                  let bg = 'rgba(255,255,255,0.02)';
+                  let textColor = 'rgba(255,255,255,0.5)';
+                  let labelBg = 'transparent';
+                  let labelColor = 'rgba(255,255,255,0.3)';
+
+                  if (showCorrect) {
+                    borderColor = 'var(--neon-green)'; bg = 'rgba(0,255,136,0.08)'; textColor = 'var(--neon-green)';
+                    labelBg = 'var(--neon-green)'; labelColor = '#060912';
+                  } else if (showWrong) {
+                    borderColor = 'var(--neon-pink)'; bg = 'rgba(255,45,149,0.08)'; textColor = 'var(--neon-pink)';
+                    labelBg = 'var(--neon-pink)'; labelColor = '#060912';
+                  } else if (isSelected) {
+                    borderColor = 'var(--neon-purple)'; bg = 'rgba(184,127,255,0.08)'; textColor = 'var(--neon-purple)';
+                    labelBg = 'var(--neon-purple)'; labelColor = '#060912';
+                  }
+
+                  return (
+                    <button
+                      key={letter}
+                      onClick={() => !result && setAnswer(letter)}
+                      disabled={!!result}
+                      style={{
+                        display: 'flex', alignItems: 'center', gap: '10px',
+                        padding: '12px 14px',
+                        background: bg, border: `2px solid ${borderColor}`,
+                        borderRadius: '10px', cursor: result ? 'default' : 'pointer',
+                        transition: 'all 0.2s', textAlign: 'left',
+                      }}
+                    >
+                      <span style={{
+                        width: '26px', height: '26px', borderRadius: '50%',
+                        border: `2px solid ${labelBg}`,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.75rem',
+                        flexShrink: 0, background: labelBg, color: labelColor,
+                      }}>
+                        {letter}
+                      </span>
+                      <span style={{ fontSize: '0.85rem', lineHeight: 1.4, color: textColor }}>
+                        {opt.substring(2).trim()}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Explanation */}
+              {result?.correct && question.explanation && (
+                <div className="hint-display" style={{ marginBottom: '14px' }}>
+                  <div style={{
+                    color: 'var(--neon-cyan)', fontSize: '0.65rem',
+                    fontFamily: 'var(--font-display)', letterSpacing: '1px',
+                    textTransform: 'uppercase', marginBottom: '6px', fontWeight: 600,
+                  }}>
+                    解析
+                  </div>
+                  <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.85rem', lineHeight: 1.6 }}>
+                    {question.explanation}
+                  </div>
+                </div>
               )}
+
+              {/* Actions */}
+              <div style={{ display: 'flex', gap: '10px' }}>
+                {!result ? (
+                  <button
+                    className="btn-cyber"
+                    onClick={handleSubmit}
+                    disabled={!answer}
+                    style={{ flex: 1, opacity: answer ? 1 : 0.4 }}
+                  >
+                    确认 {answer ? `(${answer})` : ''}
+                  </button>
+                ) : (
+                  <button className="btn-cyber" onClick={handleNext} style={{ flex: 1 }}>
+                    下一题 →
+                  </button>
+                )}
+              </div>
             </div>
-          </div>
 
-          {result && (
-            <ResultBadge correct={result.correct} correctAnswer={result.correctAnswer} />
-          )}
-        </div>
-      ) : showLoading ? (
-        /* Loading */
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '40vh', gap: '20px' }}>
-          <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
-            <circle cx="26" cy="26" r="22" stroke="rgba(192,132,252,0.12)" strokeWidth="3"/>
-            <path d="M26 4A22 22 0 0 1 48 26" stroke="var(--neon-purple)" strokeWidth="3" strokeLinecap="round">
-              <animateTransform attributeName="transform" type="rotate" from="0 26 26" to="360 26 26" dur="0.8s" repeatCount="indefinite"/>
-            </path>
-          </svg>
-          <div style={{ color: 'var(--neon-purple)', fontFamily: 'var(--font-display)', fontSize: '0.8rem', letterSpacing: '3px' }}>
-            AI 出题中...
+            {result && <ResultBadge correct={result.correct} correctAnswer={result.correctAnswer} />}
           </div>
-        </div>
-      ) : (
-        /* Subject + Level selection */
-        <div style={{ maxWidth: '680px', margin: '0 auto', animation: 'fadeInUp 0.35s ease-out' }}>
+        ) : showLoading ? (
+          <LoadingAI title="AI 出题中..." subtitle="正在生成题目，请稍候..." color="#b87fff" />
+        ) : (
+          /* Selection */
+          <div className="animate-fade-in-up">
+            {/* Subject */}
+            <div style={{ marginBottom: '28px' }}>
+              <SectionLabel color="var(--neon-cyan)" text="选择学科" />
+              <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', justifyContent: 'center' }}>
+                {SUBJECT_CARDS.map(card => (
+                  <Card
+                    key={card.id}
+                    type="subject"
+                    name={card.name}
+                    color={card.color}
+                    icon=""
+                    subjectId={card.id}
+                    selected={selectedSubject === card.id}
+                    onClick={() => setSelectedSubject(prev => prev === card.id ? null : card.id)}
+                  />
+                ))}
+              </div>
+            </div>
 
-          {/* Section label */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px' }}>
-            <div style={{ width: '3px', height: '15px', background: 'var(--neon-cyan)', borderRadius: '2px' }} />
-            <span style={{ fontFamily: 'var(--font-display)', fontSize: '0.72rem', fontWeight: 700, letterSpacing: '3px', color: 'var(--neon-cyan)', textTransform: 'uppercase' }}>
-              选择学科
-            </span>
+            {/* Level */}
+            <div style={{ marginBottom: '32px' }}>
+              <SectionLabel color="var(--neon-yellow)" text="选择难度" />
+              <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
+                {LEVEL_CARDS.map(card => (
+                  <Card
+                    key={card.id}
+                    type="level"
+                    name={card.name}
+                    color="var(--neon-yellow)"
+                    icon=""
+                    levelId={card.id}
+                    selected={selectedLevel === card.id}
+                    onClick={() => setSelectedLevel(prev => prev === card.id ? null : card.id)}
+                    timeLimit={card.timeLimit}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* Start button */}
+            <button
+              className="btn-cyber"
+              onClick={handleStart}
+              disabled={!selectedSubject || !selectedLevel || loading}
+              style={{
+                width: '100%', padding: '14px',
+                opacity: selectedSubject && selectedLevel ? 1 : 0.35,
+                cursor: selectedSubject && selectedLevel ? 'pointer' : 'not-allowed',
+                fontSize: '0.9rem', letterSpacing: '2px',
+              }}
+            >
+              ⚡ 开始练习
+            </button>
           </div>
-
-          {/* Subject cards — use SAME Card component as PvP */}
-          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'center', marginBottom: '28px' }}>
-            {SUBJECT_CARDS.map(card => (
-              <Card
-                key={card.id}
-                type="subject"
-                name={card.name}
-                color={card.color}
-                icon=""
-                subjectId={card.id}
-                selected={selectedSubject === card.id}
-                onClick={() => setSelectedSubject(prev => prev === card.id ? null : card.id)}
-              />
-            ))}
-          </div>
-
-          {/* Section label */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px' }}>
-            <div style={{ width: '3px', height: '15px', background: 'var(--neon-yellow)', borderRadius: '2px' }} />
-            <span style={{ fontFamily: 'var(--font-display)', fontSize: '0.72rem', fontWeight: 700, letterSpacing: '3px', color: 'var(--neon-yellow)', textTransform: 'uppercase' }}>
-              选择难度
-            </span>
-          </div>
-
-          {/* Level cards — use SAME Card component as PvP */}
-          <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', marginBottom: '32px' }}>
-            {LEVEL_CARDS.map(card => (
-              <Card
-                key={card.id}
-                type="level"
-                name={card.name}
-                color="var(--neon-yellow)"
-                icon=""
-                selected={selectedLevel === card.id}
-                onClick={() => setSelectedLevel(prev => prev === card.id ? null : card.id)}
-                timeLimit={card.timeLimit}
-              />
-            ))}
-          </div>
-
-          {/* Start button */}
-          <button
-            className="btn-cyber"
-            onClick={handleStart}
-            disabled={!selectedSubject || !selectedLevel || loading}
-            style={{
-              width: '100%',
-              opacity: selectedSubject && selectedLevel ? 1 : 0.3,
-              cursor: selectedSubject && selectedLevel ? 'pointer' : 'not-allowed',
-              fontSize: '0.95rem',
-              padding: '14px',
-              fontFamily: 'var(--font-display)',
-              letterSpacing: '3px',
-              borderRadius: '14px',
-              transition: 'all 0.25s',
-              boxShadow: selectedSubject && selectedLevel ? '0 0 20px rgba(192,132,252,0.28), 0 8px 24px rgba(0,0,0,0.4)' : 'none',
-            }}
-          >
-            ⚡ 开始练习
-          </button>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };
-
-function hexToRgb(hex: string): string {
-  const r = parseInt(hex.slice(1, 3), 16);
-  const g = parseInt(hex.slice(3, 5), 16);
-  const b = parseInt(hex.slice(5, 7), 16);
-  return `${r},${g},${b}`;
-}
