@@ -39,9 +39,9 @@ const FALLBACK_QUESTION: Question = {
 function generateQuestionWithTimeout(
   subject: Subject,
   level: Level,
-  apiKey: string,
-  baseUrl: string,
-  model: string,
+  apiKey?: string,
+  baseUrl?: string,
+  model?: string,
   timeoutMs = 15000
 ): Promise<Question | null> {
   return new Promise((resolve) => {
@@ -57,9 +57,9 @@ function generateQuestionWithTimeout(
  */
 async function prefetchBatched(
   items: Array<{ subject: Subject; level: Level }>,
-  apiKey: string,
-  baseUrl: string,
-  model: string,
+  apiKey?: string,
+  baseUrl?: string,
+  model?: string,
   concurrency = 4,
   timeoutMs = 15000
 ): Promise<void> {
@@ -86,7 +86,7 @@ async function prefetchBatched(
  * 游戏开始时批量预取所有 32 种学科+难度组合
  * 4并发，8秒超时，预计约 16 秒完成（8批×2秒）
  */
-async function prefetchAll(apiKey: string, baseUrl: string, model: string): Promise<void> {
+async function prefetchAll(apiKey?: string, baseUrl?: string, model?: string): Promise<void> {
   const items: Array<{ subject: Subject; level: Level }> = [];
   for (const sub of SUBJECT_CARDS) {
     for (const lv of LEVEL_CARDS) {
@@ -114,10 +114,7 @@ async function refillCache(subject: Subject, level: Level): Promise<void> {
   const cached = questionCache.get(key) ?? [];
   if (cached.length >= CACHE_MAX) return;
   const q = await generateQuestionWithTimeout(
-    subject, level,
-    process.env.MINIMAX_API_KEY!,
-    process.env.MINIMAX_BASE_URL!,
-    process.env.MINIMAX_MODEL!
+    subject, level
   );
   if (q && cached.length < CACHE_MAX) {
     cached.push(q);
@@ -303,11 +300,7 @@ export function setupGameHandlers(io: Server) {
       sendState(io, room);
 
       // 游戏开始时后台预取所有题库，1秒超时
-      prefetchAll(
-        process.env.MINIMAX_API_KEY!,
-        process.env.MINIMAX_BASE_URL!,
-        process.env.MINIMAX_MODEL!
-      );
+      prefetchAll();
     });
 
     socket.on('play_cards', async (data: { cardIndex: number }) => {
@@ -379,9 +372,7 @@ export function setupGameHandlers(io: Server) {
         room.state.activeSkillEffects.swap = false;
         const swapQ = await generateQuestionWithTimeout(
           subject, level,
-          process.env.MINIMAX_API_KEY!,
-          process.env.MINIMAX_BASE_URL!,
-          process.env.MINIMAX_MODEL!,
+          undefined, undefined, undefined,
           15000
         );
         room.state.currentQuestion = swapQ
@@ -404,9 +395,7 @@ export function setupGameHandlers(io: Server) {
       try {
         questionToUse = await generateQuestionStream(
           subject, level,
-          process.env.MINIMAX_API_KEY!,
-          process.env.MINIMAX_BASE_URL!,
-          process.env.MINIMAX_MODEL!,
+          undefined, undefined, undefined,
           (chunk) => {
             // 每收到一块思考内容就推给前端
             socket.emit('question_thinking', { chunk, narrative: '' });
@@ -492,10 +481,7 @@ export function setupGameHandlers(io: Server) {
       if (!isCorrect && room.eventState.teaching) {
         // 生成讲解
         const explanation = await generateExplanation(
-          room.state.currentQuestion,
-          process.env.MINIMAX_API_KEY!,
-          process.env.MINIMAX_BASE_URL!,
-          process.env.MINIMAX_MODEL!
+          room.state.currentQuestion
         );
         socket.emit('explanation', { explanation });
         room.eventState.teaching = false;
@@ -557,10 +543,7 @@ export function setupGameHandlers(io: Server) {
 
       try {
         const hint = await generateHint(
-          room.state.currentQuestion,
-          process.env.MINIMAX_API_KEY!,
-          process.env.MINIMAX_BASE_URL!,
-          process.env.MINIMAX_MODEL!
+          room.state.currentQuestion
         );
         socket.emit('hint_received', { hint });
       } catch (e) {

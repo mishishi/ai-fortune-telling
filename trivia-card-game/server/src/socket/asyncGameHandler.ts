@@ -141,10 +141,7 @@ export function setupAsyncGameHandlers(io: Server) {
         console.log('[Async] generating question for', subject, level);
         const q = await generateQuestion(
           subject,
-          level,
-          process.env.MINIMAX_API_KEY!,
-          process.env.MINIMAX_BASE_URL!,
-          process.env.MINIMAX_MODEL!
+          level
         );
         console.log('[Async] question generated, emitting async_question_ready');
 
@@ -234,9 +231,6 @@ export function setupAsyncGameHandlers(io: Server) {
         return generateQuestion(
           subjectName as Subject,
           levelName as Level,
-          process.env.MINIMAX_API_KEY ?? '',
-          process.env.MINIMAX_BASE_URL ?? '',
-          process.env.MINIMAX_MODEL ?? '',
         );
       });
       const aiQuestions = await Promise.all(aiQuestionPromises);

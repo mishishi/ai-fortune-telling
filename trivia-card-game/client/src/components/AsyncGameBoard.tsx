@@ -123,6 +123,8 @@ export const AsyncGameBoard: React.FC = () => {
   const selectedLevelRef = useRef<string | null>(null);
   const asyncQuestionsRef = useRef<any[]>([]);
   const [isStarting, setIsStarting] = useState(false);
+  const [hasCheckedAsyncRoom, setHasCheckedAsyncRoom] = useState(false);
+  const [autoStarted, setAutoStarted] = useState(false);
 
   useEffect(() => { selectedSubjectRef.current = selectedSubject; }, [selectedSubject]);
   useEffect(() => { selectedLevelRef.current = selectedLevel; }, [selectedLevel]);
@@ -136,8 +138,50 @@ export const AsyncGameBoard: React.FC = () => {
   }, [asyncQuestions]);
 
   useEffect(() => {
-    if (asyncRoom) setIsStarting(false);
+    if (asyncRoom) {
+      console.log('[AsyncGameBoard] asyncRoom created, resetting autoStarted');
+      setIsStarting(false);
+      setAutoStarted(false);
+    }
   }, [asyncRoom]);
+
+  // 检查异步房间状态 - 当asyncRoom变化时记录日志
+  useEffect(() => {
+    console.log('[AsyncGameBoard] asyncRoom changed:', asyncRoom ? `state=${asyncRoom.state}, turnCount=${asyncRoom.turnCount}` : 'null');
+  }, [asyncRoom]);
+
+  // 组件挂载后设置超时，总是显示2秒加载状态
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      console.log('[AsyncGameBoard] 3秒加载超时触发, asyncRoom:', !!asyncRoom, 'state:', asyncRoom?.state, 'turnCount:', asyncRoom?.turnCount);
+      setHasCheckedAsyncRoom(true);
+
+      // 如果3秒后还没有异步房间，自动开始新游戏
+      if (!asyncRoom && !autoStarted && !isStarting) {
+        console.log('[AsyncGameBoard] 3秒后没有异步房间，自动开始新游戏');
+        setAutoStarted(true);
+        setIsStarting(true);
+        startAsyncGame(3);
+      }
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, []); // 空依赖数组，只在组件挂载时运行一次
+
+  // 自动开始超时处理：如果自动开始后10秒内没有创建房间，重置状态
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+    if (autoStarted && !asyncRoom) {
+      timeoutId = setTimeout(() => {
+        console.log('[AsyncGameBoard] Auto-start timeout - room not created within 10 seconds');
+        setAutoStarted(false);
+        setIsStarting(false);
+      }, 10000); // 10秒超时
+    }
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId);
+    };
+  }, [autoStarted, asyncRoom]);
 
   const handleStartGame = useCallback(() => {
     setIsStarting(true);
@@ -203,8 +247,44 @@ export const AsyncGameBoard: React.FC = () => {
   const canSubmit = submittedQuestions.length > 0 && submittedQuestions.every(q => q.playerAnswer !== '');
   const effectiveIsStarting = isStarting && !asyncRoom;
 
-  // ========== NO ROOM YET ==========
-  if (!asyncRoom) {
+  console.log('[AsyncGameBoard] render check:', {
+    asyncRoom: !!asyncRoom,
+    asyncRoomState: asyncRoom?.state,
+    asyncRoomTurnCount: asyncRoom?.turnCount,
+    hasCheckedAsyncRoom,
+    autoStarted,
+    isStarting,
+    resumingGame,
+    showingResult,
+    aiThinking,
+    asyncGameOver: !!asyncGameOver,
+    lastAiResult: !!lastAiResult,
+    turnStartTime: !!turnStartTime,
+    submittedQuestionsLength: submittedQuestions.length,
+  });
+
+  // ========== AUTO-STARTING ==========
+  if (autoStarted && !asyncRoom) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        background: 'radial-gradient(ellipse at top, rgba(0,229,255,0.06) 0%, transparent 50%), radial-gradient(ellipse at bottom, rgba(184,127,255,0.04) 0%, transparent 50%)',
+        display: 'flex', flexDirection: 'column', alignItems: 'center',
+        justifyContent: 'center', padding: '40px 20px',
+      }}>
+        {/* Back button */}
+        <div style={{ position: 'absolute', top: '20px', left: '20px' }}>
+          <button className="btn-ghost" onClick={() => navigate('/')} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <IconArrow /> 返回
+          </button>
+        </div>
+        <LoadingAI title="正在自动创建对局..." subtitle="正在初始化异步对战房间" color="#00e5ff" />
+      </div>
+    );
+  }
+
+  // ========== NO ROOM YET (需要手动开始) ==========
+  if (!asyncRoom && hasCheckedAsyncRoom && !autoStarted) {
     return (
       <div style={{
         minHeight: '100vh',
@@ -277,8 +357,51 @@ export const AsyncGameBoard: React.FC = () => {
     );
   }
 
+  // ========== LOADING ==========
+  if (!hasCheckedAsyncRoom && !asyncRoom) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        background: 'radial-gradient(ellipse at top, rgba(0,229,255,0.06) 0%, transparent 50%), radial-gradient(ellipse at bottom, rgba(184,127,255,0.04) 0%, transparent 50%)',
+        display: 'flex', flexDirection: 'column', alignItems: 'center',
+        justifyContent: 'center', padding: '40px 20px',
+      }}>
+        {/* Back button */}
+        <div style={{ position: 'absolute', top: '20px', left: '20px' }}>
+          <button className="btn-ghost" onClick={() => navigate('/')} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <IconArrow /> 返回
+          </button>
+        </div>
+        <LoadingAI title="检查异步对战状态..." subtitle="正在查找进行中的对局" color="#00e5ff" />
+      </div>
+    );
+  }
+
   // ========== WAITING (with ongoing game) ==========
-  if (asyncRoom.state === 'waiting' && asyncRoom.turnCount > 0 && !resumingGame) {
+  // 如果有进行中的对局（state !== 'completed'），显示继续页面
+  console.log('[AsyncGameBoard] Checking WAITING condition:', {
+    hasAsyncRoom: !!asyncRoom,
+    asyncRoomState: asyncRoom?.state,
+    turnCount: asyncRoom?.turnCount,
+    maxTurns: asyncRoom?.maxTurns,
+    resumingGame,
+    meetsCondition: asyncRoom && asyncRoom.state !== 'completed' && !resumingGame
+  });
+
+  // Debug: log room state
+  if (asyncRoom) {
+    console.log('[AsyncGameBoard] Room details:', {
+      state: asyncRoom.state,
+      turnCount: asyncRoom.turnCount,
+      maxTurns: asyncRoom.maxTurns,
+      playerScore: asyncRoom.playerScore,
+      aiScore: asyncRoom.aiScore,
+      resumingGame,
+    });
+  }
+
+  if (asyncRoom && asyncRoom.state !== 'completed' && !resumingGame) {
+    console.log('[AsyncGameBoard] Rendering continue page - simplified condition');
     return (
       <div style={{ minHeight: '100vh', padding: '24px' }}>
         <div style={{ maxWidth: '800px', margin: '0 auto' }}>
@@ -714,7 +837,7 @@ export const AsyncGameBoard: React.FC = () => {
           {/* Start turn button */}
           {Array.isArray(asyncQuestions) && asyncQuestions.length > 0 && !turnStartTime && (
             <button
-              className="btn-cyber-yellow"
+              className="btn-cyber btn-cyber-yellow"
               onClick={handleStartTurn}
               style={{ width: '100%', padding: '14px', fontSize: '0.95rem', letterSpacing: '2px' }}
             >

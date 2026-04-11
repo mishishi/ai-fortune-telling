@@ -43,10 +43,7 @@ async function start() {
         const subject = (req.query.subject as string) || '数学';
         const level = (req.query.level as string) || 'Lv2';
         const q = await generateQuestion(
-          subject as any, level as any,
-          process.env.MINIMAX_API_KEY!,
-          process.env.MINIMAX_BASE_URL!,
-          process.env.MINIMAX_MODEL!
+          subject as any, level as any
         );
         res.json(q);
       } catch (e) {
@@ -66,10 +63,7 @@ async function start() {
       try {
         const q = await generateQuestion(
           subject as Subject,
-          level as Level,
-          process.env.MINIMAX_API_KEY!,
-          process.env.MINIMAX_BASE_URL!,
-          process.env.MINIMAX_MODEL!
+          level as Level
         );
         res.json({ question: q });
       } catch (e) {

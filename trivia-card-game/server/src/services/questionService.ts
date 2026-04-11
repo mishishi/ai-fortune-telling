@@ -1,5 +1,7 @@
 import { Subject, Level, Question } from '../types/game';
 
+type ApiProvider = 'minimax' | 'deepseek';
+
 export function getLevelStage(level: Level): string {
   return { Lv1: '基础', Lv2: '进阶', Lv3: '提高', Lv4: '拓展' }[level];
 }
@@ -49,6 +51,47 @@ D. 南美洲
 const CACHED_SYSTEM_PROMPT = buildSystemPrompt();
 
 // ---------------------------------------------------------------------------
+// API 提供商配置
+// ---------------------------------------------------------------------------
+
+/**
+ * 获取当前使用的 API 提供商
+ * 优先使用 DeepSeek，如果未配置则使用 MiniMax
+ */
+function getApiProvider(): ApiProvider {
+  const deepseekApiKey = process.env.DEEPSEEK_API_KEY;
+  const minimaxApiKey = process.env.MINIMAX_API_KEY;
+
+  if (deepseekApiKey && deepseekApiKey.trim()) {
+    return 'deepseek';
+  }
+  if (minimaxApiKey && minimaxApiKey.trim()) {
+    return 'minimax';
+  }
+  throw new Error('No API key configured. Please set DEEPSEEK_API_KEY or MINIMAX_API_KEY');
+}
+
+/**
+ * 根据提供商获取 API 配置
+ */
+function getApiConfig(provider: ApiProvider) {
+  switch (provider) {
+    case 'deepseek':
+      return {
+        apiKey: process.env.DEEPSEEK_API_KEY || '',
+        baseUrl: process.env.DEEPSEEK_BASE_URL || 'https://api.deepseek.com',
+        model: process.env.DEEPSEEK_MODEL || 'deepseek-chat',
+      };
+    case 'minimax':
+      return {
+        apiKey: process.env.MINIMAX_API_KEY || '',
+        baseUrl: process.env.MINIMAX_BASE_URL || 'https://api.minimaxi.com/v1',
+        model: process.env.MINIMAX_MODEL || 'MiniMax-M2.7',
+      };
+  }
+}
+
+// ---------------------------------------------------------------------------
 // 辅助函数
 // ---------------------------------------------------------------------------
 
@@ -66,13 +109,25 @@ function stripThinkingBlocks(s: string): string {
   return result.trim();
 }
 
+/**
+ * 内部生成题目函数，支持多种 API 提供商
+ */
 export async function generateQuestion(
   subject: Subject,
   level: Level,
-  apiKey: string,
-  baseUrl: string,
-  model: string
+  apiKey?: string,
+  baseUrl?: string,
+  model?: string
 ): Promise<Question> {
+  // 如果未提供 API 配置，使用默认配置
+  if (!apiKey || !baseUrl || !model) {
+    const provider = getApiProvider();
+    const config = getApiConfig(provider);
+    apiKey = apiKey || config.apiKey;
+    baseUrl = baseUrl || config.baseUrl;
+    model = model || config.model;
+  }
+
   // 添加随机提示词，鼓励 AI 生成不同题目
   const randomHints = [
     '出一道经典名题',
@@ -113,7 +168,7 @@ export async function generateQuestion(
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(`Minimax API error: ${response.status} ${response.statusText} - ${errorText}`);
+    throw new Error(`API error: ${response.status} ${response.statusText} - ${errorText}`);
   }
 
   let rawContent: string;
@@ -125,7 +180,7 @@ export async function generateQuestion(
   }
 
   if (!rawContent) {
-    throw new Error('Empty response from Minimax API');
+    throw new Error('Empty response from API');
   }
 
   const parsed = parseTextFormat(rawContent);
@@ -273,10 +328,19 @@ export function parseTextFormat(raw: string): ParsedQuestion {
 
 export async function generateHint(
   question: Question,
-  apiKey: string,
-  baseUrl: string,
-  model: string
+  apiKey?: string,
+  baseUrl?: string,
+  model?: string
 ): Promise<string> {
+  // 如果未提供 API 配置，使用默认配置
+  if (!apiKey || !baseUrl || !model) {
+    const provider = getApiProvider();
+    const config = getApiConfig(provider);
+    apiKey = apiKey || config.apiKey;
+    baseUrl = baseUrl || config.baseUrl;
+    model = model || config.model;
+  }
+
   const url = `${baseUrl}/chat/completions`;
   const response = await fetch(url, {
     method: 'POST',
@@ -296,7 +360,7 @@ export async function generateHint(
   });
 
   if (!response.ok) {
-    throw new Error(`Minimax API error: ${response.status}`);
+    throw new Error(`API error: ${response.status}`);
   }
 
   const data = await response.json() as { choices?: { message?: { content?: string } }[] };
@@ -305,10 +369,19 @@ export async function generateHint(
 
 export async function generateExplanation(
   question: Question,
-  apiKey: string,
-  baseUrl: string,
-  model: string
+  apiKey?: string,
+  baseUrl?: string,
+  model?: string
 ): Promise<string> {
+  // 如果未提供 API 配置，使用默认配置
+  if (!apiKey || !baseUrl || !model) {
+    const provider = getApiProvider();
+    const config = getApiConfig(provider);
+    apiKey = apiKey || config.apiKey;
+    baseUrl = baseUrl || config.baseUrl;
+    model = model || config.model;
+  }
+
   if (question.explanation) {
     return question.explanation;
   }
@@ -346,11 +419,20 @@ export async function generateExplanation(
 export async function generateQuestionStream(
   subject: Subject,
   level: Level,
-  apiKey: string,
-  baseUrl: string,
-  model: string,
-  onChunk: (text: string) => void,
+  apiKey?: string,
+  baseUrl?: string,
+  model?: string,
+  onChunk?: (text: string) => void,
 ): Promise<Question> {
+  // 如果未提供 API 配置，使用默认配置
+  if (!apiKey || !baseUrl || !model) {
+    const provider = getApiProvider();
+    const config = getApiConfig(provider);
+    apiKey = apiKey || config.apiKey;
+    baseUrl = baseUrl || config.baseUrl;
+    model = model || config.model;
+  }
+
   const userPrompt = `学科：${subject}，难度：${level}（${getLevelStage(level)}）的${level}级别题目，出1题`;
 
   const url = `${baseUrl}/chat/completions`;
@@ -375,7 +457,7 @@ export async function generateQuestionStream(
   });
 
   if (!response.ok) {
-    throw new Error(`Minimax API error: ${response.status} ${response.statusText}`);
+    throw new Error(`API error: ${response.status} ${response.statusText}`);
   }
 
   if (!response.body) {
@@ -410,7 +492,7 @@ export async function generateQuestionStream(
           // reasoning_details: 思考过程（reasoning_split: true 时）
           if (reasoningDetails) {
             fullContent += reasoningDetails;
-            onChunk(reasoningDetails);
+            if (onChunk) onChunk(reasoningDetails);
           }
           // content: 包含思考内容和最终题目，两者在 content 中混合
           if (contentDelta) {
@@ -419,7 +501,8 @@ export async function generateQuestionStream(
             // MINIMAX 思考标签：开始=<<think>> 结束=</think>
             const clean = contentDelta
               .replace(/\u003C\u60F3\u541B\u003E/g, '')   // 去掉 <think>
-              .replace(/\u003C\u53BB\u601D\u8003\u003E/g, ''); // 去掉 </think>            if (clean) onChunk(clean);
+              .replace(/\u003C\u53BB\u601D\u8003\u003E/g, ''); // 去掉 </think>
+            if (clean && onChunk) onChunk(clean);
           }
         } catch {
           // ignore parse errors for incomplete JSON
@@ -447,7 +530,7 @@ export async function generateQuestionStream(
   }
 
   // 非 SSE 格式时，模拟流式效果：将完整内容分块推送给前端
-  if (!buffer.includes('data:')) {
+  if (!buffer.includes('data:') && onChunk) {
     const step = Math.max(5, Math.floor(fullContent.length / 6));
     for (let i = 0; i < fullContent.length; i += step) {
       onChunk(fullContent.slice(i, i + step));

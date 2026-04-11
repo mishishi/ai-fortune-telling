@@ -713,6 +713,7 @@ h1, h2, h3, h4, h5, h6 {
 .btn-cyber-yellow {
   border-color: var(--neon-yellow);
   color: var(--neon-yellow);
+  background: linear-gradient(135deg, rgba(255, 224, 102, 0.08) 0%, rgba(255, 224, 102, 0.04) 100%);
   box-shadow: 0 0 8px rgba(255, 224, 102, 0.1);
 }
 
