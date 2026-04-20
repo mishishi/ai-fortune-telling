@@ -2,23 +2,23 @@
 
 :root {
   /* Brand Colors */
-  --color-primary: #7b68ee;
-  --color-primary-hover: #6b5ad0;
-  --color-secondary: #4169e1;
-  --color-accent: #f0c674;
-  --color-accent-hover: #e0a500;
-  --color-focus: #f0c674;
+  --color-primary: #c41e3a;
+  --color-primary-hover: #a01830;
+  --color-secondary: #1e3a5f;
+  --color-accent: #d4af37;
+  --color-accent-hover: #c9a430;
+  --color-focus: #d4af37;
 
   /* Background Colors */
-  --color-bg: #0a0e27;
-  --color-surface: #1a1f3a;
-  --color-surface-elevated: #252a4a;
-  --color-surface-hover: #1e2545;
+  --color-bg: #0f0f1a;
+  --color-surface: #1a1525;
+  --color-surface-elevated: #221c30;
+  --color-surface-hover: #1f1830;
   --color-overlay: rgba(10, 14, 39, 0.8);
 
   /* Text Colors — WCAG AA Compliant */
   --color-text: #ffffff;
-  --color-text-secondary: #d1d5db;
+  --color-text-secondary: #b0b0b0;
   --color-text-muted: #9ca3af;
 
   /* Semantic Colors */
@@ -35,11 +35,11 @@
   --color-element-water: #1e293b;
 
   /* Chart Dimension Colors */
-  --color-dimension-career: #7b68ee;
-  --color-dimension-love: #ff69b4;
-  --color-dimension-wealth: #ffd700;
-  --color-dimension-health: #00ced1;
-  --color-dimension-mentor: #87ceeb;
+  --color-dimension-career: #c41e3a;
+  --color-dimension-love: #6b5b95;
+  --color-dimension-wealth: #d4af37;
+  --color-dimension-health: #2d6a4f;
+  --color-dimension-mentor: #1e3a5f;
 
   /* Border Colors */
   --color-border: rgba(255, 255, 255, 0.1);
@@ -49,8 +49,8 @@
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
   --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.3);
   --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.4);
-  --shadow-glow-primary: 0 4px 20px rgba(123, 104, 238, 0.4);
-  --shadow-glow-accent: 0 4px 20px rgba(240, 198, 116, 0.3);
+  --shadow-glow-primary: 0 4px 20px rgba(196, 30, 58, 0.4);
+  --shadow-glow-accent: 0 4px 20px rgba(212, 175, 55, 0.3);
   --shadow-glow-success: 0 4px 20px rgba(80, 200, 120, 0.3);
 
   /* Border Radius */
@@ -154,12 +154,12 @@ body::before {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(123, 104, 238, 0.4);
+  background: rgba(196, 30, 58, 0.4);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(123, 104, 238, 0.6);
+  background: rgba(196, 30, 58, 0.6);
 }
 
 /* Smooth scrolling */
@@ -170,12 +170,12 @@ html {
 /* Focus visible styles */
 :focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(123, 104, 238, 0.4);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.4);
 }
 
 /* Selection color */
 ::selection {
-  background: rgba(123, 104, 238, 0.4);
+  background: rgba(196, 30, 58, 0.4);
   color: #ffffff;
 }
 
@@ -186,7 +186,7 @@ html {
 
 /* Gradient text utility */
 .text-gradient {
-  background: linear-gradient(135deg, #f0c674 0%, #ffffff 50%, #7b68ee 100%);
+  background: linear-gradient(135deg, #d4af37 0%, #ffffff 50%, #c41e3a 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -194,7 +194,7 @@ html {
 
 /* Shimmer gold effect for accents */
 .shimmer-gold {
-  background: linear-gradient(90deg, #f0c674, #ffffff, #f0c674);
+  background: linear-gradient(90deg, #d4af37, #ffffff, #d4af37);
   background-size: 200% 100%;
   animation: shimmer 3s ease-in-out infinite;
 }
@@ -210,7 +210,7 @@ html {
   inset: -1px;
   border-radius: inherit;
   padding: 1px;
-  background: linear-gradient(135deg, rgba(240, 198, 116, 0.5), rgba(123, 104, 238, 0.5));
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.6), rgba(196, 30, 58, 0.6));
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
@@ -220,10 +220,10 @@ html {
 
 /* Glass morphism card */
 .glass-card {
-  background: rgba(26, 31, 58, 0.6);
+  background: rgba(26, 21, 37, 0.6);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(212, 175, 55, 0.15);
 }
 
 /* Skeleton shimmer animation */
@@ -234,9 +234,9 @@ html {
 
 .skeleton-shimmer {
   background: linear-gradient(90deg,
-    rgba(123,104,238,0.08) 0%,
-    rgba(123,104,238,0.16) 50%,
-    rgba(123,104,238,0.08) 100%);
+    rgba(196,30,58,0.08) 0%,
+    rgba(196,30,58,0.16) 50%,
+    rgba(196,30,58,0.08) 100%);
   background-size: 200% 100%;
   animation: skeleton-shimmer 1.5s ease-in-out infinite;
 }
@@ -277,10 +277,10 @@ html {
 
 @keyframes glowPulse {
   0%, 100% {
-    box-shadow: 0 0 8px rgba(123, 104, 238, 0.4);
+    box-shadow: 0 0 8px rgba(196, 30, 58, 0.4);
   }
   50% {
-    box-shadow: 0 0 24px rgba(123, 104, 238, 0.8);
+    box-shadow: 0 0 24px rgba(196, 30, 58, 0.8);
   }
 }
 
@@ -560,7 +560,7 @@ html {
   transition: box-shadow 200ms ease;
 }
 .hover-glow:hover {
-  box-shadow: 0 0 20px rgba(123, 104, 238, 0.5);
+  box-shadow: 0 0 20px rgba(196, 30, 58, 0.5);
 }
 
 /* Page transition classes */
