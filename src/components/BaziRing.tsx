@@ -116,7 +116,7 @@ export default function BaziRing({ birthData, size = 280 }: BaziRingProps) {
             height: effectiveSize + 60,
             top: -30,
             left: -30,
-            background: 'radial-gradient(circle, rgba(123,104,238,0.15) 0%, transparent 70%)',
+            background: 'radial-gradient(circle, rgba(196,30,58,0.15) 0%, transparent 70%)',
             pointerEvents: 'none',
           }}
         />
@@ -127,7 +127,7 @@ export default function BaziRing({ birthData, size = 280 }: BaziRingProps) {
           height={effectiveSize}
           viewBox={`0 0 ${effectiveSize} ${effectiveSize}`}
           className="animate-ring-in"
-          style={{ filter: 'drop-shadow(0 0 20px rgba(123,104,238,0.3))' }}
+          style={{ filter: 'drop-shadow(0 0 20px rgba(196,30,58,0.3))' }}
         >
           {/* Decorative outer ring - dashed */}
           <circle
@@ -200,12 +200,12 @@ export default function BaziRing({ birthData, size = 280 }: BaziRingProps) {
             x={center}
             y={center + 8}
             textAnchor="middle"
-            fill="#f0c674"
+            fill="#d4af37"
             fontSize={effectiveSize >= 220 ? (effectiveSize > 220 ? effectiveSize * 0.17 : effectiveSize * 0.15) : effectiveSize * 0.14}
             fontWeight="bold"
             style={{
-              textShadow: '0 0 30px rgba(240,198,116,0.8)',
-              filter: 'drop-shadow(0 0 10px rgba(240,198,116,0.5))',
+              textShadow: '0 0 30px rgba(212,175,55,0.8)',
+              filter: 'drop-shadow(0 0 10px rgba(212,175,55,0.5))',
             }}
           >
             {dayBranch}
