@@ -68,12 +68,9 @@ export default function ReportContent({ radarScores, aiAnalysis, isLocked }: Rep
 
       {/* Fortune Analysis */}
       <div>
-        <h2
-          className="text-center font-bold mb-4"
-          style={{ color: 'var(--color-accent)' }}
-        >
+        <span className="text-h3 font-semibold" style={{ color: 'var(--color-accent)' }}>
           命盘解读
-        </h2>
+        </span>
         <FortuneDisplay analysis={aiAnalysis} isLocked={isLocked} />
       </div>
     </>
