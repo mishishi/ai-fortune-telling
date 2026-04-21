@@ -267,6 +267,8 @@ export default function FortuneDisplay({ analysis, isLocked = false, reportId }:
                   {/* Header */}
                   <button
                     onClick={() => toggleSection(section.key)}
+                    aria-expanded={isExpanded}
+                    aria-controls={`section-content-${section.key}`}
                     className="w-full px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-white/5 rounded-[var(--radius-md)] transition-colors stagger-item"
                   >
                     <div className="flex items-center gap-3">
@@ -331,6 +333,7 @@ export default function FortuneDisplay({ analysis, isLocked = false, reportId }:
 
                   {/* Content */}
                   <div
+                    id={`section-content-${section.key}`}
                     className={`transition-all duration-300 ease-out overflow-hidden`}
                     style={{
                       maxHeight: isExpanded ? '500px' : '0',
