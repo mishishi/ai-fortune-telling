@@ -163,7 +163,6 @@ export default function FortuneDisplay({ analysis, isLocked = false }: FortuneDi
 
   return (
     <div className="space-y-3 animate-fade-in-up">
-      <h3 className="text-h3 title-underline">命盘解读</h3>
       {visibleSections.map((section) => {
         const isExpanded = expandedSection === section.key;
         const isPreview = isLocked && section.basic;
