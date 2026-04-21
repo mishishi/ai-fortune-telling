@@ -169,12 +169,14 @@ export default function BottomNav() {
 
   return (
     <nav style={containerStyle}>
-      <defs>
-        <linearGradient id={GRADIENT_ID} x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#f0c674" />
-          <stop offset="100%" stopColor="#d4af37" />
-        </linearGradient>
-      </defs>
+      <svg style={{ position: 'absolute', width: 0, height: 0 }}>
+        <defs>
+          <linearGradient id={GRADIENT_ID} x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#f0c674" />
+            <stop offset="100%" stopColor="#d4af37" />
+          </linearGradient>
+        </defs>
+      </svg>
       {NAV_ITEMS.map((item, index) => {
         const isActive = activeIndex === index;
         return (
