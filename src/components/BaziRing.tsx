@@ -2,10 +2,12 @@
 
 import { useState, useEffect } from 'react';
 
+type Element = 'wood' | 'fire' | 'earth' | 'metal' | 'water';
+
 interface Pillar {
   stem: string;
   branch: string;
-  element: string;
+  element: Element;
 }
 
 interface BaziRingProps {
@@ -18,7 +20,7 @@ interface BaziRingProps {
   size?: number;
 }
 
-const ELEMENT_COLORS: Record<string, string> = {
+const ELEMENT_COLORS: Record<Element, string> = {
   wood: '#4ade80',
   fire: '#f87171',
   earth: '#fbbf24',
@@ -132,7 +134,7 @@ export default function BaziRing({ birthData, size = 280 }: BaziRingProps) {
             stroke="rgba(255,255,255,0.05)"
             strokeWidth="1"
             strokeDasharray="4 4"
-            className="animate-spin glow-pulse"
+            className="glow-pulse"
             style={{ transformOrigin: `${center}px ${center}px` }}
           />
 
