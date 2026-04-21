@@ -1,7 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useToast } from '@/contexts/ToastContext';
+
+// Constants
+const UNLOCK_PRICE = '¥29';
+const SUCCESS_REDIRECT_DELAY = 800;
+const BUTTON_HEIGHT = 48;
+const BUTTON_RADIUS = 24;
+const SPINNER_SIZE = 16;
 
 interface UnlockPanelProps {
   reportId: string;
@@ -51,6 +58,7 @@ const PREVIEW_ITEMS: PreviewItem[] = [
 export default function UnlockPanel({ reportId, hiddenSections, isLocked }: UnlockPanelProps) {
   const [isExpanded, setIsExpanded] = useState(true);
   const [buttonState, setButtonState] = useState<'default' | 'loading' | 'success'>('default');
+  const isUnlockingRef = useRef(false);
   const { showToast } = useToast();
 
   // If already unlocked, don't render
@@ -59,7 +67,8 @@ export default function UnlockPanel({ reportId, hiddenSections, isLocked }: Unlo
   }
 
   const handleUnlock = async () => {
-    if (buttonState !== 'default') return;
+    if (isUnlockingRef.current) return;
+    isUnlockingRef.current = true;
 
     setButtonState('loading');
 
@@ -70,10 +79,10 @@ export default function UnlockPanel({ reportId, hiddenSections, isLocked }: Unlo
 
       if (res.ok) {
         setButtonState('success');
-        // Wait 800ms then reload page
+        // Wait SUCCESS_REDIRECT_DELAY then reload page
         setTimeout(() => {
           window.location.reload();
-        }, 800);
+        }, SUCCESS_REDIRECT_DELAY);
       } else {
         throw new Error('Unlock failed');
       }
@@ -81,6 +90,8 @@ export default function UnlockPanel({ reportId, hiddenSections, isLocked }: Unlo
       console.error('Failed to unlock:', error);
       showToast('解锁失败，请重试', 'error');
       setButtonState('default');
+    } finally {
+      isUnlockingRef.current = false;
     }
   };
 
@@ -193,10 +204,12 @@ export default function UnlockPanel({ reportId, hiddenSections, isLocked }: Unlo
       <button
         onClick={handleUnlock}
         disabled={buttonState !== 'default'}
+        aria-label="解锁完整报告"
+        className="unlock-cta-button"
         style={{
-          height: '48px',
+          height: `${BUTTON_HEIGHT}px`,
           width: '100%',
-          borderRadius: '24px',
+          borderRadius: `${BUTTON_RADIUS}px`,
           border: 'none',
           cursor: buttonState === 'default' ? 'pointer' : 'not-allowed',
           fontSize: '16px',
@@ -211,44 +224,22 @@ export default function UnlockPanel({ reportId, hiddenSections, isLocked }: Unlo
             buttonState === 'default'
               ? '0 4px 16px rgba(212, 175, 55, 0.3)'
               : 'none',
-          transform: 'translateY(0)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           gap: '8px',
         }}
-        onMouseEnter={(e) => {
-          if (buttonState === 'default') {
-            e.currentTarget.style.transform = 'translateY(-2px)';
-            e.currentTarget.style.boxShadow = '0 8px 24px rgba(212, 175, 55, 0.3)';
-          }
-        }}
-        onMouseLeave={(e) => {
-          if (buttonState === 'default') {
-            e.currentTarget.style.transform = 'translateY(0)';
-            e.currentTarget.style.boxShadow = '0 4px 16px rgba(212, 175, 55, 0.3)';
-          }
-        }}
-        onMouseDown={(e) => {
-          if (buttonState === 'default') {
-            e.currentTarget.style.transform = 'scale(0.98)';
-          }
-        }}
-        onMouseUp={(e) => {
-          if (buttonState === 'default') {
-            e.currentTarget.style.transform = 'translateY(-2px)';
-          }
-        }}
       >
         {buttonState === 'loading' && (
           <>
             <span
+              className="spinner"
               style={{
                 display: 'inline-block',
-                width: '16px',
-                height: '16px',
+                width: `${SPINNER_SIZE}px`,
+                height: `${SPINNER_SIZE}px`,
                 border: '2px solid rgba(255,255,255,0.3)',
-                borderTopColor: 'white',
+                borderTopColor: 'currentColor',
                 borderRadius: '50%',
                 animation: 'spin 0.8s linear infinite',
               }}
@@ -257,12 +248,13 @@ export default function UnlockPanel({ reportId, hiddenSections, isLocked }: Unlo
           </>
         )}
         {buttonState === 'success' && <span>已解锁 ✓</span>}
-        {buttonState === 'default' && <span>解锁完整报告 — ¥29</span>}
+        {buttonState === 'default' && <span>解锁完整报告 — {UNLOCK_PRICE}</span>}
       </button>
 
       {/* Collapse button */}
       <button
         onClick={() => setIsExpanded(false)}
+        aria-label="收起面板"
         style={{
           background: 'none',
           border: 'none',
@@ -289,6 +281,16 @@ export default function UnlockPanel({ reportId, hiddenSections, isLocked }: Unlo
           to {
             transform: rotate(360deg);
           }
+        }
+        .unlock-cta-button {
+          transform: translateY(0);
+        }
+        .unlock-cta-button:hover:not(:disabled) {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 24px rgba(212, 175, 55, 0.3);
+        }
+        .unlock-cta-button:active:not(:disabled) {
+          transform: scale(0.98);
         }
       `}</style>
     </div>
