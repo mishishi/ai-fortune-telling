@@ -329,7 +329,7 @@ export default function HomePage() {
                   style={{
                     animation: 'destinyPulse 1.5s ease-in-out infinite',
                     borderColor: 'rgba(240, 198, 116, 0.4)',
-                    background: 'radial-gradient(circle, rgba(123, 104, 238, 0.1) 0%, transparent 70%)',
+                    background: 'radial-gradient(circle, rgba(196, 30, 58, 0.1) 0%, transparent 70%)',
                   }}
                 />
                 {/* Center ☯ Symbol */}
