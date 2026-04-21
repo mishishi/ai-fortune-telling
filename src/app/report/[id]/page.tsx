@@ -119,9 +119,15 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
   return (
     <main className="min-h-screen px-4 py-8 max-w-3xl mx-auto bg-[#0a0e27]">
       {/* Header */}
-      <div className="text-center mb-10">
+      <div className="text-center mb-10 relative">
+        {/* Corner brackets decoration */}
+        <div className="absolute -top-4 -left-4 w-8 h-8 border-l-2 border-t-2 border-[var(--color-accent)] opacity-40" />
+        <div className="absolute -top-4 -right-4 w-8 h-8 border-r-2 border-t-2 border-[var(--color-accent)] opacity-40" />
+        <div className="absolute -bottom-4 -left-4 w-8 h-8 border-l-2 border-b-2 border-[var(--color-accent)] opacity-40" />
+        <div className="absolute -bottom-4 -right-4 w-8 h-8 border-r-2 border-b-2 border-[var(--color-accent)] opacity-40" />
+
         <h1
-          className="text-h1 font-serif text-white mb-3"
+          className="text-h1 font-serif text-white mb-3 title-underline"
           style={{ textShadow: '0 0 30px rgba(196,30,58,0.5)' }}
         >
           {report.name} 的命盘
@@ -135,7 +141,7 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
       <div className="flex flex-col items-center py-6">
         <BaziRing birthData={birthData} size={320} />
         <div className="mt-4 text-center">
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-gray-400 section-accent inline-block pl-3">
             生肖：{zodiac} · 五行：{elementInfo}
           </p>
         </div>
@@ -145,7 +151,7 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
       <ReportContent radarScores={radarScores} aiAnalysis={aiAnalysis} isLocked={!report.unlocked} />
 
       {/* Timeline */}
-      <div className="mt-8">
+      <div className="mt-8 corner-brackets px-4 py-4">
         <Accordion title="大运时间轴" defaultOpen={false}>
           <Timeline baziData={baziData} />
         </Accordion>
