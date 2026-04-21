@@ -2,7 +2,6 @@ import { getDb } from '@/lib/db';
 import { notFound } from 'next/navigation';
 import ReportContent from '@/components/ReportContent';
 import Timeline from '@/components/Timeline';
-import UnlockButton from '@/components/UnlockButton';
 import BaziRing from '@/components/BaziRing';
 import { Accordion } from '@/components/ui/Accordion';
 
@@ -157,10 +156,6 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
         </Accordion>
       </div>
 
-      {/* Unlock prompt */}
-      {!report.unlocked && (
-        <UnlockButton reportId={id} />
-      )}
     </main>
   );
 }
