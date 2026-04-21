@@ -8,7 +8,7 @@ export default function AuroraEffect() {
         style={{
           background: 'radial-gradient(circle, rgba(123,104,238,0.3) 0%, transparent 70%)',
           filter: 'blur(60px)',
-          animation: 'pulse 8s ease-in-out infinite',
+          animation: 'aurora-pulse 8s ease-in-out infinite',
         }}
       />
       <div
@@ -16,15 +16,9 @@ export default function AuroraEffect() {
         style={{
           background: 'radial-gradient(circle, rgba(65,105,225,0.25) 0%, transparent 70%)',
           filter: 'blur(60px)',
-          animation: 'pulse 10s ease-in-out infinite 2s',
+          animation: 'aurora-pulse 10s ease-in-out infinite 2s',
         }}
       />
-      <style jsx>{`
-        @keyframes pulse {
-          0%, 100% { opacity: 0.5; transform: scale(1); }
-          50% { opacity: 0.8; transform: scale(1.1); }
-        }
-      `}</style>
     </div>
   );
 }
