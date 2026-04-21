@@ -109,7 +109,7 @@ export default function BaziRing({ birthData, size = 280 }: BaziRingProps) {
             height: effectiveSize + 60,
             top: -30,
             left: -30,
-            background: `radial-gradient(circle, rgba(212,175,55,0.15) 0%, transparent 70%)`,
+            background: `radial-gradient(circle, color-mix(in srgb, var(--color-accent) 15%, transparent) 0%, transparent 70%)`,
             pointerEvents: 'none',
           }}
         />
@@ -279,8 +279,8 @@ export default function BaziRing({ birthData, size = 280 }: BaziRingProps) {
           className="absolute text-h2 font-bold"
           style={{
             color: 'var(--color-accent)',
-            textShadow: '0 0 30px rgba(212,175,55,0.8)',
-            filter: 'drop-shadow(0 0 10px rgba(212,175,55,0.5))',
+            textShadow: '0 0 30px color-mix(in srgb, var(--color-accent) 80%, transparent)',
+            filter: 'drop-shadow(0 0 10px color-mix(in srgb, var(--color-accent) 50%, transparent))',
             top: '50%',
             left: '50%',
             transform: 'translate(-50%, -50%)',
