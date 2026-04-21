@@ -42,26 +42,54 @@ interface SectionDef {
   sub?: boolean;
   isNested?: boolean;
   basic?: boolean; // Show in preview mode
+  tier?: number; // 1-4, higher = more important
+  group?: string; // Visual group identifier
 }
 
 // Basic sections always visible (truncated) in preview
 // Advanced sections hidden in preview
 const SECTIONS: SectionDef[] = [
-  { key: 'overall', title: '命局总评', color: 'var(--color-accent)', basic: true },
-  { key: 'overallPlain', title: '通俗解读', color: 'var(--color-accent)', basic: true, sub: true },
-  { key: 'career', title: '事业运', color: 'var(--color-dimension-career)', basic: true },
-  { key: 'careerSuggest', title: '职业推荐', color: 'var(--color-dimension-career)', sub: true },
-  { key: 'mentorDirection', title: '贵人方位', color: 'var(--color-dimension-mentor)', sub: true },
-  { key: 'love', title: '感情运', color: 'var(--color-dimension-love)', basic: true },
-  { key: 'spouseDesc', title: '配偶特征', color: 'var(--color-dimension-love)', sub: true },
-  { key: 'marriageAdvice', title: '婚恋建议', color: 'var(--color-dimension-love)', sub: true },
-  { key: 'wealth', title: '财运', color: 'var(--color-dimension-wealth)', basic: true },
-  { key: 'health', title: '健康运', color: 'var(--color-dimension-health)', basic: true },
-  { key: 'fortune', title: '大运趋势', color: 'var(--color-secondary)', basic: true },
-  { key: 'yearly', title: '流年预测', color: 'var(--color-error)', basic: true },
-  { key: 'luckyElements', title: '幸运元素', color: 'var(--color-dimension-health)', isNested: true },
-  { key: 'nameSuggestions', title: '起名建议', color: 'var(--color-dimension-health)', isNested: true },
+  // ===== Tier 1: Core Overview (highest priority) =====
+  // Overview Group
+  { key: 'overall', title: '命局总评', color: 'var(--color-accent)', basic: true, tier: 1, group: 'overview' },
+  { key: 'overallPlain', title: '通俗解读', color: 'var(--color-accent)', basic: true, sub: true, tier: 1, group: 'overview' },
+
+  // Wealth Group
+  { key: 'wealth', title: '财运', color: 'var(--color-dimension-wealth)', basic: true, tier: 1, group: 'wealth' },
+  { key: 'fortune', title: '大运趋势', color: 'var(--color-secondary)', basic: true, tier: 1, group: 'wealth' },
+
+  // ===== Tier 2: Life Dimensions =====
+  // Career Group
+  { key: 'career', title: '事业运', color: 'var(--color-dimension-career)', basic: true, tier: 2, group: 'career' },
+  { key: 'careerSuggest', title: '职业推荐', color: 'var(--color-dimension-career)', sub: true, tier: 2, group: 'career' },
+  { key: 'mentorDirection', title: '贵人方位', color: 'var(--color-dimension-mentor)', sub: true, tier: 2, group: 'career' },
+
+  // Love Group
+  { key: 'love', title: '感情运', color: 'var(--color-dimension-love)', basic: true, tier: 2, group: 'love' },
+  { key: 'spouseDesc', title: '配偶特征', color: 'var(--color-dimension-love)', sub: true, tier: 2, group: 'love' },
+  { key: 'marriageAdvice', title: '婚恋建议', color: 'var(--color-dimension-love)', sub: true, tier: 2, group: 'love' },
+
+  // Health Group
+  { key: 'health', title: '健康运', color: 'var(--color-dimension-health)', basic: true, tier: 2, group: 'health' },
+
+  // ===== Tier 3: Predictions =====
+  { key: 'yearly', title: '流年预测', color: 'var(--color-error)', basic: true, tier: 3, group: 'prediction' },
+  { key: 'luckyElements', title: '幸运元素', color: 'var(--color-dimension-health)', isNested: true, tier: 3, group: 'prediction' },
+
+  // ===== Tier 4: Tools =====
+  { key: 'nameSuggestions', title: '起名建议', color: 'var(--color-dimension-health)', isNested: true, tier: 4, group: 'tools' },
 ];
+
+// Group labels for visual separation
+const GROUP_LABELS: Record<string, { label: string; tier: number }> = {
+  'overview': { label: '命局总览', tier: 1 },
+  'wealth': { label: '财富运势', tier: 1 },
+  'career': { label: '事业维度', tier: 2 },
+  'love': { label: '感情维度', tier: 2 },
+  'health': { label: '健康维度', tier: 2 },
+  'prediction': { label: '命运预测', tier: 3 },
+  'tools': { label: '工具箱', tier: 4 },
+};
 
 // Truncate text to first sentence (ends with 。 or ； or ？)
 function truncateText(text: string, maxChars: number = 60): string {
