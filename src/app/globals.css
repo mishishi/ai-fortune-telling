@@ -113,6 +113,11 @@
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
+
+  /* Font Families */
+  --font-sans: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-serif: "Noto Serif SC", "STSong", "SimSun", serif;
+  --font-display: "Noto Serif SC", "Times New Roman", serif;
 }
 
 @theme inline {
