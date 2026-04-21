@@ -240,7 +240,7 @@ export default function FortuneDisplay({ analysis, isLocked = false, reportId }:
     : SECTIONS;
 
   return (
-    <div className="space-y-3 animate-fade-in-up">
+    <div className="space-y-4 animate-fade-in-up">
       {getGroups().map(({ key: groupKey, section: firstSection }) => {
         const groupInfo = GROUP_LABELS[groupKey];
         const groupSections = visibleSections.filter(s => s.group === groupKey);
