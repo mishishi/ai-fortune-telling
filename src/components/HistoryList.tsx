@@ -184,9 +184,9 @@ export default function HistoryList() {
       {members.length > 0 && (
         <div className="relative mb-6">
           {/* Left gradient mask */}
-          <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-[#0a0e27] to-transparent z-10 pointer-events-none" />
+          <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-[var(--color-bg-page)] to-transparent z-10 pointer-events-none" />
           {/* Right gradient mask */}
-          <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-[#0a0e27] to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-[var(--color-bg-page)] to-transparent z-10 pointer-events-none" />
           <div className="flex gap-2 overflow-x-auto scrollbar-hide px-4">
             <button
               onClick={() => setSelectedMemberId('all')}
@@ -221,13 +221,13 @@ export default function HistoryList() {
           <div className="gold-divider mx-auto mb-6 w-24"></div>
           <svg className="w-16 h-16 mx-auto mb-4 text-[var(--color-accent)] opacity-40" viewBox="0 0 100 100" fill="none">
             <circle cx="50" cy="50" r="45" stroke="url(#scrollGrad)" strokeWidth="2" strokeDasharray="4 4"/>
-            <path d="M30 25h40c2 0 3 1 3 3v44c0 2-1 3-3 3H30c-2 0-3-1-3-3V28c0-2 1-3 3-3z" stroke="#d4af37" strokeWidth="1.5" fill="none"/>
-            <path d="M35 35h30M35 45h30M35 55h20" stroke="#d4af37" strokeWidth="1" opacity="0.6"/>
-            <circle cx="50" cy="68" r="4" fill="#c41e3a" opacity="0.8"/>
+            <path d="M30 25h40c2 0 3 1 3 3v44c0 2-1 3-3 3H30c-2 0-3-1-3-3V28c0-2 1-3 3-3z" stroke="var(--color-accent)" strokeWidth="1.5" fill="none"/>
+            <path d="M35 35h30M35 45h30M35 55h20" stroke="var(--color-accent)" strokeWidth="1" opacity="0.6"/>
+            <circle cx="50" cy="68" r="4" fill="var(--color-primary)" opacity="0.8"/>
             <defs>
               <linearGradient id="scrollGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#d4af37" stopOpacity="0.5"/>
-                <stop offset="100%" stopColor="#c41e3a" stopOpacity="0.5"/>
+                <stop offset="0%" stopColor="var(--color-accent)" stopOpacity="0.5"/>
+                <stop offset="100%" stopColor="var(--color-primary)" stopOpacity="0.5"/>
               </linearGradient>
             </defs>
           </svg>

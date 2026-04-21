@@ -151,7 +151,7 @@ export default function LoginForm() {
             className="w-full py-4 rounded-xl font-bold text-lg transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
             style={{
               background: 'linear-gradient(135deg, var(--color-primary), var(--color-primary-hover))',
-              color: '#ffffff',
+              color: 'var(--color-text)',
               boxShadow: '0 4px 20px rgba(196,30,58,0.3)',
             }}
           >

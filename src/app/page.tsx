@@ -362,9 +362,9 @@ export default function HomePage() {
                     const status = getStepStatus(step.key);
                     // Element colors: wood → fire → earth (cycling through five elements)
                     const elementColors = [
-                      { bg: 'rgba(74, 222, 128, 0.15)', text: '#4ade80', ring: 'rgba(74, 222, 128, 0.4)' },
-                      { bg: 'rgba(239, 68, 68, 0.15)', text: '#ef4444', ring: 'rgba(239, 68, 68, 0.4)' },
-                      { bg: 'rgba(234, 179, 8, 0.15)', text: '#eab308', ring: 'rgba(234, 179, 8, 0.4)' },
+                      { bg: 'rgba(74, 222, 128, 0.15)', text: 'var(--color-loading-wood)', ring: 'rgba(74, 222, 128, 0.4)' },
+                      { bg: 'rgba(239, 68, 68, 0.15)', text: 'var(--color-loading-fire)', ring: 'rgba(239, 68, 68, 0.4)' },
+                      { bg: 'rgba(234, 179, 8, 0.15)', text: 'var(--color-loading-earth)', ring: 'rgba(234, 179, 8, 0.4)' },
                     ];
                     const colorIdx = index % elementColors.length;
                     const colors = elementColors[colorIdx];

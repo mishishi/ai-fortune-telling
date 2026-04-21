@@ -4,7 +4,7 @@ import HistoryList from '@/components/HistoryList';
 
 export default function HistoryPage() {
   return (
-    <main className="min-h-screen px-4 py-8 max-w-2xl mx-auto bg-[#0a0e27]">
+    <main className="min-h-screen px-4 py-8 max-w-2xl mx-auto bg-[var(--color-bg-page)]">
       {/* Header with back link */}
       <div className="mb-6">
         <Link

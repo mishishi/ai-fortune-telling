@@ -21,11 +21,11 @@ interface BaziRingProps {
 }
 
 const ELEMENT_COLORS: Record<Element, string> = {
-  wood: '#4ade80',
-  fire: '#f87171',
-  earth: '#fbbf24',
-  metal: '#60a5fa',
-  water: '#a78bfa',
+  wood: 'var(--color-element-wood)',
+  fire: 'var(--color-element-fire)',
+  earth: 'var(--color-element-earth)',
+  metal: 'var(--color-element-metal)',
+  water: 'var(--color-element-water)',
 };
 
 // Ring segment configuration (Option C design)

@@ -12,6 +12,7 @@
 
   /* Background Colors */
   --color-bg: #0f0f1a;
+  --color-bg-page: #0a0e27;
   --color-surface: #1a1525;
   --color-surface-elevated: #221c30;
   --color-surface-hover: #1f1830;
@@ -30,10 +31,15 @@
 
   /* Five Elements (五行) - Semantic Chart Colors */
   --color-element-wood: #4ade80;
-  --color-element-fire: #ef4444;
-  --color-element-earth: #eab308;
-  --color-element-metal: #e5e5e5;
-  --color-element-water: #1e293b;
+  --color-element-fire: #f87171;
+  --color-element-earth: #fbbf24;
+  --color-element-metal: #60a5fa;
+  --color-element-water: #a78bfa;
+
+  /* Loading Step Indicator Colors */
+  --color-loading-wood: #4ade80;
+  --color-loading-fire: #ef4444;
+  --color-loading-earth: #eab308;
 
   /* Chart Dimension Colors */
   --color-dimension-career: #c41e3a;
@@ -205,12 +211,12 @@ html {
 /* Selection color */
 ::selection {
   background: rgba(196, 30, 58, 0.4);
-  color: #ffffff;
+  color: var(--color-text);
 }
 
 /* Gradient text utility */
 .text-gradient {
-  background: linear-gradient(135deg, #d4af37 0%, #ffffff 50%, #c41e3a 100%);
+  background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-text) 50%, var(--color-primary) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -218,7 +224,7 @@ html {
 
 /* Shimmer gold effect for accents */
 .shimmer-gold {
-  background: linear-gradient(90deg, #d4af37, #ffffff, #d4af37);
+  background: linear-gradient(90deg, var(--color-accent), var(--color-text), var(--color-accent));
   background-size: 200% 100%;
   animation: shimmer 3s ease-in-out infinite;
 }
@@ -235,8 +241,8 @@ html {
   border-radius: inherit;
   padding: 1px;
   background: linear-gradient(135deg, rgba(212, 175, 55, 0.6), rgba(196, 30, 58, 0.6));
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask: linear-gradient(var(--color-text) 0 0) content-box, linear-gradient(var(--color-text) 0 0);
+  mask: linear-gradient(var(--color-text) 0 0) content-box, linear-gradient(var(--color-text) 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   pointer-events: none;
@@ -803,9 +809,9 @@ html {
   height: 2px;
   background: linear-gradient(90deg,
     transparent 0%,
-    #d4af37 20%,
-    #f5e6c4 50%,
-    #d4af37 80%,
+    var(--color-accent) 20%,
+    color-mix(in srgb, var(--color-accent) 60%, var(--color-text)) 50%,
+    var(--color-accent) 80%,
     transparent 100%);
   opacity: 0.8;
 }
@@ -896,7 +902,7 @@ html {
 .calligraphy-line {
   width: 1px;
   height: 30px;
-  background: linear-gradient(180deg, transparent, #c41e3a, transparent);
+  background: linear-gradient(180deg, transparent, var(--color-primary), transparent);
   opacity: 0.6;
 }
 
@@ -905,7 +911,7 @@ html {
   width: 40%;
   height: 1px;
   margin: 0 auto;
-  background: linear-gradient(90deg, transparent, #d4af37, transparent);
+  background: linear-gradient(90deg, transparent, var(--color-accent), transparent);
 }
 
 /* 带朱红点缀的分割线 */
@@ -913,7 +919,7 @@ html {
   width: 60%;
   height: 1px;
   margin: 0 auto;
-  background: linear-gradient(90deg, transparent, #d4af37 30%, #c41e3a 50%, #d4af37 70%, transparent);
+  background: linear-gradient(90deg, transparent, var(--color-accent) 30%, var(--color-primary) 50%, var(--color-accent) 70%, transparent);
 }
 
 /* 水墨晕染角落效果 */

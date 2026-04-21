@@ -40,7 +40,7 @@ export default function ShareReport({ reportId }: ShareReportProps) {
         className="fixed right-4 bottom-24 z-40 flex items-center gap-2 px-4 py-4 rounded-xl font-medium text-sm transition-all hover:scale-105 active:scale-95"
         style={{
           background: 'linear-gradient(135deg, var(--color-primary), var(--color-secondary))',
-          color: '#fff',
+          color: 'var(--color-text)',
           boxShadow: 'var(--shadow-glow-primary)',
         }}
         aria-label="分享报告"

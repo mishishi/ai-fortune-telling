@@ -104,7 +104,7 @@ export default function ProfilePage() {
   // Show loading while checking auth status
   if (loading) {
     return (
-      <main className="min-h-screen px-4 py-8 max-w-lg mx-auto bg-[#0a0e27] flex items-center justify-center">
+      <main className="min-h-screen px-4 py-8 max-w-lg mx-auto bg-[var(--color-bg-page)] flex items-center justify-center">
         <div className="w-8 h-8 border-2 border-[var(--color-purple)]/30 border-t-[var(--color-purple)] rounded-full animate-spin" />
       </main>
     );
@@ -115,7 +115,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <main className="min-h-screen px-4 py-8 max-w-lg mx-auto bg-[#0a0e27]">
+    <main className="min-h-screen px-4 py-8 max-w-lg mx-auto bg-[var(--color-bg-page)]">
       {/* Header */}
       <div className="mb-8">
         <Link

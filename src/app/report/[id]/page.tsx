@@ -117,7 +117,7 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
   const elementInfo = birthData.dayPillar.element ? elementMap[birthData.dayPillar.element] || '未知' : '未知';
 
   return (
-    <main className="min-h-screen px-4 py-8 max-w-3xl mx-auto bg-[#0a0e27]">
+    <main className="min-h-screen px-4 py-8 max-w-3xl mx-auto bg-[var(--color-bg-page)]">
       {/* Header */}
       <div className="text-center mb-10 relative">
         {/* Corner brackets decoration */}
