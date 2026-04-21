@@ -50,7 +50,7 @@ export default function CustomDropdown({ id, value, options, onChange, placehold
         }
         // Set focused index to selected option when opening
         const selectedIdx = options.findIndex(o => String(o.value) === String(value));
-        setFocusedIndex(selectedIdx >= 0 ? selectedIdx : 0);
+        setFocusedIndex(options.length > 0 ? (selectedIdx >= 0 ? selectedIdx : 0) : -1);
       } else {
         setFocusedIndex(-1);
       }
