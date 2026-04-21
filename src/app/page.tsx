@@ -297,14 +297,14 @@ export default function HomePage() {
                       ? 'radial-gradient(circle, rgba(239, 68, 68, 0.3) 0%, transparent 70%)'
                       : loadingStep === 'report'
                       ? 'radial-gradient(circle, rgba(234, 179, 8, 0.3) 0%, transparent 70%)'
-                      : 'radial-gradient(circle, rgba(123, 104, 238, 0.3) 0%, transparent 70%)',
+                      : 'radial-gradient(circle, rgba(196, 30, 58, 0.3) 0%, transparent 70%)',
                     boxShadow: loadingStep === 'bazi'
                       ? '0 0 24px rgba(74, 222, 128, 0.3)'
                       : loadingStep === 'ai'
                       ? '0 0 24px rgba(239, 68, 68, 0.3)'
                       : loadingStep === 'report'
                       ? '0 0 24px rgba(234, 179, 8, 0.3)'
-                      : '0 0 24px rgba(123, 104, 238, 0.3)',
+                      : '0 0 24px rgba(196, 30, 58, 0.3)',
                   }}
                 />
                 {/* Outer Ring - Clockwise 3s */}
@@ -338,7 +338,7 @@ export default function HomePage() {
                     className="text-4xl"
                     style={{
                       animation: 'destinyPulse 1.5s ease-in-out infinite',
-                      textShadow: '0 0 20px rgba(123, 104, 238, 0.8)',
+                      textShadow: '0 0 20px rgba(196, 30, 58, 0.8)',
                     }}
                   >
                     ☯
