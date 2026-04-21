@@ -288,6 +288,18 @@ export default function FortuneDisplay({ analysis, isLocked = false, reportId }:
                       >
                         {section.title}
                       </h3>
+                      {section.tier === 1 && (
+                        <span
+                          className="text-xs px-2 py-0.5 rounded ml-2"
+                          style={{
+                            background: `linear-gradient(135deg, ${section.color}30, ${section.color}15)`,
+                            color: section.color,
+                            border: `1px solid ${section.color}40`,
+                          }}
+                        >
+                          核心
+                        </span>
+                      )}
                       {isPreview && (
                         <span
                           className="text-xs px-2 py-0.5 rounded"
