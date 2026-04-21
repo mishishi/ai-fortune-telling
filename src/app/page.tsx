@@ -290,7 +290,7 @@ export default function HomePage() {
                 <div
                   className="absolute inset-0 rounded-full"
                   style={{
-                    animation: 'glowPulse 2s ease-in-out infinite',
+                    animation: 'glow-pulse 2s ease-in-out infinite',
                     background: loadingStep === 'bazi'
                       ? 'radial-gradient(circle, rgba(74, 222, 128, 0.3) 0%, transparent 70%)'
                       : loadingStep === 'ai'
@@ -311,7 +311,7 @@ export default function HomePage() {
                 <div
                   className="absolute inset-0 rounded-full border-2 destiny-ring-outer"
                   style={{
-                    animation: 'destinySpin 3s linear infinite',
+                    animation: 'destiny-spin 3s linear infinite',
                     borderColor: 'rgba(196, 30, 58, 0.4)',
                   }}
                 />
@@ -319,7 +319,7 @@ export default function HomePage() {
                 <div
                   className="absolute inset-3 rounded-full border-2 destiny-ring-middle"
                   style={{
-                    animation: 'destinySpin 2s linear infinite reverse',
+                    animation: 'destiny-spin 2s linear infinite reverse',
                     borderColor: 'rgba(212, 175, 55, 0.5)',
                   }}
                 />
@@ -327,7 +327,7 @@ export default function HomePage() {
                 <div
                   className="absolute inset-6 rounded-full border destiny-ring-inner"
                   style={{
-                    animation: 'destinyPulse 1.5s ease-in-out infinite',
+                    animation: 'destiny-pulse 1.5s ease-in-out infinite',
                     borderColor: 'rgba(240, 198, 116, 0.4)',
                     background: 'radial-gradient(circle, rgba(196, 30, 58, 0.1) 0%, transparent 70%)',
                   }}
@@ -337,7 +337,7 @@ export default function HomePage() {
                   <span
                     className="text-4xl"
                     style={{
-                      animation: 'destinyPulse 1.5s ease-in-out infinite',
+                      animation: 'destiny-pulse 1.5s ease-in-out infinite',
                       textShadow: '0 0 20px rgba(196, 30, 58, 0.8)',
                     }}
                   >
