@@ -119,7 +119,7 @@ export default function BirthForm({ onSubmit }: BirthFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5 w-full max-w-md">
+    <form onSubmit={handleSubmit} className="glass-card rounded-[var(--radius-xl)] p-[var(--space-xl)] space-y-5 w-full max-w-md">
       {/* Header with reset button */}
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold" style={{ color: 'var(--color-text)' }}>出生信息</h2>
@@ -145,7 +145,7 @@ export default function BirthForm({ onSubmit }: BirthFormProps) {
           value={form.name}
           onChange={e => { setForm({ ...form, name: e.target.value }); clearError('name'); }}
           onBlur={() => validate('name', form.name)}
-          className="w-full rounded-lg px-4 py-4 text-white placeholder-gray-500 focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/20 transition-colors border"
+          className="w-full rounded-[var(--radius-md)] px-5 py-4 text-white placeholder-gray-500 focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/20 transition-colors border"
           style={{
             background: 'var(--color-surface)',
             borderColor: errors.name ? 'var(--color-error)' : 'var(--color-border)',
@@ -195,7 +195,7 @@ export default function BirthForm({ onSubmit }: BirthFormProps) {
               value={form.year}
               onChange={e => { setForm({ ...form, year: parseInt(e.target.value) }); clearError('date'); }}
               onBlur={() => validate('date', null, form)}
-              className="w-full rounded-lg px-4 py-4 text-white text-center focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/20 transition-colors border"
+              className="w-full rounded-[var(--radius-md)] px-5 py-4 text-white text-center focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/20 transition-colors border"
               style={{ background: 'var(--color-surface)', borderColor: errors.date ? 'var(--color-error)' : 'var(--color-border)' }}
               placeholder="年"
               min={1900}
@@ -211,7 +211,7 @@ export default function BirthForm({ onSubmit }: BirthFormProps) {
               value={form.month}
               onChange={e => { setForm({ ...form, month: parseInt(e.target.value) }); clearError('date'); }}
               onBlur={() => validate('date', null, form)}
-              className="w-full rounded-lg px-4 py-4 text-white text-center focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/20 transition-colors border"
+              className="w-full rounded-[var(--radius-md)] px-5 py-4 text-white text-center focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/20 transition-colors border"
               style={{ background: 'var(--color-surface)', borderColor: errors.date ? 'var(--color-error)' : 'var(--color-border)' }}
               placeholder="月"
               min={1}
@@ -226,7 +226,7 @@ export default function BirthForm({ onSubmit }: BirthFormProps) {
               value={form.day}
               onChange={e => { setForm({ ...form, day: parseInt(e.target.value) }); clearError('date'); }}
               onBlur={() => validate('date', null, form)}
-              className="w-full rounded-lg px-4 py-4 text-white text-center focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/20 transition-colors border"
+              className="w-full rounded-[var(--radius-md)] px-5 py-4 text-white text-center focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/20 transition-colors border"
               style={{ background: 'var(--color-surface)', borderColor: errors.date ? 'var(--color-error)' : 'var(--color-border)' }}
               placeholder="日"
               min={1}
@@ -259,7 +259,7 @@ export default function BirthForm({ onSubmit }: BirthFormProps) {
             value={form.minute}
             onChange={e => { setForm({ ...form, minute: parseInt(e.target.value) }); clearError('minute'); }}
             onBlur={() => validate('minute', form.minute)}
-            className="w-full rounded-lg px-4 py-4 text-white text-center focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/20 transition-colors border"
+            className="w-full rounded-[var(--radius-md)] px-5 py-4 text-white text-center focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/20 transition-colors border"
             style={{ background: 'var(--color-surface)', borderColor: errors.minute ? 'var(--color-error)' : 'var(--color-border)' }}
             min={0}
             max={59}
