@@ -64,7 +64,7 @@ export function Toggle({ checked, onChange, disabled = false, size = 'md', label
       `}
       style={{
         boxShadow: checked
-          ? '0 0 0 2px var(--color-gold)'
+          ? 'inset 0 0 0 1px var(--color-gold)'
           : 'none',
       }}
     >
@@ -74,7 +74,7 @@ export function Toggle({ checked, onChange, disabled = false, size = 'md', label
           ${styles.thumb}
           rounded-full
           bg-white
-          shadow
+          shadow-md
           transition-transform duration-200 ease-out
           ${checked ? styles.translate : 'left-1'}
         `}

@@ -1,0 +1,33 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3:*)",
+      "Bash(node:*)",
+      "Bash(npx create-next-app@latest . --typescript --tailwind --eslint --app --src-dir --import-alias \"@/*\" --no-git)",
+      "Bash(npm install:*)",
+      "Bash(npm test:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npm run:*)",
+      "Bash(npx jest:*)",
+      "Bash(git diff:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m ':*)",
+      "Bash(git commit:*)",
+      "Bash(ls D:/claude/workspace/ai-fortune-telling/*.json D:/claude/workspace/ai-fortune-telling/*.env*)",
+      "Bash(curl -s -X POST http://localhost:3000/api/ai/analyze -H 'Content-Type: application/json' -d '{\"birthData\":{\"year\":1990,\"month\":5,\"day\":15,\"hour\":10,\"minute\":0,\"gender\":\"male\",\"province\":\"北京\"}}')",
+      "WebSearch",
+      "WebFetch(domain:www.minimaxi.com)",
+      "WebFetch(domain:api.minimax.chat)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000)",
+      "Bash(curl -s \"http://localhost:3000/api/reports?userId=anonymous\")",
+      "Bash(curl -s \"http://localhost:3002/api/reports?userId=anonymous\")",
+      "Bash(curl -v \"http://localhost:3000/api/reports?userId=anonymous\")",
+      "Bash(curl:*)",
+      "Bash(netstat -ano)",
+      "Bash(pkill -f \"next dev\")",
+      "Bash(taskkill /F /IM node.exe)",
+      "Bash(npx tsx -e ':*)",
+      "Bash(npx ts-node --esm -e ':*)"
+    ]
+  }
+}

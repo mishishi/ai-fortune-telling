@@ -1,0 +1,109 @@
+<h2>动效设计风格</h2>
+<p class="subtitle">命理揭晓的仪式感节奏</p>
+
+<div class="cards">
+  <div class="card" data-choice="subtle" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background: #0f0f1a; padding: 30px; display: flex; flex-direction: column; align-items: center; gap: 15px;">
+        <div style="width: 60px; height: 60px; border-radius: 50%; background: rgba(196,30,58,0.2); display: flex; align-items: center; justify-content: center;">
+          <div style="width: 20px; height: 20px; border-radius: 50%; background: #c41e3a; opacity: 0.6;"></div>
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <div style="width: 40px; height: 3px; background: rgba(196,30,58,0.4);"></div>
+          <div style="width: 40px; height: 3px; background: rgba(196,30,58,0.4);"></div>
+          <div style="width: 40px; height: 3px; background: rgba(196,30,58,0.4);"></div>
+        </div>
+        <div style="font-size: 11px; color: rgba(255,255,255,0.3);">淡入淡出 · 微妙过渡</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>微妙过渡</h3>
+      <p>淡入淡出 + 微位移，不抢内容风头，优雅克制的动效</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="mystical" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background: #0f0f1a; padding: 30px; display: flex; flex-direction: column; align-items: center; gap: 15px;">
+        <div style="width: 60px; height: 60px; position: relative;">
+          <div style="position: absolute; inset: 0; border-radius: 50%; background: rgba(196,30,58,0.3); animation: pulse 2s ease-in-out infinite;"></div>
+          <div style="position: absolute; inset: 10px; border-radius: 50%; background: rgba(212,175,55,0.3); animation: pulse 2s ease-in-out infinite 0.5s;"></div>
+          <div style="position: absolute; inset: 20px; border-radius: 50%; background: #c41e3a; animation: pulse 2s ease-in-out infinite 1s;"></div>
+        </div>
+        <div style="display: flex; gap: 6px;">
+          <div style="width: 6px; height: 6px; border-radius: 50%; background: #c41e3a; animation: twinkle 2s ease-in-out infinite;"></div>
+          <div style="width: 6px; height: 6px; border-radius: 50%; background: #d4af37; animation: twinkle 2s ease-in-out infinite 0.3s;"></div>
+          <div style="width: 6px; height: 6px; border-radius: 50%; background: #c41e3a; animation: twinkle 2s ease-in-out infinite 0.6s;"></div>
+          <div style="width: 6px; height: 6px; border-radius: 50%; background: #d4af37; animation: twinkle 2s ease-in-out infinite 0.9s;"></div>
+          <div style="width: 6px; height: 6px; border-radius: 50%; background: #c41e3a; animation: twinkle 2s ease-in-out infinite 1.2s;"></div>
+        </div>
+        <div style="font-size: 11px; color: rgba(255,255,255,0.3);">光晕脉动 · 星辰闪烁</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>神秘光效</h3>
+      <p>光晕脉动 + 星辰闪烁 + 呼吸发光效果，契合命理神秘感</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="dramatic" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background: #0f0f1a; padding: 30px; display: flex; flex-direction: column; align-items: center; gap: 15px;">
+        <div style="position: relative; width: 60px; height: 60px;">
+          <div style="position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); width: 4px; height: 60px; background: linear-gradient(180deg, transparent, #c41e3a, transparent);"></div>
+          <div style="position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); width: 60px; height: 4px; background: linear-gradient(90deg, transparent, #d4af37, transparent);"></div>
+          <div style="position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); width: 20px; height: 20px; border: 2px solid #c41e3a; animation: rotate 4s linear infinite;"></div>
+        </div>
+        <div style="font-size: 11px; color: rgba(255,255,255,0.3);">卷轴展开 · 命运揭晓</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>戏剧性揭晓</h3>
+      <p>卷轴展开 + 光芒绽放 + 旋转仪式环，戏剧张力最强</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="scroll-unfold" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background: #0f0f1a; padding: 30px; display: flex; flex-direction: column; align-items: center; gap: 15px;">
+        <div style="width: 50px; height: 40px; position: relative; overflow: hidden;">
+          <div style="position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, transparent, #d4af37, transparent); animation: unfold 2s ease-in-out infinite;"></div>
+          <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, transparent, #c41e3a, transparent); animation: unfold 2s ease-in-out infinite reverse;"></div>
+        </div>
+        <div style="display: flex; gap: 4px; align-items: center;">
+          <div style="width: 2px; height: 30px; background: linear-gradient(180deg, transparent, rgba(196,30,58,0.5));"></div>
+          <div style="width: 30px; height: 2px; background: linear-gradient(90deg, transparent, rgba(212,175,55,0.5));"></div>
+          <div style="width: 2px; height: 30px; background: linear-gradient(180deg, rgba(196,30,58,0.5), transparent);"></div>
+        </div>
+        <div style="font-size: 11px; color: rgba(255,255,255,0.3);">卷轴展开 · 墨迹晕染</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>卷轴墨韵</h3>
+      <p>卷轴展开动画 + 墨迹晕染效果，东方书写仪式感</p>
+    </div>
+  </div>
+</div>
+
+<p style="margin-top: 20px; color: #9ca3af; font-size: 13px;">
+  💡 推荐「神秘光效」— 光晕脉动+星辰闪烁，既有神秘感又不过于戏剧化
+</p>
+
+<style>
+@keyframes pulse {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.1); }
+}
+@keyframes twinkle {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+@keyframes rotate {
+  from { transform: translate(-50%,-50%) rotate(0deg); }
+  to { transform: translate(-50%,-50%) rotate(360deg); }
+}
+@keyframes unfold {
+  0% { opacity: 0; }
+  50%, 100% { opacity: 1; }
+}
+</style>

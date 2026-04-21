@@ -1,0 +1,90 @@
+<h2>装饰元素选择</h2>
+<p class="subtitle">东方美学细节 — 让界面更有"命运感"</p>
+
+<div class="cards">
+  <div class="card" data-choice="symbols-only" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background: #0f0f1a; padding: 30px; display: flex; flex-direction: column; align-items: center; gap: 15px;">
+        <div style="font-size: 32px;">☯</div>
+        <div style="display: flex; gap: 20px;">
+          <div style="font-size: 20px; opacity: 0.6;">✦</div>
+          <div style="font-size: 20px; opacity: 0.6;">◈</div>
+          <div style="font-size: 20px; opacity: 0.6;">◇</div>
+        </div>
+        <div style="width: 60%; height: 1px; background: rgba(196,30,58,0.3);"></div>
+        <div style="font-size: 14px; color: rgba(255,255,255,0.5);">仅符号装饰</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>仅符号</h3>
+      <p>用 ☯ ✦ ◈ 等 Unicode 符号点缀，轻量但缺少质感</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="calligraphy-strokes" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background: #0f0f1a; padding: 30px; display: flex; flex-direction: column; align-items: center; gap: 15px;">
+        <div style="width: 120px; height: 40px; position: relative;">
+          <svg viewBox="0 0 120 40" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;">
+            <path d="M10,30 Q30,5 60,20 T110,25" stroke="url(#goldGrad)" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <defs>
+              <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:#d4af37;stop-opacity:0.3"/>
+                <stop offset="50%" style="stop-color:#d4af37;stop-opacity:1"/>
+                <stop offset="100%" style="stop-color:#d4af37;stop-opacity:0.3"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div style="display: flex; gap: 30px; align-items: center;">
+          <div style="width: 1px; height: 30px; background: linear-gradient(180deg, transparent, #c41e3a, transparent);"></div>
+          <div style="width: 1px; height: 30px; background: linear-gradient(180deg, transparent, #c41e3a, transparent);"></div>
+        </div>
+        <div style="font-size: 14px; color: rgba(255,255,255,0.5);">书法笔画装饰线</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>书法笔画</h3>
+      <p>SVG 曲线模拟毛笔走势，金色渐变+朱红点缀，高端精致</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="ink-wash-bg" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background: linear-gradient(180deg, #0f0f1a 0%, #1a1525 100%); padding: 30px; position: relative; overflow: hidden;">
+        <div style="position: absolute; top: -20px; right: -20px; width: 100px; height: 100px; background: radial-gradient(ellipse at center, rgba(196,30,58,0.15) 0%, transparent 70%); opacity: 0.5;"></div>
+        <div style="position: absolute; bottom: 10px; left: 10px; width: 80px; height: 60px; background: radial-gradient(ellipse at bottom left, rgba(100,100,100,0.1) 0%, transparent 70%);"></div>
+        <div style="position: relative; z-index: 1; text-align: center;">
+          <div style="font-size: 14px; color: rgba(255,255,255,0.5);">水墨晕染背景</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>水墨晕染</h3>
+      <p>SVG 径向渐变模拟水墨在宣纸上的晕染效果，意境深远</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="full-ceremony" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background: linear-gradient(180deg, #0a0a14 0%, #15101a 100%); padding: 30px; position: relative;">
+        <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.1; background-image: url('data:image/svg+xml,<svg viewBox=%220 0 100 100%22 xmlns=%22http://www.w3.org/2000/svg%22><filter id=%22n%22><feTurbulence baseFrequency=%220.5%22 numOctaves=%223%22/%22></filter><rect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22/></svg>');"></div>
+        <div style="position: absolute; top: 10px; left: 50%; transform: translateX(-50%); width: 80%; height: 1px; background: linear-gradient(90deg, transparent, #d4af37, transparent);"></div>
+        <div style="position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); width: 80%; height: 1px; background: linear-gradient(90deg, transparent, #d4af37, transparent);"></div>
+        <div style="position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 10px;">
+          <div style="font-size: 12px; color: #d4af37; letter-spacing: 8px;">命 运 之 轮</div>
+          <div style="width: 40px; height: 1px; background: linear-gradient(90deg, transparent, #c41e3a, transparent);"></div>
+          <div style="font-size: 11px; color: rgba(255,255,255,0.4);">✦ 完整仪式感 ✦</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>完整仪式感</h3>
+      <p>书法标题+金色分割线+水墨纹理+印章感，高端完整</p>
+    </div>
+  </div>
+</div>
+
+<p style="margin-top: 20px; color: #9ca3af; font-size: 13px;">
+  💡 推荐「完整仪式感」— 多种元素组合，形成真正的东方奢华感
+</p>

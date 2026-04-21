@@ -117,7 +117,7 @@ export default function ProfilePage() {
   return (
     <main className="min-h-screen px-4 py-8 max-w-lg mx-auto bg-[var(--color-bg-page)]">
       {/* Header */}
-      <div className="mb-8 relative">
+      <div className="mb-8 relative text-center">
         {/* Corner brackets decoration */}
         <div className="absolute -top-4 -left-4 w-8 h-8 border-l-2 border-t-2 border-[var(--color-accent)] opacity-40" />
         <div className="absolute -top-4 -right-4 w-8 h-8 border-r-2 border-t-2 border-[var(--color-accent)] opacity-40" />
@@ -278,12 +278,12 @@ export default function ProfilePage() {
                 <p className="text-gray-400 text-xs">接收分析报告完成通知</p>
               </div>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               <Toggle
                 checked={notifications}
                 onChange={(val) => setNotifications(val)}
               />
-              <span className="text-sm" style={{ color: 'var(--color-text-muted)' }}>
+              <span className="text-sm font-medium" style={{ color: notifications ? 'var(--color-primary)' : 'var(--color-text-muted)' }}>
                 {notifications ? 'ON' : 'OFF'}
               </span>
             </div>
@@ -302,12 +302,12 @@ export default function ProfilePage() {
                 <p className="text-gray-400 text-xs">历史报告中的姓名脱敏</p>
               </div>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               <Toggle
                 checked={privacyMode}
                 onChange={(val) => setPrivacyMode(val)}
               />
-              <span className="text-sm" style={{ color: 'var(--color-text-muted)' }}>
+              <span className="text-sm font-medium" style={{ color: privacyMode ? 'var(--color-primary)' : 'var(--color-text-muted)' }}>
                 {privacyMode ? 'ON' : 'OFF'}
               </span>
             </div>

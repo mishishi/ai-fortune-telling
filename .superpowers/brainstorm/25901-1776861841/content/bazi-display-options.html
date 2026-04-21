@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>八字命盘展示方案</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', sans-serif; background: #0a0e27; color: #e8e4dc; padding: 24px; }
+  h1 { text-align: center; margin-bottom: 32px; font-size: 24px; color: #f0c674; }
+  h2 { font-size: 16px; margin-bottom: 16px; color: #a09890; }
+  .options { display: flex; gap: 24px; flex-wrap: wrap; justify-content: center; }
+  .option { background: #1a1f3a; border-radius: 16px; padding: 24px; width: 340px; cursor: pointer; transition: all 0.3s; border: 2px solid transparent; }
+  .option:hover { border-color: #7b68ee; transform: translateY(-4px); }
+  .option.selected { border-color: #f0c674; }
+  .preview { background: linear-gradient(180deg, #0a0e27 0%, #1a1f3a 100%); border-radius: 12px; padding: 20px; min-height: 320px; position: relative; overflow: hidden; }
+  .preview-label { font-size: 10px; color: #7b68ee; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; }
+
+  /* Option A: Card Stack */
+  .bazi-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .bazi-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 16px; text-align: center; }
+  .bazi-card .label { font-size: 11px; color: #706860; margin-bottom: 8px; }
+  .bazi-card .pillar { font-size: 28px; font-weight: bold; margin-bottom: 4px; }
+  .bazi-card .ganzhi { font-size: 18px; color: #a09890; }
+  .bazi-card .element { display: inline-block; width: 20px; height: 20px; border-radius: 50%; margin-top: 8px; }
+  .wood { background: #4ade80; }
+  .fire { background: #f87171; }
+  .earth { background: #fbbf24; }
+  .metal { background: #60a5fa; }
+  .water { background: #a78bfa; }
+
+  /* Option B: Timeline Layout */
+  .bazi-timeline { position: relative; }
+  .bazi-timeline::before { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; background: linear-gradient(180deg, #7b68ee, #f0c674); transform: translateX(-50%); }
+  .timeline-item { display: flex; align-items: center; margin-bottom: 16px; position: relative; }
+  .timeline-item .dot { width: 12px; height: 12px; border-radius: 50%; background: #7b68ee; position: absolute; left: 50%; transform: translateX(-50%); z-index: 1; }
+  .timeline-item .content { width: 45%; padding: 12px; background: rgba(255,255,255,0.05); border-radius: 8px; }
+  .timeline-item:nth-child(even) .content { margin-left: 55%; }
+  .timeline-item .content .label { font-size: 11px; color: #706860; }
+  .timeline-item .content .text { font-size: 18px; font-weight: bold; }
+
+  /* Option C: Horoscope Ring */
+  .bazi-ring { display: flex; flex-direction: column; align-items: center; padding-top: 20px; }
+  .ring-center { width: 200px; height: 200px; border-radius: 50%; border: 3px solid rgba(255,255,255,0.1); position: relative; display: flex; align-items: center; justify-content: center; }
+  .ring-center .inner-text { font-size: 48px; font-weight: bold; color: #f0c674; }
+  .ring-segments { position: absolute; inset: 0; }
+  .ring-segment { position: absolute; width: 50%; height: 50%; border: 1px solid rgba(255,255,255,0.1); }
+  .ring-segment:nth-child(1) { top: 0; left: 50%; border-radius: 0 100% 0 0; }
+  .ring-segment:nth-child(2) { bottom: 0; left: 50%; border-radius: 0 0 100% 0; }
+  .ring-segment:nth-child(3) { bottom: 0; right: 50%; border-radius: 0 0 0 100%; }
+  .ring-segment:nth-child(4) { top: 0; right: 50%; border-radius: 100% 0 0 0; }
+  .ring-labels { display: flex; justify-content: space-around; width: 100%; margin-top: 24px; }
+  .ring-label { text-align: center; }
+  .ring-label .name { font-size: 14px; font-weight: bold; }
+  .ring-label .value { font-size: 12px; color: #a09890; margin-top: 4px; }
+
+  .select-btn { display: block; width: 100%; margin-top: 20px; padding: 12px; background: #7b68ee; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; transition: background 0.2s; }
+  .select-btn:hover { background: #6a5acd; }
+  .option.selected .select-btn { background: #f0c674; color: #0a0e27; }
+</style>
+</head>
+<body>
+<h1>八字命盘展示方案选择</h1>
+<div class="options">
+
+  <!-- Option A: Card Stack -->
+  <div class="option" onclick="select(this)">
+    <h2>A. 四柱卡片式</h2>
+    <div class="preview">
+      <div class="preview-label">方案A - 卡片堆叠</div>
+      <div class="bazi-cards">
+        <div class="bazi-card">
+          <div class="label">年柱</div>
+          <div class="pillar" style="color:#4ade80">辛</div>
+          <div class="ganzhi">丑</div>
+          <div class="element wood"></div>
+        </div>
+        <div class="bazi-card">
+          <div class="label">月柱</div>
+          <div class="pillar" style="color:#f87171">丙</div>
+          <div class="ganzhi">寅</div>
+          <div class="element fire"></div>
+        </div>
+        <div class="bazi-card">
+          <div class="label">日柱</div>
+          <div class="pillar" style="color:#fbbf24">戊</div>
+          <div class="ganzhi">辰</div>
+          <div class="element earth"></div>
+        </div>
+        <div class="bazi-card">
+          <div class="label">时柱</div>
+          <div class="pillar" style="color:#60a5fa">壬</div>
+          <div class="ganzhi">戌</div>
+          <div class="element metal"></div>
+        </div>
+      </div>
+    </div>
+    <button class="select-btn">选择此方案</button>
+  </div>
+
+  <!-- Option B: Timeline -->
+  <div class="option" onclick="select(this)">
+    <h2>B. 命盘时间轴</h2>
+    <div class="preview">
+      <div class="preview-label">方案B - 时间轴展示</div>
+      <div class="bazi-timeline">
+        <div class="timeline-item">
+          <div class="dot" style="background:#4ade80"></div>
+          <div class="content">
+            <div class="label">年柱 · 辛丑</div>
+            <div class="text" style="color:#4ade80">金土</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="dot" style="background:#f87171"></div>
+          <div class="content">
+            <div class="label">月柱 · 丙寅</div>
+            <div class="text" style="color:#f87171">火木</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="dot" style="background:#fbbf24"></div>
+          <div class="content">
+            <div class="label">日柱 · 戊辰</div>
+            <div class="text" style="color:#fbbf24">土土</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="dot" style="background:#60a5fa"></div>
+          <div class="content">
+            <div class="label">时柱 · 壬戌</div>
+            <div class="text" style="color:#60a5fa">水火</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <button class="select-btn">选择此方案</button>
+  </div>
+
+  <!-- Option C: Ring -->
+  <div class="option" onclick="select(this)">
+    <h2>C. 命盘环形图</h2>
+    <div class="preview">
+      <div class="preview-label">方案C - 环形命盘</div>
+      <div class="bazi-ring">
+        <div class="ring-center">
+          <div class="ring-segments">
+            <div class="ring-segment" style="border-color:#4ade80;background:rgba(74,222,128,0.1)"></div>
+            <div class="ring-segment" style="border-color:#f87171;background:rgba(248,113,113,0.1)"></div>
+            <div class="ring-segment" style="border-color:#fbbf24;background:rgba(251,191,36,0.1)"></div>
+            <div class="ring-segment" style="border-color:#60a5fa;background:rgba(96,165,250,0.1)"></div>
+          </div>
+          <div class="inner-text">辰</div>
+        </div>
+        <div class="ring-labels">
+          <div class="ring-label">
+            <div class="name" style="color:#4ade80">年</div>
+            <div class="value">辛丑</div>
+          </div>
+          <div class="ring-label">
+            <div class="name" style="color:#f87171">月</div>
+            <div class="value">丙寅</div>
+          </div>
+          <div class="ring-label">
+            <div class="name" style="color:#fbbf24">日</div>
+            <div class="value">戊辰</div>
+          </div>
+          <div class="ring-label">
+            <div class="name" style="color:#60a5fa">时</div>
+            <div class="value">壬戌</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <button class="select-btn">选择此方案</button>
+  </div>
+
+</div>
+<script>
+function select(el) {
+  document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  el.querySelector('.select-btn').textContent = '✓ 已选择';
+}
+</script>
+</body>
+</html>
