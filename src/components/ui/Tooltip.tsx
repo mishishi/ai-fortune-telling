@@ -10,10 +10,14 @@ interface TooltipProps {
 
 export function Tooltip({ content, children, position = 'top' }: TooltipProps) {
   const [isVisible, setIsVisible] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
   const [coords, setCoords] = useState({ top: 0, left: 0 });
   const triggerRef = useRef<HTMLDivElement>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const ARROW_SIZE = 6;
+  const OFFSET = 8;
 
   const updatePosition = useCallback(() => {
     if (!triggerRef.current) return;
@@ -32,20 +36,20 @@ export function Tooltip({ content, children, position = 'top' }: TooltipProps) {
 
     switch (position) {
       case 'top':
-        top = triggerRect.top + scrollY - tooltipRect.height - 8;
+        top = triggerRect.top + scrollY - tooltipRect.height - OFFSET;
         left = triggerRect.left + scrollX + (triggerRect.width - tooltipRect.width) / 2;
         break;
       case 'bottom':
-        top = triggerRect.bottom + scrollY + 8;
+        top = triggerRect.bottom + scrollY + OFFSET;
         left = triggerRect.left + scrollX + (triggerRect.width - tooltipRect.width) / 2;
         break;
       case 'left':
         top = triggerRect.top + scrollY + (triggerRect.height - tooltipRect.height) / 2;
-        left = triggerRect.left + scrollX - tooltipRect.width - 8;
+        left = triggerRect.left + scrollX - tooltipRect.width - OFFSET;
         break;
       case 'right':
         top = triggerRect.top + scrollY + (triggerRect.height - tooltipRect.height) / 2;
-        left = triggerRect.right + scrollX + 8;
+        left = triggerRect.right + scrollX + OFFSET;
         break;
     }
 
@@ -78,6 +82,10 @@ export function Tooltip({ content, children, position = 'top' }: TooltipProps) {
     timeoutRef.current = setTimeout(() => {
       updatePosition();
       setIsVisible(true);
+      // Trigger animation after a micro delay
+      requestAnimationFrame(() => {
+        setIsAnimating(true);
+      });
     }, 100);
   }, [updatePosition]);
 
@@ -85,9 +93,10 @@ export function Tooltip({ content, children, position = 'top' }: TooltipProps) {
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
+    setIsAnimating(false);
     timeoutRef.current = setTimeout(() => {
       setIsVisible(false);
-    }, 100);
+    }, 150);
   }, []);
 
   useEffect(() => {
@@ -114,6 +123,48 @@ export function Tooltip({ content, children, position = 'top' }: TooltipProps) {
     };
   }, [isVisible, updatePosition]);
 
+  const getArrowStyle = (): React.CSSProperties => {
+    const baseStyle: React.CSSProperties = {
+      position: 'absolute',
+      width: 0,
+      height: 0,
+      borderStyle: 'solid',
+    };
+
+    const sizes = {
+      top: {
+        borderWidth: `0 ${ARROW_SIZE}px ${ARROW_SIZE}px ${ARROW_SIZE}px`,
+        borderColor: `transparent transparent var(--color-surface) transparent`,
+        left: '50%',
+        transform: 'translateX(-50%)',
+        bottom: -ARROW_SIZE,
+      },
+      bottom: {
+        borderWidth: `${ARROW_SIZE}px ${ARROW_SIZE}px 0 ${ARROW_SIZE}px`,
+        borderColor: `var(--color-surface) transparent transparent transparent`,
+        left: '50%',
+        transform: 'translateX(-50%)',
+        top: -ARROW_SIZE,
+      },
+      left: {
+        borderWidth: `${ARROW_SIZE}px ${ARROW_SIZE}px ${ARROW_SIZE}px 0`,
+        borderColor: `transparent var(--color-surface) transparent transparent`,
+        top: '50%',
+        transform: 'translateY(-50%)',
+        right: -ARROW_SIZE,
+      },
+      right: {
+        borderWidth: `${ARROW_SIZE}px 0 ${ARROW_SIZE}px ${ARROW_SIZE}px`,
+        borderColor: `transparent transparent transparent var(--color-surface)`,
+        top: '50%',
+        transform: 'translateY(-50%)',
+        left: -ARROW_SIZE,
+      },
+    };
+
+    return { ...baseStyle, ...sizes[position] };
+  };
+
   return (
     <>
       <div
@@ -131,7 +182,7 @@ export function Tooltip({ content, children, position = 'top' }: TooltipProps) {
         <div
           ref={tooltipRef}
           role="tooltip"
-          className="px-3 py-2 rounded-lg text-xs font-medium max-w-xs shadow-lg pointer-events-none"
+          className={`px-3 py-2 rounded-lg text-xs font-medium max-w-xs shadow-lg pointer-events-none ${isAnimating ? 'animate-fade-in-scale-fast' : 'opacity-0'}`}
           style={{
             position: 'fixed',
             top: coords.top,
@@ -144,6 +195,7 @@ export function Tooltip({ content, children, position = 'top' }: TooltipProps) {
           }}
         >
           {content}
+          <div style={getArrowStyle()} />
         </div>
       )}
     </>
