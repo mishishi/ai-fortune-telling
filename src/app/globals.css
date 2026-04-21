@@ -467,21 +467,53 @@ html {
 }
 
 
-/* Utility Classes - Entrance */
+/* Utility Classes - Entrance with varied durations for better rhythm */
 .animate-fade-in {
   animation: fadeIn 300ms ease-out forwards;
+}
+
+.animate-fade-in-fast {
+  animation: fadeIn 150ms ease-out forwards;
+}
+
+.animate-fade-in-medium {
+  animation: fadeIn 250ms ease-out forwards;
+}
+
+.animate-fade-in-slow {
+  animation: fadeIn 500ms ease-out forwards;
 }
 
 .animate-fade-in-up {
   animation: fadeInUp 400ms ease-out forwards;
 }
 
+.animate-fade-in-up-fast {
+  animation: fadeInUp 200ms ease-out forwards;
+}
+
+.animate-fade-in-up-slow {
+  animation: fadeInUp 600ms ease-out forwards;
+}
+
 .animate-fade-in-down {
   animation: fadeInDown 400ms ease-out forwards;
 }
 
+.animate-fade-in-down-fast {
+  animation: fadeInDown 200ms ease-out forwards;
+}
+
 .animate-fade-in-scale {
   animation: fadeInScale 300ms ease-out forwards;
+}
+
+.animate-fade-in-scale-fast {
+  animation: fadeInScale 150ms ease-out forwards;
+}
+
+.animate-fade-in-scale-slow {
+  animation: fadeInScale 500ms ease-out forwards;
 }
 
 .animate-slide-in-left {
@@ -497,6 +529,10 @@ html {
   animation: fadeOut 200ms ease-in forwards;
 }
 
+.animate-fade-out-fast {
+  animation: fadeOut 100ms ease-in forwards;
+}
+
 .animate-fade-out-down {
   animation: fadeOutDown 300ms ease-in forwards;
 }
@@ -510,12 +546,20 @@ html {
   animation: pulse 300ms ease-in-out;
 }
 
+.animate-pulse-fast {
+  animation: pulse 150ms ease-in-out;
+}
+
 .animate-shake {
   animation: shake 500ms ease-in-out;
 }
 
 .animate-success-pop {
   animation: successPop 400ms ease-out;
+}
+
+.animate-success-pop-fast {
+  animation: successPop 200ms ease-out;
 }
 
 .animate-spin {
@@ -534,29 +578,70 @@ html {
   animation: glowPulse 2s ease-in-out infinite;
 }
 
-/* Staggered reveal for lists */
+/* Staggered reveal for lists - varied delays for natural rhythm */
 .stagger-item {
   opacity: 0;
   transform: translateY(12px);
   animation: fadeInUp 400ms ease-out forwards;
 }
 
+/* Organic stagger delays - like breathing, not mechanical */
 .stagger-item:nth-child(1) { animation-delay: 0ms; }
-.stagger-item:nth-child(2) { animation-delay: 80ms; }
-.stagger-item:nth-child(3) { animation-delay: 160ms; }
-.stagger-item:nth-child(4) { animation-delay: 240ms; }
-.stagger-item:nth-child(5) { animation-delay: 320ms; }
-.stagger-item:nth-child(6) { animation-delay: 400ms; }
-.stagger-item:nth-child(7) { animation-delay: 480ms; }
-.stagger-item:nth-child(8) { animation-delay: 560ms; }
-.stagger-item:nth-child(9) { animation-delay: 640ms; }
-.stagger-item:nth-child(10) { animation-delay: 720ms; }
+.stagger-item:nth-child(2) { animation-delay: 70ms; }
+.stagger-item:nth-child(3) { animation-delay: 150ms; }
+.stagger-item:nth-child(4) { animation-delay: 200ms; }
+.stagger-item:nth-child(5) { animation-delay: 280ms; }
+.stagger-item:nth-child(6) { animation-delay: 340ms; }
+.stagger-item:nth-child(7) { animation-delay: 430ms; }
+.stagger-item:nth-child(8) { animation-delay: 500ms; }
+.stagger-item:nth-child(9) { animation-delay: 580ms; }
+.stagger-item:nth-child(10) { animation-delay: 670ms; }
 
-/* Hover interactions */
+/* Fast stagger for compact lists */
+.stagger-item-fast:nth-child(1) { animation-delay: 0ms; }
+.stagger-item-fast:nth-child(2) { animation-delay: 40ms; }
+.stagger-item-fast:nth-child(3) { animation-delay: 80ms; }
+.stagger-item-fast:nth-child(4) { animation-delay: 120ms; }
+.stagger-item-fast:nth-child(5) { animation-delay: 160ms; }
+.stagger-item-fast:nth-child(6) { animation-delay: 200ms; }
+.stagger-item-fast:nth-child(7) { animation-delay: 240ms; }
+.stagger-item-fast:nth-child(8) { animation-delay: 280ms; }
+.stagger-item-fast:nth-child(9) { animation-delay: 320ms; }
+.stagger-item-fast:nth-child(10) { animation-delay: 360ms; }
+
+/* Slow stagger for dramatic reveals */
+.stagger-item-slow:nth-child(1) { animation-delay: 0ms; }
+.stagger-item-slow:nth-child(2) { animation-delay: 120ms; }
+.stagger-item-slow:nth-child(3) { animation-delay: 260ms; }
+.stagger-item-slow:nth-child(4) { animation-delay: 380ms; }
+.stagger-item-slow:nth-child(5) { animation-delay: 520ms; }
+.stagger-item-slow:nth-child(6) { animation-delay: 640ms; }
+.stagger-item-slow:nth-child(7) { animation-delay: 780ms; }
+.stagger-item-slow:nth-child(8) { animation-delay: 900ms; }
+.stagger-item-slow:nth-child(9) { animation-delay: 1040ms; }
+.stagger-item-slow:nth-child(10) { animation-delay: 1160ms; }
+
+/* Hover interactions - varied speeds for better rhythm */
 .hover-lift {
   transition: transform 200ms var(--ease-smooth), box-shadow 200ms var(--ease-smooth);
 }
 .hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
+}
+
+.hover-lift-fast {
+  transition: transform 150ms var(--ease-smooth), box-shadow 150ms var(--ease-smooth);
+}
+.hover-lift-fast:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
+}
+
+.hover-lift-slow {
+  transition: transform 350ms var(--ease-smooth), box-shadow 350ms var(--ease-smooth);
+}
+.hover-lift-slow:hover {
   transform: translateY(-4px);
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
 }
@@ -568,10 +653,38 @@ html {
   transform: scale(1.02);
 }
 
+.hover-scale-fast {
+  transition: transform 150ms var(--ease-smooth);
+}
+.hover-scale-fast:hover {
+  transform: scale(1.02);
+}
+
+.hover-scale-slow {
+  transition: transform 300ms var(--ease-smooth);
+}
+.hover-scale-slow:hover {
+  transform: scale(1.02);
+}
+
 .hover-glow {
   transition: box-shadow 200ms ease;
 }
 .hover-glow:hover {
+  box-shadow: 0 0 20px rgba(196, 30, 58, 0.5);
+}
+
+.hover-glow-fast {
+  transition: box-shadow 150ms ease;
+}
+.hover-glow-fast:hover {
+  box-shadow: 0 0 20px rgba(196, 30, 58, 0.5);
+}
+
+.hover-glow-slow {
+  transition: box-shadow 350ms ease;
+}
+.hover-glow-slow:hover {
   box-shadow: 0 0 20px rgba(196, 30, 58, 0.5);
 }
 
