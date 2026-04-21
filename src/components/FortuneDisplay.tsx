@@ -162,7 +162,8 @@ export default function FortuneDisplay({ analysis, isLocked = false }: FortuneDi
     : SECTIONS;
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-3 animate-fade-in-up">
+      <h3 className="text-h3 title-underline">命盘解读</h3>
       {visibleSections.map((section) => {
         const isExpanded = expandedSection === section.key;
         const isPreview = isLocked && section.basic;
@@ -183,7 +184,7 @@ export default function FortuneDisplay({ analysis, isLocked = false }: FortuneDi
             {/* Header */}
             <button
               onClick={() => toggleSection(section.key)}
-              className="w-full px-5 py-4 flex items-center justify-between transition-all duration-200 hover:bg-white/5"
+              className="w-full px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-white/5 rounded-[var(--radius-md)] transition-colors stagger-item"
             >
               <div className="flex items-center gap-3">
                 <div
