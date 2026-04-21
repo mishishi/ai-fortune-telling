@@ -176,7 +176,7 @@ export default function ProfilePage() {
                 placeholder="姓名"
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
-                aria-invalid={!form.name && form.birthDate !== ''}
+                aria-invalid={!form.name}
                 className="w-full px-4 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)] focus:ring-offset-2 focus:ring-offset-[var(--color-surface)] aria-invalid:border-red-500 transition-all duration-150 ease-out"
               />
               <CustomDropdown
@@ -191,7 +191,7 @@ export default function ProfilePage() {
                 type="date"
                 value={form.birthDate}
                 onChange={(e) => setForm({ ...form, birthDate: e.target.value })}
-                aria-invalid={form.name !== '' && !form.birthDate}
+                aria-invalid={!form.birthDate}
                 className="w-full px-4 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)] focus:ring-offset-2 focus:ring-offset-[var(--color-surface)] aria-invalid:border-red-500 transition-all duration-150 ease-out [&::-webkit-calendar-picker-indicator]:invert"
               />
               <div className="flex gap-2">
