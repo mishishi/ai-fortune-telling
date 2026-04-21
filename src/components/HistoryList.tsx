@@ -192,7 +192,7 @@ export default function HistoryList() {
               onClick={() => setSelectedMemberId('all')}
               className={`px-4 py-2 rounded-full text-sm whitespace-nowrap transition-colors ${
                 selectedMemberId === 'all'
-                  ? 'bg-[#7b68ee] text-white'
+                  ? 'bg-[#c41e3a] text-white'
                   : 'bg-white/5 text-gray-400 hover:bg-white/10'
               }`}
             >
@@ -204,7 +204,7 @@ export default function HistoryList() {
                 onClick={() => setSelectedMemberId(member.name)}
                 className={`px-4 py-2 rounded-full text-sm whitespace-nowrap transition-colors ${
                   selectedMemberId === member.name
-                    ? 'bg-[#7b68ee] text-white'
+                    ? 'bg-[#c41e3a] text-white'
                     : 'bg-white/5 text-gray-400 hover:bg-white/10'
                 }`}
               >
@@ -253,7 +253,7 @@ export default function HistoryList() {
           <button
             onClick={handleOpenCompare}
             title="选择2个报告进行对比"
-            className="px-8 py-3 bg-gradient-to-r from-[#7b68ee] to-[#ff69b4] text-white font-bold rounded-full shadow-lg hover:shadow-xl transition-all"
+            className="px-8 py-3 bg-gradient-to-r from-[#c41e3a] to-[#d4af37] text-white font-bold rounded-full shadow-lg hover:shadow-xl transition-all"
           >
             开始对比
           </button>
