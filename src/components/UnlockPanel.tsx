@@ -241,7 +241,6 @@ export default function UnlockPanel({ reportId, hiddenSections, isLocked }: Unlo
                 border: '2px solid rgba(255,255,255,0.3)',
                 borderTopColor: 'currentColor',
                 borderRadius: '50%',
-                animation: 'spin 0.8s linear infinite',
               }}
             />
             <span>处理中...</span>
@@ -281,6 +280,9 @@ export default function UnlockPanel({ reportId, hiddenSections, isLocked }: Unlo
           to {
             transform: rotate(360deg);
           }
+        }
+        .spinner {
+          animation: spin 0.8s linear infinite;
         }
         .unlock-cta-button {
           transform: translateY(0);
