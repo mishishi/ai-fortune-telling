@@ -54,6 +54,7 @@ export function Toggle({ checked, onChange, disabled = false, size = 'md', label
       className={`
         relative ${styles.track}
         rounded-full
+        overflow-hidden
         transition-colors duration-200 ease-out
         focus:outline-none
         ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
@@ -74,7 +75,6 @@ export function Toggle({ checked, onChange, disabled = false, size = 'md', label
           ${styles.thumb}
           rounded-full
           bg-white
-          shadow-md
           transition-transform duration-200 ease-out
           ${checked ? styles.translate : 'left-1'}
         `}

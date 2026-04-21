@@ -279,13 +279,13 @@ export default function ProfilePage() {
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <span className="text-sm font-medium w-8 text-right" style={{ color: notifications ? 'var(--color-primary)' : 'var(--color-text-muted)' }}>
-                {notifications ? 'ON' : 'OFF'}
-              </span>
               <Toggle
                 checked={notifications}
                 onChange={(val) => setNotifications(val)}
               />
+              <span className="text-sm font-medium w-8" style={{ color: notifications ? 'var(--color-primary)' : 'var(--color-text-muted)' }}>
+                {notifications ? 'ON' : 'OFF'}
+              </span>
             </div>
           </div>
 
@@ -303,13 +303,13 @@ export default function ProfilePage() {
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <span className="text-sm font-medium w-8 text-right" style={{ color: privacyMode ? 'var(--color-primary)' : 'var(--color-text-muted)' }}>
-                {privacyMode ? 'ON' : 'OFF'}
-              </span>
               <Toggle
                 checked={privacyMode}
                 onChange={(val) => setPrivacyMode(val)}
               />
+              <span className="text-sm font-medium w-8" style={{ color: privacyMode ? 'var(--color-primary)' : 'var(--color-text-muted)' }}>
+                {privacyMode ? 'ON' : 'OFF'}
+              </span>
             </div>
           </div>
         </div>
