@@ -217,49 +217,36 @@ export default function HistoryList() {
 
       {/* Reports List */}
       {sortedReports.length === 0 ? (
-        <div className="text-center py-20 px-4">
-          {/* Decorative SVG - Scroll symbol */}
-          <div className="relative inline-block mb-8">
-            <svg className="w-24 h-24 mx-auto opacity-60" viewBox="0 0 100 100" fill="none">
-              <circle cx="50" cy="50" r="45" stroke="url(#scrollGrad)" strokeWidth="2" strokeDasharray="4 4"/>
-              <path d="M30 25h40c2 0 3 1 3 3v44c0 2-1 3-3 3H30c-2 0-3-1-3-3V28c0-2 1-3 3-3z" stroke="#d4af37" strokeWidth="1.5" fill="none"/>
-              <path d="M35 35h30M35 45h30M35 55h20" stroke="#d4af37" strokeWidth="1" opacity="0.6"/>
-              <circle cx="50" cy="68" r="4" fill="#c41e3a" opacity="0.8"/>
-              <defs>
-                <linearGradient id="scrollGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#d4af37" stopOpacity="0.5"/>
-                  <stop offset="100%" stopColor="#c41e3a" stopOpacity="0.5"/>
-                </linearGradient>
-              </defs>
-            </svg>
-            {/* Decorative corner elements */}
-            <div className="absolute -top-2 -left-2 w-4 h-4 border-t-2 border-l-2 border-[var(--color-accent)]/40"/>
-            <div className="absolute -top-2 -right-2 w-4 h-4 border-t-2 border-r-2 border-[var(--color-accent)]/40"/>
-            <div className="absolute -bottom-2 -left-2 w-4 h-4 border-b-2 border-l-2 border-[var(--color-accent)]/40"/>
-            <div className="absolute -bottom-2 -right-2 w-4 h-4 border-b-2 border-r-2 border-[var(--color-accent)]/40"/>
-          </div>
-
-          <h2 className="text-h2 font-serif text-white mb-3">命盘空白</h2>
-          <p className="text-gray-400 mb-8 max-w-xs mx-auto leading-relaxed">
-            命运的画卷尚未展开<br/>
-            <span className="text-[var(--color-accent)]">踏入命理之门</span>，解锁人生密码
-          </p>
-          <Link href="/">
-            <Button variant="primary" className="px-8">
-              开启命盘
-            </Button>
-          </Link>
+        <div className="text-center py-16">
+          <div className="gold-divider mx-auto mb-6 w-24"></div>
+          <svg className="w-16 h-16 mx-auto mb-4 text-[var(--color-accent)] opacity-40" viewBox="0 0 100 100" fill="none">
+            <circle cx="50" cy="50" r="45" stroke="url(#scrollGrad)" strokeWidth="2" strokeDasharray="4 4"/>
+            <path d="M30 25h40c2 0 3 1 3 3v44c0 2-1 3-3 3H30c-2 0-3-1-3-3V28c0-2 1-3 3-3z" stroke="#d4af37" strokeWidth="1.5" fill="none"/>
+            <path d="M35 35h30M35 45h30M35 55h20" stroke="#d4af37" strokeWidth="1" opacity="0.6"/>
+            <circle cx="50" cy="68" r="4" fill="#c41e3a" opacity="0.8"/>
+            <defs>
+              <linearGradient id="scrollGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#d4af37" stopOpacity="0.5"/>
+                <stop offset="100%" stopColor="#c41e3a" stopOpacity="0.5"/>
+              </linearGradient>
+            </defs>
+          </svg>
+          <p className="text-h4 text-[var(--color-text-secondary)]">暂无命盘记录</p>
+          <p className="text-body text-[var(--color-text-muted)] mt-2">开始解读你的命运</p>
+          <div className="gold-divider mx-auto mt-6 w-24"></div>
         </div>
       ) : (
         <div className="space-y-4">
           {sortedReports.map(report => (
-            <ReportCard
-              key={report.id}
-              report={report}
-              onDelete={() => setDeleteTarget(report.id)}
-              onCompare={handleCompareToggle}
-              isSelected={selectedReportIds.includes(report.id)}
-            />
+            <div className="stagger-item hover-lift bg-[var(--color-surface)] rounded-[var(--radius-lg)] p-5 border border-white/10">
+              <ReportCard
+                key={report.id}
+                report={report}
+                onDelete={() => setDeleteTarget(report.id)}
+                onCompare={handleCompareToggle}
+                isSelected={selectedReportIds.includes(report.id)}
+              />
+            </div>
           ))}
         </div>
       )}
