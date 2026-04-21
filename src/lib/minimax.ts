@@ -63,21 +63,6 @@ export async function chat(messages: ChatMessage[], retries = 1): Promise<string
 
   // All retries exhausted, throw the last error
   throw lastError || new Error('Minimax API failed after retries');
-
-  if (!response.ok) {
-    throw new Error(`Minimax API error: ${response.status}`);
-  }
-
-  const data = await response.json();
-
-  // Check for API-level errors (Minimax returns 200 but sets status_code in base_resp)
-  if (data.base_resp?.status_code !== 0 && data.base_resp?.status_code !== undefined) {
-    console.error(`Minimax API error: ${data.base_resp.status_code} - ${data.base_resp.status_msg}`);
-    // Fall back to mock response
-    return mockChatResponse(messages);
-  }
-
-  return data.choices?.[0]?.message?.content || '';
 }
 
 function mockChatResponse(messages: ChatMessage[]): string {
