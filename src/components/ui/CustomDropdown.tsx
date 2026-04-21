@@ -219,7 +219,7 @@ export default function CustomDropdown({ id, value, options, onChange, placehold
               role="option"
               aria-selected={String(option.value) === String(value)}
               tabIndex={focusedIndex === index ? 0 : -1}
-              onClick={() => { onChange(option.value); setIsAnimating(false); setTimeout(() => { setIsRendered(false); }, 200); setOpen(false); setFocusedIndex(-1); }}
+              onClick={() => { if (isClosingRef.current) return; isClosingRef.current = true; onChange(option.value); setIsAnimating(false); setTimeout(() => { setIsRendered(false); isClosingRef.current = false; }, 200); setOpen(false); setFocusedIndex(-1); }}
               onMouseEnter={() => setFocusedIndex(index)}
               className={`w-full px-4 py-2.5 text-left transition-all duration-200 focus:outline-none stagger-item ${
                 String(option.value) === String(value) ? 'text-white' : 'text-gray-300'
