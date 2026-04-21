@@ -267,6 +267,12 @@ export default function ProfilePage() {
             <div className="gold-divider mx-auto mb-4 animate-fade-in" style={{ animationDelay: '100ms' }}></div>
             <p className="text-[var(--color-text-muted)] mb-1 animate-fade-in-up" style={{ animationDelay: '150ms' }}>暂无家庭成员</p>
             <p className="text-sm text-[var(--color-text-muted)]/60 animate-fade-in-up" style={{ animationDelay: '200ms' }}>点击上方按钮添加家庭成员</p>
+            <button
+              onClick={() => { setShowAddForm(true); setEditingId(null); setForm({ name: '', gender: 'male', birthDate: '' }); }}
+              className="mt-6 px-6 py-3 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)] text-white font-bold rounded-full shadow-lg hover:shadow-xl transition-all hover:-translate-y-0.5"
+            >
+              添加成员
+            </button>
           </div>
         ) : (
           <div className="space-y-3">
