@@ -19,8 +19,8 @@
 
   /* Text Colors — WCAG AA Compliant */
   --color-text: #ffffff;
-  --color-text-secondary: #b0b0b0;
-  --color-text-muted: #9ca3af;
+  --color-text-secondary: #e0e0e0;  /* was #b0b0b0 */
+  --color-text-muted: #a0a0a0;       /* was #9ca3af */
 
   /* Semantic Colors */
   --color-success: #50c878;
@@ -188,7 +188,7 @@ html {
 /* Focus visible styles */
 :focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.4);
+  box-shadow: 0 0 0 3px var(--color-primary), 0 0 0 6px rgba(196, 30, 58, 0.2);
 }
 
 /* Selection color */
