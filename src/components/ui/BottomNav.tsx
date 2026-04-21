@@ -130,15 +130,6 @@ export default function BottomNav() {
     return null;
   }
 
-  // Calculate indicator width per item: icon (28px) + text width
-  // For Chinese characters at 10px: ~20px per character, so 2-char labels = ~40px
-  const getIndicatorWidth = (label: string) => `${28 + label.length * 20}px`;
-
-  // For 3-column space-around layout, centers are at 16.67%, 50%, 83.33%
-  // Formula: calc(-50% + (index + 0.5) * (100/3)%)
-  const getIndicatorPosition = (index: number) =>
-    `calc(-50% + ${(index + 0.5) * (100 / 3)}%)`;
-
   const containerStyle: React.CSSProperties = {
     position: 'fixed',
     bottom: 0,
@@ -168,6 +159,18 @@ export default function BottomNav() {
     cursor: 'pointer',
   };
 
+  const indicatorStyle: React.CSSProperties = {
+    position: 'absolute',
+    left: '50%',
+    bottom: '0',
+    transform: 'translateX(-50%)',
+    width: '48px',
+    height: '2px',
+    background: 'linear-gradient(90deg, #f0c674, #d4af37)',
+    borderRadius: '1px',
+    transition: 'opacity 200ms ease',
+  };
+
   const textStyle: React.CSSProperties = {
     fontSize: '10px',
     lineHeight: 1,
@@ -176,24 +179,6 @@ export default function BottomNav() {
 
   return (
     <nav style={containerStyle}>
-      {/* Sliding indicator bar - positioned absolutely behind items */}
-      {activeIndex >= 0 && (
-        <div
-          data-indicator
-          style={{
-            position: 'absolute',
-            bottom: '0',
-            left: getIndicatorPosition(activeIndex),
-            width: getIndicatorWidth(NAV_ITEMS[activeIndex].label),
-            height: '2px',
-            background: 'linear-gradient(90deg, #f0c674, #d4af37)',
-            borderRadius: '1px',
-            transform: 'translateX(-50%)',
-            transition: 'left 300ms cubic-bezier(0.4, 0, 0.2, 1), width 300ms cubic-bezier(0.4, 0, 0.2, 1)',
-          }}
-        />
-      )}
-
       {NAV_ITEMS.map((item, index) => {
         const isActive = activeIndex === index;
         return (
@@ -202,6 +187,9 @@ export default function BottomNav() {
             href={item.path}
             style={navItemStyle}
           >
+            {isActive && (
+              <div style={indicatorStyle} />
+            )}
             {getIcon(item.icon, isActive)}
             <span
               style={{
