@@ -105,14 +105,14 @@ export default function LoginForm() {
           AI 八字命理分析
         </h1>
 
-        <div className="space-y-4">
+        <div className="ink-wash-corner glass-card rounded-[var(--radius-xl)] p-[var(--space-xl)] space-y-4">
           <div>
             <input
               type="tel"
               placeholder="手机号"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              className="w-full px-4 py-4 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-[var(--color-primary)] transition-colors"
+              className="w-full rounded-[var(--radius-md)] px-5 py-4 text-white placeholder-gray-500 border transition-all duration-200 focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/20 bg-[var(--color-surface)]"
               maxLength={11}
             />
           </div>
@@ -123,7 +123,7 @@ export default function LoginForm() {
               placeholder="验证码"
               value={code}
               onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-              className="flex-1 px-4 py-4 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-[var(--color-primary)] transition-colors"
+              className="flex-1 rounded-[var(--radius-md)] px-5 py-4 text-white placeholder-gray-500 border transition-all duration-200 focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/20 bg-[var(--color-surface)]"
               maxLength={6}
             />
             <button
