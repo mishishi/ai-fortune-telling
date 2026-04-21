@@ -264,14 +264,14 @@ export default function HomePage() {
       {/* Main Content */}
       <div className="relative z-10 flex flex-col items-center justify-center min-h-[calc(100vh-80px)] px-4 py-8">
         {/* Hero Section */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-12">
           <h1
-            className="text-4xl md:text-5xl font-bold text-white mb-3 text-center"
+            className="text-h1 md:text-display font-serif text-white mb-4 text-center"
             style={{ textShadow: '0 0 40px rgba(196,30,58,0.6)' }}
           >
             AI 八字命理分析
           </h1>
-          <p className="text-gray-400 text-center text-lg">
+          <p className="text-gray-400 text-center text-lg tracking-wide">
             输入出生信息，开启你的生命密码
           </p>
         </div>

@@ -119,14 +119,14 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
   return (
     <main className="min-h-screen px-4 py-8 max-w-3xl mx-auto bg-[#0a0e27]">
       {/* Header */}
-      <div className="text-center mb-8">
+      <div className="text-center mb-10">
         <h1
-          className="text-3xl font-bold text-white mb-2"
-          style={{ textShadow: '0 0 30px rgba(240,198,116,0.4)' }}
+          className="text-h1 font-serif text-white mb-3"
+          style={{ textShadow: '0 0 30px rgba(196,30,58,0.5)' }}
         >
           {report.name} 的命盘
         </h1>
-        <p className="text-gray-400">
+        <p className="text-gray-400 text-sm tracking-wide">
           生成时间：{new Date(report.createdAt).toLocaleDateString('zh-CN')}
         </p>
       </div>

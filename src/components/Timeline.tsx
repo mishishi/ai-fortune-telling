@@ -125,7 +125,7 @@ export default function Timeline({ baziData, onFortuneSelect }: TimelineProps) {
 
               {/* Pillar */}
               <div
-                className="text-2xl font-bold mb-2 tracking-wider"
+                className="text-h2 font-serif mb-2 tracking-wider"
                 style={{ color: isCurrent ? elementColor : 'var(--color-accent)' }}
               >
                 {STEM_NAMES[line.stem % 10]}{BRANCH_NAMES[line.branch % 12]}

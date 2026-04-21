@@ -198,7 +198,7 @@ export default function FortuneDisplay({ analysis, isLocked = false }: FortuneDi
                   style={{
                     color: section.color,
                     fontFamily: section.key === 'overall' || section.key === 'overallPlain'
-                      ? '"Noto Serif SC", serif'
+                      ? 'var(--font-serif), serif'
                       : 'inherit',
                   }}
                 >

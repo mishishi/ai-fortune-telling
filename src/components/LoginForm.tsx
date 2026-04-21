@@ -99,7 +99,7 @@ export default function LoginForm() {
         </Link>
 
         <h1
-          className="text-3xl font-bold text-white text-center mb-8"
+          className="text-h1 font-serif text-white text-center mb-10"
           style={{ textShadow: '0 0 30px rgba(196,30,58,0.4)' }}
         >
           AI 八字命理分析

@@ -77,12 +77,12 @@
   --space-lg: 1.5rem;
   --space-xl: 2rem;
 
-  /* Typography Typescale */
+  /* Typography Typescale - Enhanced for Eastern Luxury */
   --font-size-display: 3.5rem;    /* 56px - Hero titles */
-  --font-size-h1: 2.5rem;        /* 40px - Page titles */
-  --font-size-h2: 2rem;          /* 32px - Section headers */
-  --font-size-h3: 1.5rem;        /* 24px - Card titles */
-  --font-size-h4: 1.25rem;       /* 20px - Subsection */
+  --font-size-h1: 2.25rem;       /* 36px - Page titles (was 40px) */
+  --font-size-h2: 1.75rem;       /* 28px - Section headers (was 32px) */
+  --font-size-h3: 1.375rem;      /* 22px - Card titles (was 24px) */
+  --font-size-h4: 1.125rem;       /* 18px - Subsection (was 20px) */
   --font-size-lg: 1.125rem;      /* 18px - Lead text */
   --font-size-base: 1rem;        /* 16px - Body text */
   --font-size-sm: 0.875rem;      /* 14px - Secondary text */
@@ -90,16 +90,16 @@
   --font-size-2xs: 0.625rem;     /* 10px - Micro text */
 
   /* Line Heights */
-  --line-height-tight: 1.2;      /* Headings */
-  --line-height-snug: 1.375;     /* Subheadings */
-  --line-height-normal: 1.5;    /* Body */
-  --line-height-relaxed: 1.625;  /* Long form */
+  --line-height-tight: 1.15;      /* Headings - tighter for Chinese */
+  --line-height-snug: 1.3;       /* Subheadings */
+  --line-height-normal: 1.6;      /* Body - more generous for readability */
+  --line-height-relaxed: 1.75;    /* Long form */
 
   /* Letter Spacing */
-  --letter-spacing-tight: -0.02em;
+  --letter-spacing-tight: -0.01em;
   --letter-spacing-normal: 0;
-  --letter-spacing-wide: 0.02em;
-  --letter-spacing-wider: 0.05em;
+  --letter-spacing-wide: 0.025em;
+  --letter-spacing-wider: 0.08em;
 
   /* Font Weights */
   --font-weight-normal: 400;
@@ -594,12 +594,13 @@ html {
    TYPOGRAPHY UTILITIES
    ======================================== */
 
-/* Heading styles */
+/* Heading styles - Serif for Eastern Luxury feel */
 .text-display {
   font-size: var(--font-size-display);
   line-height: var(--line-height-tight);
   letter-spacing: var(--letter-spacing-tight);
   font-weight: var(--font-weight-bold);
+  font-family: var(--font-serif), serif;
 }
 
 .text-h1 {
@@ -607,12 +608,14 @@ html {
   line-height: var(--line-height-tight);
   letter-spacing: var(--letter-spacing-tight);
   font-weight: var(--font-weight-bold);
+  font-family: var(--font-serif), serif;
 }
 
 .text-h2 {
   font-size: var(--font-size-h2);
   line-height: var(--line-height-snug);
   font-weight: var(--font-weight-semibold);
+  font-family: var(--font-serif), serif;
 }
 
 .text-h3 {

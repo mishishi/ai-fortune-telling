@@ -9,12 +9,13 @@ export default function HistoryPage() {
       <div className="mb-6">
         <Link
           href="/"
-          className="inline-flex items-center text-gray-400 hover:text-white transition-colors mb-4"
+          className="inline-flex items-center text-gray-400 hover:text-white transition-colors mb-6"
         >
           <span className="mr-1">←</span>
           返回首页
         </Link>
-        <h1 className="text-2xl font-bold text-white">历史报告</h1>
+        <h1 className="text-h1 font-serif text-white mb-2">历史报告</h1>
+        <p className="text-gray-400 text-sm tracking-wide">追溯命盘轨迹</p>
       </div>
 
       <HistoryList />

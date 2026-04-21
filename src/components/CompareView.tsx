@@ -129,7 +129,7 @@ export default function CompareView({ report1, report2, onClose }: CompareViewPr
             <span className="text-lg">←</span>
             <span>返回</span>
           </button>
-          <h1 className="flex-1 text-center text-white font-bold">报告对比</h1>
+          <h1 className="flex-1 text-center text-white font-serif text-h2">报告对比</h1>
           <div className="w-16" />
         </div>
       </div>
@@ -138,8 +138,8 @@ export default function CompareView({ report1, report2, onClose }: CompareViewPr
       <div className="flex flex-col md:flex-row">
         {/* Report 1 Column */}
         <div className="flex-1 md:border-r" style={{ borderColor: 'rgba(255,255,255,0.1)' }}>
-          <div className="p-4 text-center border-b border-white/10">
-            <h2 className="text-xl font-bold text-white">{report1.name}</h2>
+          <div className="p-5 text-center border-b border-white/10">
+            <h2 className="text-h3 font-serif text-white">{report1.name}</h2>
             <p className="text-sm mt-1" style={{ color: 'var(--color-text-muted)' }}>{formatDate(report1.createdAt)}</p>
             <span className={`inline-block text-xs px-2 py-0.5 rounded-full mt-2 ${
               report1.gender === 'male' ? 'bg-blue-500/20 text-blue-400' : 'bg-pink-500/20 text-pink-400'
@@ -168,8 +168,8 @@ export default function CompareView({ report1, report2, onClose }: CompareViewPr
 
         {/* Report 2 Column */}
         <div className="flex-1">
-          <div className="p-4 text-center border-b border-white/10">
-            <h2 className="text-xl font-bold text-white">{report2.name}</h2>
+          <div className="p-5 text-center border-b border-white/10">
+            <h2 className="text-h3 font-serif text-white">{report2.name}</h2>
             <p className="text-sm mt-1" style={{ color: 'var(--color-text-muted)' }}>{formatDate(report2.createdAt)}</p>
             <span className={`inline-block text-xs px-2 py-0.5 rounded-full mt-2 ${
               report2.gender === 'male' ? 'bg-blue-500/20 text-blue-400' : 'bg-pink-500/20 text-pink-400'
