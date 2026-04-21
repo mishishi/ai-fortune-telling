@@ -112,7 +112,7 @@ export default function LoginForm() {
               placeholder="手机号"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-[#c41e3a] transition-colors"
+              className="w-full px-4 py-4 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-[#c41e3a] transition-colors"
               maxLength={11}
             />
           </div>
@@ -123,13 +123,13 @@ export default function LoginForm() {
               placeholder="验证码"
               value={code}
               onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-              className="flex-1 px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-[#c41e3a] transition-colors"
+              className="flex-1 px-4 py-4 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-[#c41e3a] transition-colors"
               maxLength={6}
             />
             <button
               onClick={handleSendCode}
               disabled={countdown > 0}
-              className="px-4 py-3 rounded-xl bg-[#c41e3a]/20 text-white text-sm hover:bg-[#c41e3a]/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+              className="px-4 py-4 rounded-xl bg-[#c41e3a]/20 text-white text-sm hover:bg-[#c41e3a]/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
             >
               {countdown > 0 ? `${countdown}秒` : '获取验证码'}
             </button>

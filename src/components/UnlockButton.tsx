@@ -43,9 +43,9 @@ export default function UnlockButton({ reportId }: UnlockButtonProps) {
         disabled={loading}
         className="px-8 py-4 rounded-xl font-bold text-lg transition-all hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
         style={{
-          background: 'linear-gradient(135deg, #f0c674, #e0a500)',
-          color: '#0a0e27',
-          boxShadow: '0 4px 20px rgba(240,198,116,0.3)'
+          background: 'linear-gradient(135deg, var(--color-accent), var(--color-accent-hover))',
+          color: 'var(--color-bg)',
+          boxShadow: 'var(--shadow-glow-accent)'
         }}
       >
         {loading ? '处理中...' : '解锁完整报告（¥29）'}

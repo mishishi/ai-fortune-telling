@@ -37,11 +37,11 @@ export default function ShareReport({ reportId }: ShareReportProps) {
       {/* Floating Share Button */}
       <button
         onClick={() => setShowModal(true)}
-        className="fixed right-4 bottom-24 z-40 flex items-center gap-2 px-4 py-3 rounded-xl font-medium text-sm transition-all hover:scale-105 active:scale-95"
+        className="fixed right-4 bottom-24 z-40 flex items-center gap-2 px-4 py-4 rounded-xl font-medium text-sm transition-all hover:scale-105 active:scale-95"
         style={{
-          background: 'linear-gradient(135deg, #7b68ee, #4169e1)',
+          background: 'linear-gradient(135deg, var(--color-primary), var(--color-secondary))',
           color: '#fff',
-          boxShadow: '0 4px 20px rgba(123,104,238,0.4)',
+          boxShadow: 'var(--shadow-glow-primary)',
         }}
         aria-label="分享报告"
       >
@@ -68,15 +68,15 @@ export default function ShareReport({ reportId }: ShareReportProps) {
           <div
             className="relative z-10 w-72 rounded-2xl p-6 text-center"
             style={{
-              background: 'linear-gradient(135deg, #1a1f4e, #0a0e27)',
-              border: '1px solid rgba(240,198,116,0.2)',
+              background: 'var(--color-surface)',
+              border: '1px solid rgba(212,175,55,0.2)',
               boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
             }}
             onClick={(e) => e.stopPropagation()}
           >
             <h3
               className="text-lg font-bold mb-1"
-              style={{ color: '#f0c674' }}
+              style={{ color: 'var(--color-accent)' }}
             >
               分享报告
             </h3>
@@ -87,11 +87,11 @@ export default function ShareReport({ reportId }: ShareReportProps) {
             <div className="flex flex-col gap-3">
               <button
                 onClick={handleCopyLink}
-                className="w-full py-3 rounded-xl font-medium text-sm transition-all hover:scale-105 active:scale-95"
+                className="w-full py-4 rounded-xl font-medium text-sm transition-all hover:scale-105 active:scale-95"
                 style={{
-                  background: 'linear-gradient(135deg, #f0c674, #e0a500)',
-                  color: '#0a0e27',
-                  boxShadow: '0 4px 16px rgba(240,198,116,0.3)',
+                  background: 'linear-gradient(135deg, var(--color-accent), var(--color-accent-hover))',
+                  color: 'var(--color-bg)',
+                  boxShadow: 'var(--shadow-glow-accent)',
                 }}
               >
                 复制链接
@@ -99,11 +99,11 @@ export default function ShareReport({ reportId }: ShareReportProps) {
 
               <button
                 onClick={handleGenerateImage}
-                className="w-full py-3 rounded-xl font-medium text-sm transition-all hover:scale-105 active:scale-95"
+                className="w-full py-4 rounded-xl font-medium text-sm transition-all hover:scale-105 active:scale-95"
                 style={{
-                  background: 'rgba(123,104,238,0.2)',
-                  color: '#a89af8',
-                  border: '1px solid rgba(123,104,238,0.4)',
+                  background: 'rgba(196,30,58,0.2)',
+                  color: 'var(--color-primary)',
+                  border: '1px solid rgba(196,30,58,0.4)',
                 }}
               >
                 生成分享图片
