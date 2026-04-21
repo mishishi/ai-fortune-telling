@@ -323,6 +323,22 @@ html {
   scrollbar-width: none;
 }
 
+/* Dropdown scrollbar styling */
+.dropdown-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.dropdown-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+}
+.dropdown-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+}
+.dropdown-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
 /* Touch target minimum (44x44px per Apple HIG and WCAG) */
 .touch-target {
   min-width: 44px;

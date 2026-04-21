@@ -19,9 +19,22 @@ export default function CustomDropdown({ id, value, options, onChange, placehold
   const [focusedIndex, setFocusedIndex] = useState(-1);
   const ref = useRef<HTMLDivElement>(null);
   const optionRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const isClosingRef = useRef(false);
   const listboxId = id ? `${id}-listbox` : undefined;
 
   const selectedOption = options.find(o => String(o.value) === String(value));
+
+  // Cleanup optionRefs when options change to prevent memory leak
+  useEffect(() => {
+    optionRefs.current = [];
+  }, [options]);
+
+  // Clamp focusedIndex when options change to prevent stale index
+  useEffect(() => {
+    if (focusedIndex >= options.length) {
+      setFocusedIndex(options.length > 0 ? options.length - 1 : -1);
+    }
+  }, [options, focusedIndex]);
 
   // Focus the option button when focusedIndex changes
   useEffect(() => {
@@ -49,12 +62,16 @@ export default function CustomDropdown({ id, value, options, onChange, placehold
 
   const toggleOpen = useCallback(() => {
     if (open) {
+      // Guard against rapid re-entry during close animation
+      if (isClosingRef.current) return;
+      isClosingRef.current = true;
       // Start exit animation
       setIsAnimating(false);
       setFocusedIndex(-1);
       // Delay unmount to allow exit animation
       setTimeout(() => {
         setIsRendered(false);
+        isClosingRef.current = false;
       }, 200);
     } else {
       // Prepare for entrance animation
@@ -104,11 +121,14 @@ export default function CustomDropdown({ id, value, options, onChange, placehold
     } else if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
       if (open && focusedIndex >= 0) {
+        if (isClosingRef.current) return;
+        isClosingRef.current = true;
         onChange(options[focusedIndex].value);
         setIsAnimating(false);
         setFocusedIndex(-1);
         setTimeout(() => {
           setIsRendered(false);
+          isClosingRef.current = false;
         }, 200);
         setOpen(false);
       } else {
@@ -117,10 +137,13 @@ export default function CustomDropdown({ id, value, options, onChange, placehold
     } else if (e.key === 'Escape') {
       e.preventDefault();
       if (open) {
+        if (isClosingRef.current) return;
+        isClosingRef.current = true;
         setIsAnimating(false);
         setFocusedIndex(-1);
         setTimeout(() => {
           setIsRendered(false);
+          isClosingRef.current = false;
         }, 200);
       }
       setOpen(false);
@@ -162,32 +185,14 @@ export default function CustomDropdown({ id, value, options, onChange, placehold
           id={listboxId}
           role="listbox"
           aria-labelledby={id}
-          className={`absolute z-50 w-full rounded-[var(--radius-md)] shadow-[var(--shadow-lg)] max-h-[70vh] overflow-y-auto transition-all origin-top ${
+          className={`absolute z-50 w-full rounded-[var(--radius-md)] shadow-[var(--shadow-lg)] max-h-[70vh] overflow-y-auto transition-all origin-top dropdown-scrollbar ${
             dropUp ? 'bottom-full mb-1' : 'top-full mt-1'
           } ${isAnimating ? 'animate-fade-in-scale' : 'opacity-0 scale-95'}`}
           style={{
             background: 'var(--color-surface)',
             border: '1px solid var(--color-border)',
-            scrollbarWidth: 'thin',
-            scrollbarColor: 'rgba(255,255,255,0.3) transparent',
           }}
         >
-          <style>{`
-            div::-webkit-scrollbar {
-              width: 6px;
-            }
-            div::-webkit-scrollbar-track {
-              background: rgba(255,255,255,0.05);
-              border-radius: 3px;
-            }
-            div::-webkit-scrollbar-thumb {
-              background: rgba(255,255,255,0.3);
-              border-radius: 3px;
-            }
-            div::-webkit-scrollbar-thumb:hover {
-              background: rgba(255,255,255,0.5);
-            }
-          `}</style>
           {options.length === 0 && (
             <div className="px-4 py-8 text-center">
               <svg
