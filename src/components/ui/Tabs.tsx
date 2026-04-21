@@ -16,9 +16,50 @@ interface TabsProps {
 export function Tabs({ tabs, defaultTab }: TabsProps) {
   const [activeTab, setActiveTab] = useState(defaultTab || tabs[0]?.id);
   const [focusedTabId, setFocusedTabId] = useState<string | null>(null);
+  const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
+  const [contentVisible, setContentVisible] = useState(activeTab);
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const tabListRef = useRef<HTMLDivElement>(null);
 
   const activeIndex = tabs.findIndex((tab) => tab.id === activeTab);
+
+  // Update sliding indicator position
+  useEffect(() => {
+    const updateIndicator = () => {
+      const activeButton = tabRefs.current[activeIndex];
+      const tabList = tabListRef.current;
+      if (activeButton && tabList) {
+        const listRect = tabList.getBoundingClientRect();
+        const buttonRect = activeButton.getBoundingClientRect();
+        setIndicatorStyle({
+          left: buttonRect.left - listRect.left,
+          width: buttonRect.width,
+        });
+      }
+    };
+
+    updateIndicator();
+    // Use resize observer for responsive updates
+    const resizeObserver = new ResizeObserver(updateIndicator);
+    if (tabListRef.current) {
+      resizeObserver.observe(tabListRef.current);
+    }
+    window.addEventListener('resize', updateIndicator);
+
+    return () => {
+      resizeObserver.disconnect();
+      window.removeEventListener('resize', updateIndicator);
+    };
+  }, [activeIndex]);
+
+  // Content entrance animation
+  useEffect(() => {
+    setContentVisible(null); // Trigger exit animation briefly
+    const timeoutId = setTimeout(() => {
+      setContentVisible(activeTab);
+    }, 50);
+    return () => clearTimeout(timeoutId);
+  }, [activeTab]);
 
   const handleKeyDown = (e: KeyboardEvent<HTMLButtonElement>, currentIndex: number) => {
     let newIndex = currentIndex;
@@ -51,9 +92,10 @@ export function Tabs({ tabs, defaultTab }: TabsProps) {
     <div>
       {/* Tab List */}
       <div
+        ref={tabListRef}
         role="tablist"
         aria-orientation="horizontal"
-        className="flex gap-1 p-1 rounded-xl"
+        className="relative flex gap-1 p-1 rounded-xl"
         style={{
           background: 'rgba(255, 255, 255, 0.05)',
         }}
@@ -86,21 +128,36 @@ export function Tabs({ tabs, defaultTab }: TabsProps) {
             {tab.label}
           </button>
         ))}
+        {/* Sliding Indicator */}
+        <div
+          className="absolute bottom-1 h-[3px] rounded-full"
+          style={{
+            left: indicatorStyle.left,
+            width: indicatorStyle.width,
+            background: 'var(--color-accent)',
+            transform: `translateX(0)`,
+            transition: 'left 300ms var(--ease-smooth), width 300ms var(--ease-smooth)',
+          }}
+        />
       </div>
 
       {/* Tab Panels */}
       {tabs.map((tab) => (
-        <div
-          key={tab.id}
-          role="tabpanel"
-          id={`tabpanel-${tab.id}`}
-          aria-labelledby={`tab-${tab.id}`}
-          hidden={activeTab !== tab.id}
-          tabIndex={0}
-          className="mt-4 focus:outline-none"
-        >
-          {activeTab === tab.id && tab.content}
-        </div>
+        contentVisible === tab.id && (
+          <div
+            key={tab.id}
+            role="tabpanel"
+            id={`tabpanel-${tab.id}`}
+            aria-labelledby={`tab-${tab.id}`}
+            tabIndex={0}
+            className="mt-4 focus:outline-none"
+            style={{
+              animation: 'fadeInUp 400ms ease-out',
+            }}
+          >
+            {tab.content}
+          </div>
+        )
       ))}
     </div>
   );

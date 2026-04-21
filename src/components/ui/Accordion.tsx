@@ -68,15 +68,10 @@ export function Accordion({ title, children, defaultOpen = false }: AccordionPro
         tabIndex={0}
         onClick={toggle}
         onKeyDown={handleKeyDown}
-        className="w-full px-4 py-3 flex items-center justify-between gap-4 transition-colors duration-200 focus:outline-none"
+        className="w-full px-4 py-3 flex items-center justify-between gap-4 hover:bg-[var(--color-surface-hover)] focus:outline-none focus:ring-2 focus:ring-[var(--color-focus)]"
         style={{
           background: 'transparent',
-        }}
-        onFocus={(e) => {
-          e.currentTarget.style.boxShadow = '0 0 0 2px var(--color-focus)';
-        }}
-        onBlur={(e) => {
-          e.currentTarget.style.boxShadow = 'none';
+          transition: 'background 300ms var(--ease-smooth)',
         }}
       >
         <span
@@ -107,17 +102,26 @@ export function Accordion({ title, children, defaultOpen = false }: AccordionPro
         </svg>
       </button>
 
-      {/* Content */}
+      {/* Content - using CSS grid for smooth height animation */}
       <div
         id={`accordion-content-${title.replace(/\s+/g, '-')}`}
-        className="overflow-hidden transition-all duration-300 ease-out"
         style={{
-          maxHeight: isOpen ? '2000px' : '0',
-          opacity: isOpen ? 1 : 0,
+          display: 'grid',
+          gridTemplateRows: isOpen ? '1fr' : '0fr',
+          transition: 'grid-template-rows 300ms var(--ease-smooth)',
         }}
       >
-        <div className="px-4 pb-4 pt-2">
-          {children}
+        <div
+          style={{
+            minHeight: 0,
+            overflow: 'hidden',
+            transition: 'opacity 300ms var(--ease-smooth)',
+            opacity: isOpen ? 1 : 0,
+          }}
+        >
+          <div className="px-4 pb-4 pt-2">
+            {children}
+          </div>
         </div>
       </div>
     </div>

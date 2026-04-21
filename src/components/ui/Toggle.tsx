@@ -47,7 +47,6 @@ export function Toggle({ checked, onChange, disabled = false, size = 'md', label
       aria-checked={checked}
       aria-disabled={disabled}
       aria-label={label}
-      tabIndex={0}
       disabled={disabled}
       onClick={() => !disabled && onChange(!checked)}
       onKeyDown={handleKeyDown}
@@ -56,11 +55,11 @@ export function Toggle({ checked, onChange, disabled = false, size = 'md', label
         rounded-full
         overflow-hidden
         transition-colors duration-200 ease-out
-        focus:outline-none
+        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-gold)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-bg)]
         ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
         ${checked
-          ? 'bg-gradient-to-r from-[var(--color-purple)] to-[var(--color-purple-dark)]'
-          : 'bg-white/20'
+          ? 'bg-gradient-to-r from-[var(--color-purple)] to-[var(--color-purple-dark)] hover:brightness-110'
+          : 'bg-white/20 hover:bg-white/30'
         }
       `}
       style={{
@@ -75,9 +74,10 @@ export function Toggle({ checked, onChange, disabled = false, size = 'md', label
           ${styles.thumb}
           rounded-full
           bg-white
-          transition-transform duration-200 ease-out
+          transition-transform duration-200
           ${checked ? styles.translate : 'left-1'}
         `}
+        style={{ transitionTimingFunction: 'cubic-bezier(0.68, -0.55, 0.265, 1.55)' }}
       />
     </button>
   );

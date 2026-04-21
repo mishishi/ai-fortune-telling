@@ -14,12 +14,14 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
   const previousActiveElement = useRef<HTMLElement | null>(null);
   const [isFocused, setIsFocused] = useState(false);
+  const [isExiting, setIsExiting] = useState(false);
   const overflowSetByThisModal = useRef(false);
 
   // Store the previously focused element before modal opens
   useEffect(() => {
     if (isOpen) {
       previousActiveElement.current = document.activeElement as HTMLElement;
+      setIsExiting(false);
     }
   }, [isOpen]);
 
@@ -49,7 +51,10 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isOpen) {
-        onClose();
+        setIsExiting(true);
+        setTimeout(() => {
+          onClose();
+        }, 200);
       }
     };
 
@@ -92,19 +97,38 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
   // Click outside to close
   const handleBackdropClick = (e: MouseEvent) => {
     if (e.target === e.currentTarget) {
-      onClose();
+      setIsExiting(true);
+      setTimeout(() => {
+        onClose();
+      }, 200);
     }
   };
 
-  if (!isOpen) return null;
+  // Trigger exit animation when isOpen becomes false
+  useEffect(() => {
+    if (!isOpen && !isExiting) {
+      setIsExiting(true);
+    }
+  }, [isOpen, isExiting]);
+
+  // Auto-unmount after exit animation completes
+  useEffect(() => {
+    if (isExiting) {
+      const timer = setTimeout(() => {
+        setIsExiting(false);
+      }, 200); // scale-out animation duration
+      return () => clearTimeout(timer);
+    }
+  }, [isExiting]);
+
+  if (!isOpen && !isExiting) return null;
 
   const modalContent = (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fade-in"
+      className={`fixed inset-0 z-50 flex items-center justify-center p-4 ${isExiting ? 'animate-fade-out' : 'animate-fade-in'}`}
       style={{
         background: 'rgba(0, 0, 0, 0.7)',
         backdropFilter: 'blur(4px)',
-        animationDuration: '200ms',
       }}
       onClick={handleBackdropClick}
       aria-hidden={!isOpen}
@@ -116,12 +140,11 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
         aria-labelledby={title ? 'modal-title' : undefined}
         tabIndex={-1}
         onKeyDown={trapFocus}
-        className="relative w-full max-w-lg rounded-2xl overflow-hidden shadow-2xl animate-fade-in-scale"
+        className={`relative w-full max-w-lg rounded-2xl overflow-hidden shadow-2xl ${isExiting ? 'animate-scale-out' : 'animate-fade-in-scale'}`}
         style={{
           background: 'var(--color-surface)',
           border: '1px solid var(--color-border)',
           boxShadow: isFocused ? '0 0 0 2px var(--color-focus)' : undefined,
-          animationDuration: '300ms',
         }}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
@@ -142,17 +165,16 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
               {title}
             </h2>
             <button
-              onClick={onClose}
+              onClick={() => {
+                setIsExiting(true);
+                setTimeout(() => {
+                  onClose();
+                }, 200);
+              }}
               aria-label="Close modal"
-              className="p-2 rounded-lg transition-colors duration-200 focus:outline-none focus-visible:ring-2"
+              className="p-2 rounded-lg transition-all duration-150 ease-out hover:scale-110 hover:bg-white/10 focus:outline-none focus-visible:ring-2"
               style={{
                 color: 'var(--color-text-secondary)',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'transparent';
               }}
               onFocus={(e) => {
                 e.currentTarget.style.boxShadow = '0 0 0 2px var(--color-focus)';
