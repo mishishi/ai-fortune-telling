@@ -40,6 +40,8 @@ function calculateAge(birthDataStr?: string): number | null {
   return null;
 }
 
+// formatDate is reserved for future use (e.g., detailed date display in report details)
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function formatDate(dateStr: string): string {
   const date = new Date(dateStr);
   return isNaN(date.getTime()) ? '未知日期' : date.toLocaleDateString('zh-CN', {
@@ -108,6 +110,7 @@ export default function ReportCard({ report, onDelete, onCompare, isSelected, sk
 
   const handleActionClick = (e: React.MouseEvent, action: () => void) => {
     e.stopPropagation();
+    e.preventDefault();
     action();
   };
 
