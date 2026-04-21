@@ -16,19 +16,21 @@ const NAV_ITEMS: NavItem[] = [
   { path: '/profile', label: '我的', icon: 'profile' },
 ];
 
+// Layout constants
+const NAV_HEIGHT = '64px';
+const ICON_SIZE = 28;
+const FONT_SIZE = '10px';
+const ITEM_GAP = '4px';
+const INDICATOR_WIDTH = '72px';
+const GRADIENT_ID = 'bottom-nav-gold-gradient';
+
 // SVG Icons as components
 function HomeIcon({ active }: { active: boolean }) {
-  const strokeColor = active ? 'url(#goldGradient)' : '#666';
-  const fillColor = active ? 'url(#goldGradient)' : 'none';
+  const strokeColor = active ? `url(#${GRADIENT_ID})` : '#666';
+  const fillColor = active ? `url(#${GRADIENT_ID})` : 'none';
 
   return (
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#f0c674" />
-          <stop offset="100%" stopColor="#d4af37" />
-        </linearGradient>
-      </defs>
+    <svg width={ICON_SIZE} height={ICON_SIZE} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M3 12L5 10M5 10L12 3L19 10M5 10V20C5 20.5523 5.44772 21 6 21H9M19 10L21 12M19 10V20C19 20.5523 18.5523 21 18 21H15M9 21C9.55228 21 10 20.5523 10 20V16C10 15.4477 10.4477 15 11 15H13C13.5523 15 14 15.4477 14 16V20C14 20.5523 14.4477 21 15 21M9 21H15"
         stroke={strokeColor}
@@ -42,17 +44,11 @@ function HomeIcon({ active }: { active: boolean }) {
 }
 
 function HistoryIcon({ active }: { active: boolean }) {
-  const strokeColor = active ? 'url(#goldGradientHistory)' : '#666';
-  const fillColor = active ? 'url(#goldGradientHistory)' : 'none';
+  const strokeColor = active ? `url(#${GRADIENT_ID})` : '#666';
+  const fillColor = active ? `url(#${GRADIENT_ID})` : 'none';
 
   return (
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="goldGradientHistory" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#f0c674" />
-          <stop offset="100%" stopColor="#d4af37" />
-        </linearGradient>
-      </defs>
+    <svg width={ICON_SIZE} height={ICON_SIZE} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M12 8V12L15 15M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"
         stroke={strokeColor}
@@ -72,17 +68,11 @@ function HistoryIcon({ active }: { active: boolean }) {
 }
 
 function ProfileIcon({ active }: { active: boolean }) {
-  const strokeColor = active ? 'url(#goldGradientProfile)' : '#666';
-  const fillColor = active ? 'url(#goldGradientProfile)' : 'none';
+  const strokeColor = active ? `url(#${GRADIENT_ID})` : '#666';
+  const fillColor = active ? `url(#${GRADIENT_ID})` : 'none';
 
   return (
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="goldGradientProfile" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#f0c674" />
-          <stop offset="100%" stopColor="#d4af37" />
-        </linearGradient>
-      </defs>
+    <svg width={ICON_SIZE} height={ICON_SIZE} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <circle
         cx="12"
         cy="8"
@@ -135,7 +125,7 @@ export default function BottomNav() {
     bottom: 0,
     left: 0,
     right: 0,
-    height: '64px',
+    height: NAV_HEIGHT,
     background: 'rgba(10, 10, 15, 0.85)',
     backdropFilter: 'blur(12px)',
     WebkitBackdropFilter: 'blur(12px)',
@@ -152,19 +142,19 @@ export default function BottomNav() {
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: '4px',
+    gap: ITEM_GAP,
     textDecoration: 'none',
     position: 'relative',
     padding: '8px 16px',
     cursor: 'pointer',
   };
 
-  const getIndicatorStyle = (label: string): React.CSSProperties => ({
+  const getIndicatorStyle = (): React.CSSProperties => ({
     position: 'absolute',
     left: '50%',
     bottom: '0',
     transform: 'translateX(-50%)',
-    width: `${28 + label.length * 14}px`,
+    width: INDICATOR_WIDTH,
     height: '2px',
     background: 'linear-gradient(90deg, #f0c674, #d4af37)',
     borderRadius: '1px',
@@ -172,13 +162,19 @@ export default function BottomNav() {
   });
 
   const textStyle: React.CSSProperties = {
-    fontSize: '10px',
+    fontSize: FONT_SIZE,
     lineHeight: 1,
     fontWeight: 500,
   };
 
   return (
     <nav style={containerStyle}>
+      <defs>
+        <linearGradient id={GRADIENT_ID} x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#f0c674" />
+          <stop offset="100%" stopColor="#d4af37" />
+        </linearGradient>
+      </defs>
       {NAV_ITEMS.map((item, index) => {
         const isActive = activeIndex === index;
         return (
@@ -188,7 +184,7 @@ export default function BottomNav() {
             style={navItemStyle}
           >
             {isActive && (
-              <div style={getIndicatorStyle(item.label)} />
+              <div style={getIndicatorStyle()} />
             )}
             {getIcon(item.icon, isActive)}
             <span
