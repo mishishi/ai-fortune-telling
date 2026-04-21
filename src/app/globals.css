@@ -79,8 +79,10 @@
   --transition-slow: 500ms ease;
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --ease-micro-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
   --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
   --transition-bounce: 400ms var(--ease-bounce);
+  --transition-micro-bounce: 150ms var(--ease-micro-bounce);
   --transition-smooth: 300ms var(--ease-smooth);
 
   /* Spacing */
@@ -443,6 +445,17 @@ html {
   }
 }
 
+@keyframes scaleDown {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+
 /* Feedback Animations */
 @keyframes pulse {
   0%, 100% { transform: scale(1); }
@@ -573,6 +586,10 @@ html {
 
 .animate-scale-out {
   animation: scaleOut 200ms ease-in forwards;
+}
+
+.animate-scale-down {
+  animation: scaleDown 200ms ease-in forwards;
 }
 
 /* Utility Classes - Feedback */
@@ -936,6 +953,38 @@ html {
   height: 1px;
   margin: 0 auto;
   background: linear-gradient(90deg, transparent, var(--color-accent) 30%, var(--color-primary) 50%, var(--color-accent) 70%, transparent);
+}
+
+/* Page section divider - ornamental section separator */
+.page-section-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1.5rem 0;
+  width: 100%;
+}
+
+.page-section-divider::before,
+.page-section-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.3), transparent);
+}
+
+.page-section-divider::before {
+  background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.3));
+}
+
+.page-section-divider::after {
+  background: linear-gradient(90deg, rgba(212, 175, 55, 0.3), transparent);
+}
+
+.page-section-divider-icon {
+  color: var(--color-accent);
+  opacity: 0.7;
+  font-size: 0.75rem;
 }
 
 /* 水墨晕染角落效果 */
