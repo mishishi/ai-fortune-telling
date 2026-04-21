@@ -15,6 +15,7 @@ export default function PageTransition({ children }: { children: React.ReactNode
     <div
       className={`page-transition-container ${isAnimating ? 'animate-fade-in-up' : ''}`}
       onAnimationEnd={() => setIsAnimating(false)}
+      style={{ paddingBottom: '80px' }}
     >
       {children}
     </div>
