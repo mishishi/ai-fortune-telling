@@ -105,7 +105,7 @@ export default function ProfilePage() {
   if (loading) {
     return (
       <main className="min-h-screen px-4 py-8 max-w-lg mx-auto bg-[#0a0e27] flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-[#7b68ee]/30 border-t-[#7b68ee] rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-[var(--color-purple)]/30 border-t-[var(--color-purple)] rounded-full animate-spin" />
       </main>
     );
   }
@@ -136,8 +136,8 @@ export default function ProfilePage() {
       {/* Phone Number */}
       <div className="mb-8 p-4 rounded-xl bg-white/5 border border-white/10">
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#f0c674] to-[#e0a500] flex items-center justify-center flex-shrink-0">
-            <span className="text-2xl font-bold text-[#0a0e27]">
+          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[var(--color-gold)] to-[var(--color-gold-dark)] flex items-center justify-center flex-shrink-0">
+            <span className="text-2xl font-bold text-[var(--color-bg)]">
               {user.phone.slice(-4, -3)}
             </span>
           </div>
@@ -170,7 +170,7 @@ export default function ProfilePage() {
                 placeholder="姓名"
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
-                className="w-full px-4 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-[#7b68ee] transition-colors"
+                className="w-full px-4 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-[var(--color-purple)] transition-colors"
               />
               <CustomDropdown
                 value={form.gender}
@@ -184,7 +184,7 @@ export default function ProfilePage() {
                 type="date"
                 value={form.birthDate}
                 onChange={(e) => setForm({ ...form, birthDate: e.target.value })}
-                className="w-full px-4 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:border-[#7b68ee] transition-colors [&::-webkit-calendar-picker-indicator]:invert"
+                className="w-full px-4 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:border-[var(--color-purple)] transition-colors [&::-webkit-calendar-picker-indicator]:invert"
               />
               <div className="flex gap-2">
                 <Button
@@ -254,8 +254,8 @@ export default function ProfilePage() {
           {/* Notifications Toggle */}
           <div className="flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/10">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-[#7b68ee]/20 flex items-center justify-center">
-                <svg className="w-4 h-4 text-[#7b68ee]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-8 h-8 rounded-lg bg-[var(--color-purple)]/20 flex items-center justify-center">
+                <svg className="w-4 h-4 text-[var(--color-purple)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                 </svg>
               </div>
@@ -278,8 +278,8 @@ export default function ProfilePage() {
           {/* Privacy Mode Toggle */}
           <div className="flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/10">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-[#07c160]/20 flex items-center justify-center">
-                <svg className="w-4 h-4 text-[#07c160]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-8 h-8 rounded-lg bg-[var(--color-success)]/20 flex items-center justify-center">
+                <svg className="w-4 h-4 text-[var(--color-success)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                 </svg>
               </div>

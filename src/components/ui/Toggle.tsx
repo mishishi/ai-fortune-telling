@@ -58,13 +58,13 @@ export function Toggle({ checked, onChange, disabled = false, size = 'md', label
         focus:outline-none
         ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
         ${checked
-          ? 'bg-gradient-to-r from-[#7b68ee] to-[#4169e1]'
+          ? 'bg-gradient-to-r from-[var(--color-purple)] to-[var(--color-purple-dark)]'
           : 'bg-white/20'
         }
       `}
       style={{
         boxShadow: checked
-          ? '0 0 0 2px #f0c674'
+          ? '0 0 0 2px var(--color-gold)'
           : 'none',
       }}
     >

@@ -59,12 +59,12 @@ export default function RadarChartComponent({
           <PolarGrid stroke="rgba(255,255,255,0.1)" />
           <PolarAngleAxis
             dataKey="dimension"
-            tick={{ fill: '#9ca3af', fontSize: 13 }}
+            tick={{ fill: 'var(--color-text-muted)', fontSize: 13 }}
           />
           <PolarRadiusAxis
             angle={90}
             domain={[0, 100]}
-            tick={{ fill: '#6b7280', fontSize: 10 }}
+            tick={{ fill: 'var(--color-text-muted)', fontSize: 10 }}
             tickCount={5}
           />
           {DIMENSIONS.map((d) => {

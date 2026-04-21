@@ -213,7 +213,7 @@ export default function HomePage() {
           <div className="flex items-center justify-between px-4 py-3 rounded-2xl bg-white/5 backdrop-blur-md border border-white/10">
             {/* Logo / Brand */}
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#c41e3a] to-[#1e3a5f] flex items-center justify-center">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-secondary)] flex items-center justify-center">
                 <span className="text-sm">☯</span>
               </div>
               <span className="text-white font-semibold text-sm hidden sm:inline">八字命理</span>
@@ -236,10 +236,10 @@ export default function HomePage() {
               {user ? (
                 <Link
                   href="/profile"
-                  className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm bg-gradient-to-r from-[#f0c674]/20 to-[#e0a500]/20 text-[#f0c674] hover:from-[#f0c674]/30 hover:to-[#e0a500]/30 transition-all border border-[#f0c674]/30"
+                  className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm bg-gradient-to-r from-[var(--color-gold)]/20 to-[var(--color-gold-dark)]/20 text-[var(--color-gold)] hover:from-[var(--color-gold)]/30 hover:to-[var(--color-gold-dark)]/30 transition-all border border-[var(--color-gold)]/30"
                 >
-                  <div className="w-5 h-5 rounded-full bg-gradient-to-br from-[#f0c674] to-[#e0a500] flex items-center justify-center">
-                    <span className="text-xs text-[#0a0e27] font-bold">
+                  <div className="w-5 h-5 rounded-full bg-gradient-to-br from-[var(--color-gold)] to-[var(--color-gold-dark)] flex items-center justify-center">
+                    <span className="text-xs text-[var(--color-bg)] font-bold">
                       {user.phone.slice(-4, -3)}
                     </span>
                   </div>
@@ -376,8 +376,8 @@ export default function HomePage() {
                           style={{
                             background: status === 'completed' ? 'rgba(80, 200, 120, 0.15)' :
                                        status === 'active' ? colors.bg : 'rgba(255, 255, 255, 0.05)',
-                            color: status === 'completed' ? '#50c878' :
-                                   status === 'active' ? colors.text : '#6b7280',
+                            color: status === 'completed' ? 'var(--color-success)' :
+                                   status === 'active' ? colors.text : 'var(--color-text-muted)',
                             boxShadow: status === 'active' ? `0 0 12px ${colors.ring}` : 'none',
                             border: status === 'active' ? `1px solid ${colors.ring}` : '1px solid transparent',
                           }}
@@ -414,7 +414,7 @@ export default function HomePage() {
                     <div
                       className="rounded-full shimmer-bar"
                       style={{
-                        background: 'linear-gradient(90deg, #c41e3a, #d4af37)',
+                        background: 'linear-gradient(90deg, var(--color-primary), var(--color-accent))',
                         backgroundSize: '200% 100%',
                         animation: 'shimmer 2s linear infinite',
                         height: '100%',

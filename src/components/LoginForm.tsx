@@ -88,7 +88,7 @@ export default function LoginForm() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#0f0f1a] px-4">
+    <div className="min-h-screen flex items-center justify-center bg-[var(--color-bg)] px-4">
       <div className="w-full max-w-sm">
         <Link
           href="/"
@@ -129,7 +129,7 @@ export default function LoginForm() {
             <button
               onClick={handleSendCode}
               disabled={countdown > 0}
-              className="px-4 py-4 rounded-xl bg-[#c41e3a]/20 text-white text-sm hover:bg-[#c41e3a]/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+              className="px-4 py-4 rounded-xl bg-[var(--color-primary)]/20 text-white text-sm hover:bg-[var(--color-primary)]/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
             >
               {countdown > 0 ? `${countdown}秒` : '获取验证码'}
             </button>
@@ -144,7 +144,7 @@ export default function LoginForm() {
             disabled={loading}
             className="w-full py-4 rounded-xl font-bold text-lg transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
             style={{
-              background: 'linear-gradient(135deg, #c41e3a, #a01830)',
+              background: 'linear-gradient(135deg, var(--color-primary), var(--color-primary-hover))',
               color: '#ffffff',
               boxShadow: '0 4px 20px rgba(196,30,58,0.3)',
             }}

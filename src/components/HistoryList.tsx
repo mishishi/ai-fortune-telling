@@ -192,7 +192,7 @@ export default function HistoryList() {
               onClick={() => setSelectedMemberId('all')}
               className={`px-4 py-2 rounded-full text-sm whitespace-nowrap transition-colors ${
                 selectedMemberId === 'all'
-                  ? 'bg-[#c41e3a] text-white'
+                  ? 'bg-[var(--color-primary)] text-white'
                   : 'bg-white/5 text-gray-400 hover:bg-white/10'
               }`}
             >
@@ -204,7 +204,7 @@ export default function HistoryList() {
                 onClick={() => setSelectedMemberId(member.name)}
                 className={`px-4 py-2 rounded-full text-sm whitespace-nowrap transition-colors ${
                   selectedMemberId === member.name
-                    ? 'bg-[#c41e3a] text-white'
+                    ? 'bg-[var(--color-primary)] text-white'
                     : 'bg-white/5 text-gray-400 hover:bg-white/10'
                 }`}
               >
@@ -233,16 +233,16 @@ export default function HistoryList() {
               </defs>
             </svg>
             {/* Decorative corner elements */}
-            <div className="absolute -top-2 -left-2 w-4 h-4 border-t-2 border-l-2 border-[#d4af37]/40"/>
-            <div className="absolute -top-2 -right-2 w-4 h-4 border-t-2 border-r-2 border-[#d4af37]/40"/>
-            <div className="absolute -bottom-2 -left-2 w-4 h-4 border-b-2 border-l-2 border-[#d4af37]/40"/>
-            <div className="absolute -bottom-2 -right-2 w-4 h-4 border-b-2 border-r-2 border-[#d4af37]/40"/>
+            <div className="absolute -top-2 -left-2 w-4 h-4 border-t-2 border-l-2 border-[var(--color-accent)]/40"/>
+            <div className="absolute -top-2 -right-2 w-4 h-4 border-t-2 border-r-2 border-[var(--color-accent)]/40"/>
+            <div className="absolute -bottom-2 -left-2 w-4 h-4 border-b-2 border-l-2 border-[var(--color-accent)]/40"/>
+            <div className="absolute -bottom-2 -right-2 w-4 h-4 border-b-2 border-r-2 border-[var(--color-accent)]/40"/>
           </div>
 
           <h2 className="text-h2 font-serif text-white mb-3">命盘空白</h2>
           <p className="text-gray-400 mb-8 max-w-xs mx-auto leading-relaxed">
             命运的画卷尚未展开<br/>
-            <span className="text-[#d4af37]">踏入命理之门</span>，解锁人生密码
+            <span className="text-[var(--color-accent)]">踏入命理之门</span>，解锁人生密码
           </p>
           <Link href="/">
             <Button variant="primary" className="px-8">
@@ -270,7 +270,7 @@ export default function HistoryList() {
           <button
             onClick={handleOpenCompare}
             title="选择2个报告进行对比"
-            className="px-8 py-3 bg-gradient-to-r from-[#c41e3a] to-[#d4af37] text-white font-bold rounded-full shadow-lg hover:shadow-xl transition-all"
+            className="px-8 py-3 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)] text-white font-bold rounded-full shadow-lg hover:shadow-xl transition-all"
           >
             开始对比
           </button>

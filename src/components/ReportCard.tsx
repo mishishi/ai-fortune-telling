@@ -189,8 +189,8 @@ export default function ReportCard({ report, onDelete, onCompare, isSelected, sk
                 onClick={e => { e.stopPropagation(); onCompare?.(report.id); }}
                 className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all cursor-pointer ${
                   isSelected
-                    ? 'bg-[#c41e3a] border-[#d4af37]'
-                    : 'bg-white/5 border-white/20 hover:border-[#c41e3a]/50'
+                    ? 'bg-[var(--color-primary)] border-[var(--color-accent)]'
+                    : 'bg-white/5 border-white/20 hover:border-[var(--color-primary)]/50'
                 }`}
               >
                 {isSelected && (
@@ -201,7 +201,7 @@ export default function ReportCard({ report, onDelete, onCompare, isSelected, sk
               </div>
               <span className={`text-xs px-3 py-1.5 rounded-lg border transition-colors ${
                 isSelected
-                  ? 'bg-[#c41e3a]/30 border-[#c41e3a] text-white'
+                  ? 'bg-[var(--color-primary)]/30 border-[var(--color-primary)] text-white'
                   : 'bg-white/5 border-white/10 text-gray-300 hover:bg-white/10'
               }`}>
                 {isSelected ? '已选择' : '对比'}

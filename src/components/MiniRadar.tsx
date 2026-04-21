@@ -44,7 +44,7 @@ export default function MiniRadar({ scores, size = 80 }: MiniRadarProps) {
       <ResponsiveContainer width="100%" height="100%">
         <RadarChart data={data} cx="50%" cy="50%" outerRadius="85%">
           <PolarGrid stroke="rgba(255,255,255,0.1)" />
-          <PolarAngleAxis dataKey="dimension" tick={{ fill: '#9ca3af', fontSize: 8 }} />
+          <PolarAngleAxis dataKey="dimension" tick={{ fill: 'var(--color-text-muted)', fontSize: 8 }} />
           <Radar
             name="Score"
             dataKey="value"
