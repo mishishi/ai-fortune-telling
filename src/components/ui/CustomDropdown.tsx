@@ -111,10 +111,9 @@ export default function CustomDropdown({ id, value, options, onChange, placehold
         aria-expanded={open}
         aria-labelledby={id ? `${id}-label` : undefined}
         aria-activedescendant={open && focusedIndex >= 0 ? `${listboxId}-option-${focusedIndex}` : undefined}
-        className={`w-full flex items-center justify-between px-4 py-3 rounded-lg border transition-colors focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)] focus:ring-offset-2 focus:ring-offset-[var(--color-bg)] ${error ? 'border-[var(--color-error)]' : 'border-[var(--color-border)']} hover:border-[var(--color-border-hover)] ${open ? 'border-[var(--color-primary)]' : ''}`}
+        className={`w-full flex items-center justify-between px-4 py-3 rounded-lg border transition-colors focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)] focus:ring-offset-2 ${error ? 'border-red-500' : 'border-white/10'} hover:border-white/20 ${open ? 'border-[var(--color-primary)]' : ''}`}
         style={{
           background: 'var(--color-surface)',
-          borderColor: error ? 'var(--color-error)' : 'var(--color-border)',
         }}
       >
         <span className={selectedOption ? 'text-white' : 'text-gray-500'}>
