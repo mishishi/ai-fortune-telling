@@ -88,7 +88,7 @@ export default function LoginForm() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#0a0e27] px-4">
+    <div className="min-h-screen flex items-center justify-center bg-[#0f0f1a] px-4">
       <div className="w-full max-w-sm">
         <Link
           href="/"
@@ -100,7 +100,7 @@ export default function LoginForm() {
 
         <h1
           className="text-3xl font-bold text-white text-center mb-8"
-          style={{ textShadow: '0 0 30px rgba(123,104,238,0.4)' }}
+          style={{ textShadow: '0 0 30px rgba(196,30,58,0.4)' }}
         >
           AI 八字命理分析
         </h1>
@@ -112,7 +112,7 @@ export default function LoginForm() {
               placeholder="手机号"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-[#7b68ee] transition-colors"
+              className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-[#c41e3a] transition-colors"
               maxLength={11}
             />
           </div>
@@ -123,13 +123,13 @@ export default function LoginForm() {
               placeholder="验证码"
               value={code}
               onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-              className="flex-1 px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-[#7b68ee] transition-colors"
+              className="flex-1 px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-[#c41e3a] transition-colors"
               maxLength={6}
             />
             <button
               onClick={handleSendCode}
               disabled={countdown > 0}
-              className="px-4 py-3 rounded-xl bg-white/10 text-white text-sm hover:bg-white/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+              className="px-4 py-3 rounded-xl bg-[#c41e3a]/20 text-white text-sm hover:bg-[#c41e3a]/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
             >
               {countdown > 0 ? `${countdown}秒` : '获取验证码'}
             </button>
@@ -144,9 +144,9 @@ export default function LoginForm() {
             disabled={loading}
             className="w-full py-4 rounded-xl font-bold text-lg transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
             style={{
-              background: 'linear-gradient(135deg, #f0c674, #e0a500)',
-              color: '#0a0e27',
-              boxShadow: '0 4px 20px rgba(240,198,116,0.3)',
+              background: 'linear-gradient(135deg, #c41e3a, #a01830)',
+              color: '#ffffff',
+              boxShadow: '0 4px 20px rgba(196,30,58,0.3)',
             }}
           >
             {loading ? '登录中...' : '登录'}
