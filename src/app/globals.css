@@ -93,7 +93,6 @@
   --duration-smooth: 400ms;
 
   /* Animation easing tokens */
-  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-out-back: cubic-bezier(0.34, 1.56, 0.64, 1);
   --ease-spring: cubic-bezier(0.5, 1.5, 0.5, 1);
 
@@ -286,12 +285,6 @@ html {
 }
 
 /* Staggered Reveal animation */
-.stagger-item {
-  opacity: 0;
-  transform: translateY(12px);
-  animation: staggerFadeIn 400ms ease-out forwards;
-}
-
 @keyframes staggerFadeIn {
   to {
     opacity: 1;
@@ -305,28 +298,7 @@ html {
 .stagger-item:nth-child(4) { animation-delay: 300ms; }
 .stagger-item:nth-child(5) { animation-delay: 400ms; }
 
-/* Hover lift utility */
-.hover-lift {
-  transition: transform 200ms var(--ease-smooth), box-shadow 200ms var(--ease-smooth);
-}
-.hover-lift:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
-}
-
 /* Glow Pulse animation */
-.glow-pulse {
-  animation: glowPulse 2s ease-in-out infinite;
-}
-
-@keyframes glowPulse {
-  0%, 100% {
-    box-shadow: 0 0 8px rgba(196, 30, 58, 0.4);
-  }
-  50% {
-    box-shadow: 0 0 24px rgba(196, 30, 58, 0.8);
-  }
-}
 
 /* Hide scrollbar for horizontal scroll containers */
 .scrollbar-hide::-webkit-scrollbar {
@@ -369,11 +341,6 @@ html {
    ======================================== */
 
 /* Entrance Animations */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -474,23 +441,6 @@ html {
   50% { transform: scale(1.05); }
 }
 
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
-  20%, 40%, 60%, 80% { transform: translateX(4px); }
-}
-
-@keyframes successPop {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.2); }
-  100% { transform: scale(1); }
-}
-
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
 /* Bounce animation for loading states */
 @keyframes bounce {
   0%, 80%, 100% { transform: scale(0); }
@@ -503,23 +453,7 @@ html {
   50% { transform: translateY(-8px); }
 }
 
-/* Shimmer for skeleton screens */
-@keyframes shimmer {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
-}
-
-/* Destiny Ring Animations */
-@keyframes destinySpin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-@keyframes destinyPulse {
-  0%, 100% { transform: scale(0.95); opacity: 0.8; }
-  50% { transform: scale(1); opacity: 1; }
-}
-
+/* Shimmer for skeleton screens - kept at skeleton-shimmer below */
 @keyframes elementGlow {
   0%, 100% { box-shadow: 0 0 8px currentColor, 0 0 16px currentColor; }
   50% { box-shadow: 0 0 16px currentColor, 0 0 32px currentColor; }
@@ -675,22 +609,6 @@ html {
 
 .animate-pulse-fast {
   animation: pulse 150ms ease-in-out;
-}
-
-.animate-shake {
-  animation: shake 500ms ease-in-out;
-}
-
-.animate-success-pop {
-  animation: successPop 400ms ease-out;
-}
-
-.animate-success-pop-fast {
-  animation: successPop 200ms ease-out;
-}
-
-.animate-spin {
-  animation: spin 1s linear infinite;
 }
 
 .animate-bounce-dot {
@@ -862,7 +780,20 @@ html {
   .toast-shake, .toast-success-pop, .toast-appear,
   .animate-ring-in, .animate-label-in,
   .glow-pulse, .destiny-spin, .destiny-pulse, .shimmer,
-  .aurora-pulse, .spinner {
+  .aurora-pulse, .spinner,
+  .animate-fade-in, .animate-fade-in-fast, .animate-fade-in-medium, .animate-fade-in-slow,
+  .animate-fade-in-up, .animate-fade-in-up-fast, .animate-fade-in-up-slow,
+  .animate-fade-in-down, .animate-fade-in-down-fast,
+  .animate-fade-in-scale, .animate-fade-in-scale-fast, .animate-fade-in-scale-slow,
+  .animate-slide-in-left, .animate-slide-in-right,
+  .animate-fade-out, .animate-fade-out-fast, .animate-fade-out-down,
+  .animate-scale-out, .animate-scale-down,
+  .animate-pulse, .animate-pulse-fast,
+  .animate-bounce-dot, .animate-float, .animate-glow-pulse,
+  .stagger-item, .stagger-item-fast, .stagger-item-slow,
+  .hover-lift, .hover-lift-fast, .hover-lift-slow,
+  .twinkle, .twinkle-delay-1, .twinkle-delay-2, .twinkle-delay-3, .twinkle-delay-4,
+  .glow-breath, .scroll-unfold {
     animation: none;
   }
 }
