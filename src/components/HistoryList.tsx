@@ -60,8 +60,8 @@ export default function HistoryList() {
       if (stored) {
         setMembers(JSON.parse(stored));
       }
-    } catch {
-      // ignore
+    } catch (err) {
+      console.error('Failed to parse members from localStorage:', err);
     }
   }, []);
 
@@ -85,18 +85,18 @@ export default function HistoryList() {
     }
   };
 
-  // Get unique names from reports to map to members
-  const reportNames = [...new Set(reports.map(r => r.name))];
-
   // Filter reports by selected member tab
   const filteredReports = selectedMemberId === 'all'
     ? reports
     : reports.filter(r => r.name === selectedMemberId);
 
   // Sort by createdAt descending (newest first)
-  const sortedReports = [...filteredReports].sort(
-    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-  );
+  const sortedReports = [...filteredReports].sort((a, b) => {
+    const dateA = new Date(a.createdAt).getTime();
+    const dateB = new Date(b.createdAt).getTime();
+    if (isNaN(dateA) || isNaN(dateB)) return 0;
+    return dateB - dateA;
+  });
 
   // Handle delete
   const handleDelete = async () => {
@@ -240,7 +240,6 @@ export default function HistoryList() {
           {sortedReports.map(report => (
             <div className="stagger-item hover-lift bg-[var(--color-surface)] rounded-[var(--radius-lg)] p-5 border border-white/10">
               <ReportCard
-                key={report.id}
                 report={report}
                 onDelete={() => setDeleteTarget(report.id)}
                 onCompare={handleCompareToggle}
