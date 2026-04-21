@@ -117,7 +117,13 @@ export default function ProfilePage() {
   return (
     <main className="min-h-screen px-4 py-8 max-w-lg mx-auto bg-[var(--color-bg-page)]">
       {/* Header */}
-      <div className="mb-8">
+      <div className="mb-8 relative">
+        {/* Corner brackets decoration */}
+        <div className="absolute -top-4 -left-4 w-8 h-8 border-l-2 border-t-2 border-[var(--color-accent)] opacity-40" />
+        <div className="absolute -top-4 -right-4 w-8 h-8 border-r-2 border-t-2 border-[var(--color-accent)] opacity-40" />
+        <div className="absolute -bottom-4 -left-4 w-8 h-8 border-l-2 border-b-2 border-[var(--color-accent)] opacity-40" />
+        <div className="absolute -bottom-4 -right-4 w-8 h-8 border-r-2 border-b-2 border-[var(--color-accent)] opacity-40" />
+
         <Link
           href="/"
           className="inline-flex items-center text-gray-400 hover:text-white transition-colors mb-4"
@@ -126,7 +132,7 @@ export default function ProfilePage() {
           返回首页
         </Link>
         <h1
-          className="text-2xl font-bold text-white"
+          className="text-h1 font-serif text-white title-underline"
           style={{ textShadow: '0 0 20px rgba(240,198,116,0.3)' }}
         >
           个人档案
@@ -134,7 +140,7 @@ export default function ProfilePage() {
       </div>
 
       {/* Phone Number */}
-      <div className="mb-8 p-4 rounded-xl bg-white/5 border border-white/10">
+      <div className="mb-8 glass-card rounded-[var(--radius-lg)] p-5">
         <div className="flex items-center gap-4">
           <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[var(--color-gold)] to-[var(--color-gold-dark)] flex items-center justify-center flex-shrink-0">
             <span className="text-2xl font-bold text-[var(--color-bg)]">
@@ -142,14 +148,14 @@ export default function ProfilePage() {
             </span>
           </div>
           <div>
-            <p className="text-sm mb-1" style={{ color: 'var(--color-text-muted)' }}>登录手机</p>
+            <p className="text-sm mb-1 text-[var(--color-text-muted)]">登录手机</p>
             <p className="text-white text-lg font-medium">{maskPhone(user.phone)}</p>
           </div>
         </div>
       </div>
 
       {/* Family Members Section */}
-      <div className="mb-8">
+      <div className="mb-8 glass-card rounded-[var(--radius-lg)] p-5">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-white">家庭成员</h2>
           <Button
@@ -170,7 +176,7 @@ export default function ProfilePage() {
                 placeholder="姓名"
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
-                className="w-full px-4 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-[var(--color-purple)] transition-colors"
+                className="w-full px-4 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:border-[var(--color-primary)] transition-colors"
               />
               <CustomDropdown
                 value={form.gender}
@@ -184,7 +190,7 @@ export default function ProfilePage() {
                 type="date"
                 value={form.birthDate}
                 onChange={(e) => setForm({ ...form, birthDate: e.target.value })}
-                className="w-full px-4 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:border-[var(--color-purple)] transition-colors [&::-webkit-calendar-picker-indicator]:invert"
+                className="w-full px-4 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white focus:outline-none focus:border-[var(--color-primary)] transition-colors [&::-webkit-calendar-picker-indicator]:invert"
               />
               <div className="flex gap-2">
                 <Button
@@ -207,10 +213,18 @@ export default function ProfilePage() {
 
         {/* Members List */}
         {members.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
-            <div className="text-5xl mb-3">👨‍👩‍👧</div>
-            <p className="mb-2">暂无家庭成员</p>
-            <p className="text-sm">点击上方按钮添加</p>
+          <div className="text-center py-8">
+            <div className="flex justify-center mb-4">
+              <svg className="w-16 h-16 text-[var(--color-gold)]/40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
+                <circle cx="12" cy="8" r="4" />
+                <path d="M4 20c0-4 4-6 8-6s8 2 8 6" />
+                <circle cx="19" cy="8" r="2.5" />
+                <path d="M14 20c0-2.5 2.5-4 5-4" />
+              </svg>
+            </div>
+            <div className="h-px bg-gradient-to-r from-transparent via-[var(--color-gold)]/30 to-transparent mb-4" />
+            <p className="text-[var(--color-text-muted)] mb-1">暂无家庭成员</p>
+            <p className="text-sm text-[var(--color-text-muted)]/60">点击上方按钮添加</p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -248,7 +262,7 @@ export default function ProfilePage() {
       </div>
 
       {/* Settings Section */}
-      <div className="mb-6">
+      <div className="mb-6 glass-card rounded-[var(--radius-lg)] p-5">
         <h2 className="text-lg font-semibold text-white mb-4">设置</h2>
         <div className="space-y-3">
           {/* Notifications Toggle */}
