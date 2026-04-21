@@ -107,11 +107,14 @@ export default function LoginForm() {
 
         <div className="ink-wash-corner glass-card rounded-[var(--radius-xl)] p-[var(--space-xl)] space-y-4">
           <div>
+            <label htmlFor="phone" className="sr-only">手机号</label>
             <input
+              id="phone"
               type="tel"
               placeholder="手机号"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
+              aria-describedby={error ? "form-error" : undefined}
               className="w-full rounded-[var(--radius-md)] px-5 py-4 text-white placeholder-gray-500 border transition-all duration-200 focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/20 bg-[var(--color-surface)]"
               maxLength={11}
             />
@@ -119,10 +122,12 @@ export default function LoginForm() {
 
           <div className="flex gap-2">
             <input
+              id="code"
               type="text"
               placeholder="验证码"
               value={code}
               onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+              aria-describedby={error ? "form-error" : undefined}
               className="flex-1 rounded-[var(--radius-md)] px-5 py-4 text-white placeholder-gray-500 border transition-all duration-200 focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/20 bg-[var(--color-surface)]"
               maxLength={6}
             />
@@ -136,7 +141,7 @@ export default function LoginForm() {
           </div>
 
           {error && (
-            <p className="text-red-400 text-sm text-center">{error}</p>
+            <p id="form-error" role="alert" className="text-sm text-[var(--color-error)] mt-1 text-center">{error}</p>
           )}
 
           <button
