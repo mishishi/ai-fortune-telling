@@ -213,7 +213,7 @@ export default function HomePage() {
           <div className="flex items-center justify-between px-4 py-3 rounded-2xl bg-white/5 backdrop-blur-md border border-white/10">
             {/* Logo / Brand */}
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#7b68ee] to-[#4169e1] flex items-center justify-center">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#c41e3a] to-[#1e3a5f] flex items-center justify-center">
                 <span className="text-sm">☯</span>
               </div>
               <span className="text-white font-semibold text-sm hidden sm:inline">八字命理</span>
@@ -267,7 +267,7 @@ export default function HomePage() {
         <div className="text-center mb-8">
           <h1
             className="text-4xl md:text-5xl font-bold text-white mb-3 text-center"
-            style={{ textShadow: '0 0 40px rgba(123,104,238,0.6)' }}
+            style={{ textShadow: '0 0 40px rgba(196,30,58,0.6)' }}
           >
             AI 八字命理分析
           </h1>
@@ -312,7 +312,7 @@ export default function HomePage() {
                   className="absolute inset-0 rounded-full border-2 destiny-ring-outer"
                   style={{
                     animation: 'destinySpin 3s linear infinite',
-                    borderColor: 'rgba(123, 104, 238, 0.4)',
+                    borderColor: 'rgba(196, 30, 58, 0.4)',
                   }}
                 />
                 {/* Middle Ring - Counter-clockwise 2s */}
@@ -320,7 +320,7 @@ export default function HomePage() {
                   className="absolute inset-3 rounded-full border-2 destiny-ring-middle"
                   style={{
                     animation: 'destinySpin 2s linear infinite reverse',
-                    borderColor: 'rgba(65, 105, 225, 0.5)',
+                    borderColor: 'rgba(212, 175, 55, 0.5)',
                   }}
                 />
                 {/* Inner Ring - Pulse */}
@@ -414,7 +414,7 @@ export default function HomePage() {
                     <div
                       className="rounded-full shimmer-bar"
                       style={{
-                        background: 'linear-gradient(90deg, #7b68ee, #f0c674)',
+                        background: 'linear-gradient(90deg, #c41e3a, #d4af37)',
                         backgroundSize: '200% 100%',
                         animation: 'shimmer 2s linear infinite',
                         height: '100%',
