@@ -798,6 +798,88 @@ html {
   opacity: 0.8;
 }
 
+/* Section accent bar - thin vertical line that indicates section type */
+.section-accent {
+  position: relative;
+  padding-left: 12px;
+}
+.section-accent::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 2px;
+  bottom: 2px;
+  width: 2px;
+  background: currentColor;
+  border-radius: 1px;
+  opacity: 0.8;
+}
+
+/* Corner brackets - L-shaped decorations for cards/containers */
+.corner-brackets {
+  position: relative;
+}
+.corner-brackets::before,
+.corner-brackets::after {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  opacity: 0.4;
+  pointer-events: none;
+}
+.corner-brackets::before {
+  top: 0;
+  left: 0;
+  border-top: 1px solid var(--color-accent);
+  border-left: 1px solid var(--color-accent);
+}
+.corner-brackets::after {
+  bottom: 0;
+  right: 0;
+  border-bottom: 1px solid var(--color-accent);
+  border-right: 1px solid var(--color-accent);
+}
+
+/* Corner brackets all four */
+.corner-brackets-all::before,
+.corner-brackets-all::after {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  opacity: 0.4;
+  pointer-events: none;
+}
+.corner-brackets-all::before {
+  top: 0;
+  left: 0;
+  border-top: 1px solid var(--color-accent);
+  border-left: 1px solid var(--color-accent);
+}
+.corner-brackets-all::after {
+  bottom: 0;
+  right: 0;
+  border-bottom: 1px solid var(--color-accent);
+  border-right: 1px solid var(--color-accent);
+}
+
+/* Title underline accent - subtle gold line under section titles */
+.title-underline {
+  position: relative;
+  display: inline-block;
+}
+.title-underline::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 24px;
+  height: 1px;
+  background: var(--color-accent);
+  opacity: 0.6;
+}
+
 /* 垂直书法线条 */
 .calligraphy-line {
   width: 1px;
