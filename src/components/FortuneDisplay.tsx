@@ -174,10 +174,10 @@ export default function FortuneDisplay({ analysis, isLocked = false }: FortuneDi
               section.sub ? 'ml-3' : ''
             }`}
             style={{
-              background: 'rgba(26, 31, 58, 0.4)',
+              background: 'rgba(26, 21, 37, 0.5)',
               backdropFilter: 'blur(12px)',
-              border: `1px solid ${isExpanded ? section.color + '40' : 'rgba(255,255,255,0.06)'}`,
-              boxShadow: isExpanded ? `0 0 20px ${section.color}15` : 'none',
+              border: `1px solid ${isExpanded ? section.color + '50' : 'rgba(212,175,55,0.12)'}`,
+              boxShadow: isExpanded ? `0 0 20px ${section.color}20` : 'none',
             }}
           >
             {/* Header */}
@@ -254,8 +254,8 @@ export default function FortuneDisplay({ analysis, isLocked = false }: FortuneDi
         <div
           className="mt-6 p-5 rounded-xl text-center transition-all duration-300 hover:scale-[1.02]"
           style={{
-            background: 'linear-gradient(135deg, rgba(240,198,116,0.08) 0%, rgba(123,104,238,0.08) 100%)',
-            border: '1px solid rgba(240,198,116,0.2)',
+            background: 'linear-gradient(135deg, rgba(212,175,55,0.08) 0%, rgba(196,30,58,0.08) 100%)',
+            border: '1px solid rgba(212,175,55,0.2)',
           }}
         >
           <p className="font-semibold mb-2" style={{ color: 'var(--color-accent)' }}>
