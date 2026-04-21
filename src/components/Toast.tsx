@@ -34,20 +34,6 @@ export default function Toast({ message, type, onClose }: ToastProps) {
   return (
     <>
       <style jsx>{`
-        @keyframes shake {
-          0%, 100% { transform: translateX(0); }
-          10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
-          20%, 40%, 60%, 80% { transform: translateX(4px); }
-        }
-        @keyframes successPop {
-          0% { transform: scale(1); }
-          50% { transform: scale(1.3); }
-          100% { transform: scale(1); }
-        }
-        @keyframes appear {
-          0% { opacity: 0; transform: scale(0.9); }
-          100% { opacity: 1; transform: scale(1); }
-        }
         .toast-success {
           animation: appear 300ms ease-out;
         }
