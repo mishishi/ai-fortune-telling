@@ -148,7 +148,7 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
       </div>
 
       {/* Interactive Report Content */}
-      <ReportContent radarScores={radarScores} aiAnalysis={aiAnalysis} isLocked={!report.unlocked} />
+      <ReportContent radarScores={radarScores} aiAnalysis={aiAnalysis} isLocked={!report.unlocked} reportId={id} />
 
       {/* Timeline */}
       <div className="mt-8 corner-brackets px-4 py-4">

@@ -22,6 +22,7 @@ interface ReportContentProps {
     yearly: string;
   };
   isLocked?: boolean;
+  reportId?: string;
 }
 
 const DIMENSION_TO_KEY: Record<string, string> = {
@@ -32,7 +33,7 @@ const DIMENSION_TO_KEY: Record<string, string> = {
   '贵人': 'mentor',
 };
 
-export default function ReportContent({ radarScores, aiAnalysis, isLocked }: ReportContentProps) {
+export default function ReportContent({ radarScores, aiAnalysis, isLocked, reportId }: ReportContentProps) {
   const [activeSection, setActiveSection] = useState<string | null>('overall');
 
   const handleDimensionClick = (dimension: string) => {
@@ -65,7 +66,7 @@ export default function ReportContent({ radarScores, aiAnalysis, isLocked }: Rep
         <h2 className="text-h3 font-semibold mb-4" style={{ color: 'var(--color-accent)' }}>
           命盘解读
         </h2>
-        <FortuneDisplay analysis={aiAnalysis} isLocked={isLocked} />
+        <FortuneDisplay analysis={aiAnalysis} isLocked={isLocked} reportId={reportId} />
       </div>
     </>
   );
