@@ -1106,3 +1106,20 @@ html {
 .scroll-unfold {
   animation: scrollUnfold 600ms ease-out forwards;
 }
+
+/* ===== Fortune Section Tier Styling ===== */
+
+/* Tier 1 sections - Core overview with subtle glow */
+.section-tier-1 {
+  background: linear-gradient(135deg, rgba(212,175,55,0.05) 0%, transparent 50%);
+}
+
+/* Group separator animations */
+@keyframes group-fade-in {
+  0% { opacity: 0; transform: translateY(8px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.group-separator {
+  animation: group-fade-in 0.4s ease-out forwards;
+}
