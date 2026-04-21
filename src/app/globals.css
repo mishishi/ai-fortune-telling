@@ -29,12 +29,12 @@
   --color-error: #ef4444;
   --color-info: #3b82f6;
 
-  /* Five Elements (五行) - Semantic Chart Colors */
-  --color-element-wood: #4ade80;
-  --color-element-fire: #f87171;
-  --color-element-earth: #fbbf24;
-  --color-element-metal: #60a5fa;
-  --color-element-water: #a78bfa;
+  /* Five Elements (五行) - Traditional semantics */
+  --color-element-wood: #4ade80;    /* Green - correct */
+  --color-element-fire: #ef4444;    /* Red - correct */
+  --color-element-earth: #ca8a04;   /* Earth yellow - traditional */
+  --color-element-metal: #d1d5db;   /* White/silver - correct */
+  --color-element-water: #1e3a5f;   /* Dark blue/black - correct */
 
   /* Loading Step Indicator Colors */
   --color-loading-wood: #4ade80;
