@@ -182,15 +182,26 @@ export default function ReportCard({ report, onDelete, onCompare, isSelected, sk
           {/* Action Buttons */}
           <div className="flex gap-2 mt-3" onClick={e => e.stopPropagation()}>
             <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={isSelected}
-                onChange={e => { e.stopPropagation(); onCompare?.(report.id); }}
-                className="w-4 h-4 rounded border-white/20 bg-white/5 accent-[var(--color-primary)] cursor-pointer"
-              />
+              {/* Custom Checkbox */}
+              <div
+                role="checkbox"
+                aria-checked={isSelected}
+                onClick={e => { e.stopPropagation(); onCompare?.(report.id); }}
+                className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all cursor-pointer ${
+                  isSelected
+                    ? 'bg-[#c41e3a] border-[#d4af37]'
+                    : 'bg-white/5 border-white/20 hover:border-[#c41e3a]/50'
+                }`}
+              >
+                {isSelected && (
+                  <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
+                )}
+              </div>
               <span className={`text-xs px-3 py-1.5 rounded-lg border transition-colors ${
                 isSelected
-                  ? 'bg-[var(--color-primary)]/30 border-[var(--color-primary)] text-white'
+                  ? 'bg-[#c41e3a]/30 border-[#c41e3a] text-white'
                   : 'bg-white/5 border-white/10 text-gray-300 hover:bg-white/10'
               }`}>
                 {isSelected ? '已选择' : '对比'}
