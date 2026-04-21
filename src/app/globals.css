@@ -85,6 +85,18 @@
   --transition-micro-bounce: 150ms var(--ease-micro-bounce);
   --transition-smooth: 300ms var(--ease-smooth);
 
+  /* Animation duration scale */
+  --duration-micro: 100ms;
+  --duration-fast: 150ms;
+  --duration-base: 200ms;
+  --duration-slow: 300ms;
+  --duration-smooth: 400ms;
+
+  /* Animation easing tokens */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-spring: cubic-bezier(0.5, 1.5, 0.5, 1);
+
   /* Spacing */
   --space-xs: 0.25rem;
   --space-sm: 0.5rem;
@@ -513,6 +525,70 @@ html {
   50% { box-shadow: 0 0 16px currentColor, 0 0 32px currentColor; }
 }
 
+/* ===== Keyframes ===== */
+
+/* Toast animations */
+@keyframes toast-shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+  20%, 40%, 60%, 80% { transform: translateX(4px); }
+}
+
+@keyframes toast-success-pop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+
+@keyframes toast-appear {
+  0% { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* BaziRing animations */
+@keyframes ring-expand {
+  0% { transform: scale(0.8); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes fade-in {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+/* Home page destiny orb animations */
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.6; filter: blur(40px); }
+  50% { opacity: 1; filter: blur(50px); }
+}
+
+@keyframes destiny-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes destiny-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+/* Aurora effect pulse */
+@keyframes aurora-pulse {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.02); }
+}
+
+/* Spinner for unlock button */
+@keyframes spinner-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 
 /* Utility Classes - Entrance with varied durations for better rhythm */
 .animate-fade-in {
@@ -752,6 +828,43 @@ html {
 }
 .page-exit-active {
   animation: fadeOut 200ms ease-in forwards;
+}
+
+/* ===== Animation utility classes ===== */
+
+/* Toast animation classes */
+.toast-shake { animation: toast-shake 0.5s ease-in-out; }
+.toast-success-pop { animation: toast-success-pop 0.3s var(--ease-spring); }
+.toast-appear { animation: toast-appear 0.4s var(--ease-out-expo) forwards; }
+
+/* BaziRing animation classes */
+.animate-ring-in { animation: ring-expand 0.6s var(--ease-out-expo) forwards; }
+.animate-label-in { animation: fade-in 0.5s ease-out forwards; }
+
+/* Home page destiny orb classes */
+.glow-pulse { animation: glow-pulse 4s ease-in-out infinite; }
+.destiny-spin { animation: destiny-spin 20s linear infinite; }
+.destiny-pulse { animation: destiny-pulse 4s ease-in-out infinite; }
+.shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 2s linear infinite;
+}
+
+/* Aurora pulse */
+.aurora-pulse { animation: aurora-pulse 4s ease-in-out infinite; }
+
+/* Spinner */
+.spinner { animation: spinner-spin 0.8s linear infinite; }
+
+/* Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .toast-shake, .toast-success-pop, .toast-appear,
+  .animate-ring-in, .animate-label-in,
+  .glow-pulse, .destiny-spin, .destiny-pulse, .shimmer,
+  .aurora-pulse, .spinner {
+    animation: none;
+  }
 }
 
 /* ========================================
