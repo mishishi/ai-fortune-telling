@@ -111,7 +111,7 @@ export default function CustomDropdown({ id, value, options, onChange, placehold
         aria-expanded={open}
         aria-labelledby={id ? `${id}-label` : undefined}
         aria-activedescendant={open && focusedIndex >= 0 ? `${listboxId}-option-${focusedIndex}` : undefined}
-        className="w-full flex items-center justify-between px-4 py-3 rounded-lg border transition-colors focus:border-[#7b68ee] focus:outline-none"
+        className={`w-full flex items-center justify-between px-4 py-3 rounded-lg border transition-colors focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)] focus:ring-offset-2 focus:ring-offset-[var(--color-bg)] ${error ? 'border-[var(--color-error)]' : 'border-[var(--color-border)']} hover:border-[var(--color-border-hover)] ${open ? 'border-[var(--color-primary)]' : ''}`}
         style={{
           background: 'var(--color-surface)',
           borderColor: error ? 'var(--color-error)' : 'var(--color-border)',
@@ -178,8 +178,8 @@ export default function CustomDropdown({ id, value, options, onChange, placehold
               }`}
               style={{
                 background: focusedIndex === index
-                  ? 'rgba(123, 104, 238, 0.25)'
-                  : String(option.value) === String(value) ? 'rgba(123, 104, 238, 0.15)' : undefined,
+                  ? 'rgba(var(--color-primary-rgb), 0.25)'
+                  : String(option.value) === String(value) ? 'rgba(var(--color-primary-rgb), 0.15)' : undefined,
               }}
             >
               {option.label}

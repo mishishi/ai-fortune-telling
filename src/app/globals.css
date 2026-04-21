@@ -3,6 +3,7 @@
 :root {
   /* Brand Colors */
   --color-primary: #c41e3a;
+  --color-primary-rgb: 196, 30, 58;
   --color-primary-hover: #a01830;
   --color-secondary: #1e3a5f;
   --color-accent: #d4af37;
