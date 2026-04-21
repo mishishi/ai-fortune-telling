@@ -42,12 +42,6 @@ export default function ReportContent({ radarScores, aiAnalysis, isLocked }: Rep
     }
   };
 
-  // Sync active section to FortuneDisplay
-  useEffect(() => {
-    // When activeSection changes, FortuneDisplay will handle it via its own state
-    // This component just passes the initial state
-  }, [activeSection]);
-
   return (
     <>
       {/* Radar Chart */}
@@ -68,9 +62,9 @@ export default function ReportContent({ radarScores, aiAnalysis, isLocked }: Rep
 
       {/* Fortune Analysis */}
       <div>
-        <span className="text-h3 font-semibold" style={{ color: 'var(--color-accent)' }}>
+        <h2 className="text-h3 font-semibold" style={{ color: 'var(--color-accent)' }}>
           命盘解读
-        </span>
+        </h2>
         <FortuneDisplay analysis={aiAnalysis} isLocked={isLocked} />
       </div>
     </>
