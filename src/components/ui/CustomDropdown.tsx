@@ -111,7 +111,7 @@ export default function CustomDropdown({ id, value, options, onChange, placehold
         aria-expanded={open}
         aria-labelledby={id ? `${id}-label` : undefined}
         aria-activedescendant={open && focusedIndex >= 0 ? `${listboxId}-option-${focusedIndex}` : undefined}
-        className={`w-full flex items-center justify-between px-4 py-3 rounded-lg border transition-colors focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)] focus:ring-offset-2 ${error ? 'border-red-500' : 'border-white/10'} hover:border-white/20 ${open ? 'border-[var(--color-primary)]' : ''}`}
+        className={`w-full flex items-center justify-between px-4 py-3 rounded-[var(--radius-md)] border transition-colors focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)] focus:ring-offset-2 ${error ? 'border-red-500' : 'border-white/10'} hover:border-white/20 ${open ? 'border-[var(--color-primary)]' : ''}`}
         style={{
           background: 'var(--color-surface)',
         }}
@@ -134,7 +134,7 @@ export default function CustomDropdown({ id, value, options, onChange, placehold
           id={listboxId}
           role="listbox"
           aria-labelledby={id}
-          className={`absolute z-50 w-full rounded-lg shadow-xl max-h-[70vh] overflow-y-auto ${
+          className={`absolute z-50 w-full rounded-[var(--radius-md)] shadow-[var(--shadow-lg)] max-h-[70vh] overflow-y-auto ${
             dropUp ? 'bottom-full mb-1' : 'top-full mt-1'
           }`}
           style={{
@@ -176,7 +176,7 @@ export default function CustomDropdown({ id, value, options, onChange, placehold
             </div>
           )}
           {options.length > 0 && (
-            <div className="py-1">
+            <div className="py-1 stagger-item">
               {options.map((option, index) => (
             <button
               key={String(option.value)}
