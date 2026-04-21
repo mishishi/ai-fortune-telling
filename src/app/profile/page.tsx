@@ -214,17 +214,59 @@ export default function ProfilePage() {
         {/* Members List */}
         {members.length === 0 ? (
           <div className="text-center py-8">
-            <div className="flex justify-center mb-4">
-              <svg className="w-16 h-16 text-[var(--color-gold)]/40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
-                <circle cx="12" cy="8" r="4" />
-                <path d="M4 20c0-4 4-6 8-6s8 2 8 6" />
-                <circle cx="19" cy="8" r="2.5" />
-                <path d="M14 20c0-2.5 2.5-4 5-4" />
+            {/* Oriental compass/feng shui illustration */}
+            <div className="relative inline-block mb-6 animate-fade-in-up">
+              <svg
+                className="w-20 h-20 animate-float"
+                viewBox="0 0 80 80"
+                fill="none"
+                style={{ animationDuration: '4s' }}
+              >
+                {/* Outer ring */}
+                <circle cx="40" cy="40" r="36" stroke="var(--color-gold)" strokeWidth="0.5" opacity="0.4"/>
+                <circle cx="40" cy="40" r="30" stroke="var(--color-gold)" strokeWidth="0.8" opacity="0.5"/>
+
+                {/* Inner octagon - bagua base */}
+                <path
+                  d="M40 12 L54 22 L62 40 L54 58 L40 68 L26 58 L18 40 L26 22 Z"
+                  stroke="var(--color-gold)"
+                  strokeWidth="0.8"
+                  fill="none"
+                  opacity="0.5"
+                />
+
+                {/* Center compass needle */}
+                <path d="M40 20 L44 40 L40 44 L36 40 Z" fill="var(--color-primary)" opacity="0.8"/>
+                <path d="M40 60 L44 40 L40 36 L36 40 Z" fill="var(--color-gold)" opacity="0.7"/>
+
+                {/* Direction markers */}
+                <circle cx="40" cy="12" r="2" fill="var(--color-gold)" opacity="0.6"/>
+                <circle cx="62" cy="40" r="2" fill="var(--color-gold)" opacity="0.6"/>
+                <circle cx="40" cy="68" r="2" fill="var(--color-gold)" opacity="0.6"/>
+                <circle cx="18" cy="40" r="2" fill="var(--color-gold)" opacity="0.6"/>
+
+                {/* Diagonal markers */}
+                <circle cx="55" cy="25" r="1.5" fill="var(--color-gold)" opacity="0.4"/>
+                <circle cx="55" cy="55" r="1.5" fill="var(--color-gold)" opacity="0.4"/>
+                <circle cx="25" cy="55" r="1.5" fill="var(--color-gold)" opacity="0.4"/>
+                <circle cx="25" cy="25" r="1.5" fill="var(--color-gold)" opacity="0.4"/>
+
+                {/* Center dot */}
+                <circle cx="40" cy="40" r="4" fill="url(#compassCenter)" opacity="0.9"/>
+                <circle cx="40" cy="40" r="2" fill="var(--color-primary)" opacity="0.8"/>
+
+                <defs>
+                  <radialGradient id="compassCenter" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stopColor="var(--color-gold)"/>
+                    <stop offset="100%" stopColor="var(--color-primary)"/>
+                  </radialGradient>
+                </defs>
               </svg>
             </div>
-            <div className="h-px bg-gradient-to-r from-transparent via-[var(--color-gold)]/30 to-transparent mb-4" />
-            <p className="text-[var(--color-text-muted)] mb-1">暂无家庭成员</p>
-            <p className="text-sm text-[var(--color-text-muted)]/60">点击上方按钮添加</p>
+
+            <div className="gold-divider mx-auto mb-4 animate-fade-in" style={{ animationDelay: '100ms' }}></div>
+            <p className="text-[var(--color-text-muted)] mb-1 animate-fade-in-up" style={{ animationDelay: '150ms' }}>暂无家庭成员</p>
+            <p className="text-sm text-[var(--color-text-muted)]/60 animate-fade-in-up" style={{ animationDelay: '200ms' }}>点击上方按钮添加家庭成员</p>
           </div>
         ) : (
           <div className="space-y-3">

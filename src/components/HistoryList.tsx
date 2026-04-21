@@ -218,22 +218,166 @@ export default function HistoryList() {
       {/* Reports List */}
       {sortedReports.length === 0 ? (
         <div className="text-center py-16">
-          <div className="gold-divider mx-auto mb-6 w-24"></div>
-          <svg className="w-16 h-16 mx-auto mb-4 text-[var(--color-accent)] opacity-40" viewBox="0 0 100 100" fill="none">
-            <circle cx="50" cy="50" r="45" stroke="url(#scrollGrad)" strokeWidth="2" strokeDasharray="4 4"/>
-            <path d="M30 25h40c2 0 3 1 3 3v44c0 2-1 3-3 3H30c-2 0-3-1-3-3V28c0-2 1-3 3-3z" stroke="var(--color-accent)" strokeWidth="1.5" fill="none"/>
-            <path d="M35 35h30M35 45h30M35 55h20" stroke="var(--color-accent)" strokeWidth="1" opacity="0.6"/>
-            <circle cx="50" cy="68" r="4" fill="var(--color-primary)" opacity="0.8"/>
-            <defs>
-              <linearGradient id="scrollGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="var(--color-accent)" stopOpacity="0.5"/>
-                <stop offset="100%" stopColor="var(--color-primary)" stopOpacity="0.5"/>
-              </linearGradient>
-            </defs>
-          </svg>
-          <p className="text-h4 text-[var(--color-text-secondary)]">暂无命盘记录</p>
-          <p className="text-body text-[var(--color-text-muted)] mt-2">开始解读你的命运</p>
-          <div className="gold-divider mx-auto mt-6 w-24"></div>
+          {/* Top gold divider */}
+          <div className="gold-divider mx-auto mb-8 w-24 animate-fade-in" style={{ animationDelay: '0ms' }}></div>
+
+          {/* Oriental Ba Gua illustration with float animation */}
+          <div className="relative inline-block mb-8 animate-fade-in-up" style={{ animationDelay: '100ms' }}>
+            <svg
+              className="w-32 h-32 animate-float"
+              viewBox="0 0 120 120"
+              fill="none"
+              style={{ animationDelay: '0ms', animationDuration: '4s' }}
+            >
+              {/* Outer ring - mystical circle */}
+              <circle
+                cx="60" cy="60" r="56"
+                stroke="url(#baguaGrad)"
+                strokeWidth="1"
+                opacity="0.4"
+              />
+              <circle
+                cx="60" cy="60" r="52"
+                stroke="var(--color-accent)"
+                strokeWidth="0.5"
+                strokeDasharray="2 4"
+                opacity="0.6"
+              />
+
+              {/* Middle ring with trigrams positions */}
+              <circle
+                cx="60" cy="60" r="44"
+                stroke="url(#baguaGrad)"
+                strokeWidth="1.5"
+                opacity="0.7"
+              />
+
+              {/* Inner ring */}
+              <circle
+                cx="60" cy="60" r="32"
+                stroke="var(--color-accent)"
+                strokeWidth="0.5"
+                opacity="0.5"
+              />
+
+              {/* Ba Gua lines - simplified trigram symbols around center */}
+              {/* ☰ (Heaven) - top */}
+              <g opacity="0.8">
+                <line x1="56" y1="22" x2="64" y2="22" stroke="var(--color-accent)" strokeWidth="2.5" strokeLinecap="round"/>
+                <line x1="56" y1="26" x2="64" y2="26" stroke="var(--color-accent)" strokeWidth="2.5" strokeLinecap="round"/>
+                <line x1="56" y1="30" x2="64" y2="30" stroke="var(--color-accent)" strokeWidth="2.5" strokeLinecap="round"/>
+              </g>
+
+              {/* ☱ (Lake) - top right */}
+              <g opacity="0.7">
+                <line x1="84" y1="28" x2="92" y2="28" stroke="var(--color-accent)" strokeWidth="2.5" strokeLinecap="round"/>
+                <line x1="84" y1="32" x2="92" y2="32" stroke="var(--color-accent)" strokeWidth="2.5" strokeLinecap="round"/>
+                <line x1="86" y1="36" x2="90" y2="36" stroke="var(--color-accent)" strokeWidth="2.5" strokeLinecap="round"/>
+              </g>
+
+              {/* ☲ (Fire) - right */}
+              <g opacity="0.75">
+                <line x1="94" y1="56" x2="102" y2="56" stroke="var(--color-accent)" strokeWidth="2.5" strokeLinecap="round"/>
+                <line x1="86" y1="60" x2="94" y2="60" stroke="var(--color-accent)" strokeWidth="2.5" strokeLinecap="round"/>
+                <line x1="94" y1="64" x2="102" y2="64" stroke="var(--color-accent)" strokeWidth="2.5" strokeLinecap="round"/>
+              </g>
+
+              {/* ☳ (Thunder) - bottom right */}
+              <g opacity="0.65">
+                <line x1="84" y1="84" x2="92" y2="84" stroke="var(--color-accent)" strokeWidth="2.5" strokeLinecap="round"/>
+                <line x1="86" y1="88" x2="90" y2="88" stroke="var(--color-accent)" strokeWidth="2.5" strokeLinecap="round"/>
+                <line x1="84" y1="92" x2="92" y2="92" stroke="var(--color-accent)" strokeWidth="2.5" strokeLinecap="round"/>
+              </g>
+
+              {/* ☴ (Wind) - bottom */}
+              <g opacity="0.7">
+                <line x1="56" y1="94" x2="64" y2="94" stroke="var(--color-accent)" strokeWidth="2.5" strokeLinecap="round"/>
+                <line x1="56" y1="90" x2="64" y2="90" stroke="var(--color-accent)" strokeWidth="2.5" strokeLinecap="round"/>
+                <line x1="56" y1="86" x2="64" y2="86" stroke="var(--color-accent)" strokeWidth="2.5" strokeLinecap="round"/>
+              </g>
+
+              {/* ☵ (Water) - bottom left */}
+              <g opacity="0.75">
+                <line x1="28" y1="84" x2="36" y2="84" stroke="var(--color-accent)" strokeWidth="2.5" strokeLinecap="round"/>
+                <line x1="30" y1="88" x2="34" y2="88" stroke="var(--color-accent)" strokeWidth="2.5" strokeLinecap="round"/>
+                <line x1="28" y1="92" x2="36" y2="92" stroke="var(--color-accent)" strokeWidth="2.5" strokeLinecap="round"/>
+              </g>
+
+              {/* ☶ (Mountain) - left */}
+              <g opacity="0.8">
+                <line x1="18" y1="56" x2="26" y2="56" stroke="var(--color-accent)" strokeWidth="2.5" strokeLinecap="round"/>
+                <line x1="26" y1="60" x2="34" y2="60" stroke="var(--color-accent)" strokeWidth="2.5" strokeLinecap="round"/>
+                <line x1="18" y1="64" x2="26" y2="64" stroke="var(--color-accent)" strokeWidth="2.5" strokeLinecap="round"/>
+              </g>
+
+              {/* ☷ (Earth) - top left */}
+              <g opacity="0.65">
+                <line x1="28" y1="28" x2="36" y2="28" stroke="var(--color-accent)" strokeWidth="2.5" strokeLinecap="round"/>
+                <line x1="30" y1="32" x2="34" y2="32" stroke="var(--color-accent)" strokeWidth="2.5" strokeLinecap="round"/>
+                <line x1="28" y1="36" x2="36" y2="36" stroke="var(--color-accent)" strokeWidth="2.5" strokeLinecap="round"/>
+              </g>
+
+              {/* Center dot - Tai Ji origin */}
+              <circle cx="60" cy="60" r="6" fill="url(#centerGrad)" opacity="0.9"/>
+              <circle cx="60" cy="60" r="3" fill="var(--color-primary)" opacity="0.8"/>
+
+              {/* Decorative cloud motifs */}
+              <g opacity="0.3">
+                <path d="M25 45 Q30 42 35 45 Q40 48 45 45" stroke="var(--color-accent)" strokeWidth="0.8" fill="none"/>
+                <path d="M75 75 Q80 72 85 75 Q90 78 95 75" stroke="var(--color-accent)" strokeWidth="0.8" fill="none"/>
+              </g>
+
+              {/* Gradient definitions */}
+              <defs>
+                <linearGradient id="baguaGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="var(--color-accent)" stopOpacity="0.8"/>
+                  <stop offset="50%" stopColor="var(--color-primary)" stopOpacity="0.6"/>
+                  <stop offset="100%" stopColor="var(--color-accent)" stopOpacity="0.8"/>
+                </linearGradient>
+                <radialGradient id="centerGrad" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stopColor="var(--color-primary)"/>
+                  <stop offset="100%" stopColor="var(--color-accent)"/>
+                </radialGradient>
+              </defs>
+            </svg>
+
+            {/* Subtle glow behind the illustration */}
+            <div
+              className="absolute inset-0 -z-10 rounded-full blur-2xl opacity-20"
+              style={{
+                background: 'radial-gradient(circle, var(--color-accent) 0%, transparent 70%)',
+              }}
+            />
+          </div>
+
+          {/* Main message */}
+          <p
+            className="text-h3 text-[var(--color-text-secondary)] mb-3 animate-fade-in-up font-serif"
+            style={{ animationDelay: '200ms', textShadow: '0 0 20px rgba(212,175,55,0.2)' }}
+          >
+            命运的齿轮尚未转动
+          </p>
+
+          {/* Subtext */}
+          <p className="text-body text-[var(--color-text-muted)] mb-6 animate-fade-in-up" style={{ animationDelay: '300ms' }}>
+            开启你的第一次命盘解读
+          </p>
+
+          {/* CTA Button */}
+          <div className="animate-fade-in-up" style={{ animationDelay: '400ms' }}>
+            <Link
+              href="/"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)] text-white font-medium rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200"
+            >
+              <span>开始解读</span>
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+              </svg>
+            </Link>
+          </div>
+
+          {/* Bottom gold divider */}
+          <div className="gold-divider mx-auto mt-10 w-24 animate-fade-in" style={{ animationDelay: '500ms' }}></div>
         </div>
       ) : (
         <div className="space-y-4">
