@@ -161,8 +161,24 @@ export default function CustomDropdown({ id, value, options, onChange, placehold
               background: rgba(255,255,255,0.5);
             }
           `}</style>
-          <div className="py-1">
-          {options.map((option, index) => (
+          {options.length === 0 && (
+            <div className="px-4 py-8 text-center">
+              <svg
+                className="w-8 h-8 mx-auto mb-2 opacity-40"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>
+                暂无可选项目
+              </p>
+            </div>
+          )}
+          {options.length > 0 && (
+            <div className="py-1">
+              {options.map((option, index) => (
             <button
               key={String(option.value)}
               id={`${listboxId}-option-${index}`}
@@ -185,7 +201,8 @@ export default function CustomDropdown({ id, value, options, onChange, placehold
               {option.label}
             </button>
           ))}
-          </div>
+            </div>
+          )}
         </div>
       )}
     </div>
