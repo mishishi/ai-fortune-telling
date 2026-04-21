@@ -91,10 +91,6 @@ export default function BaziRing({ birthData, size = 280 }: BaziRingProps) {
           from { opacity: 0; transform: translateY(10px); }
           to { opacity: 1; transform: translateY(0); }
         }
-        @keyframes glowPulse {
-          0%, 100% { opacity: 0.3; }
-          50% { opacity: 0.6; }
-        }
         .animate-ring-in {
           animation: ringExpand 600ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
         }
@@ -102,32 +98,30 @@ export default function BaziRing({ birthData, size = 280 }: BaziRingProps) {
           opacity: 0;
           animation: fadeIn 400ms ease-out forwards;
         }
-        .glow-ring {
-          animation: glowPulse 3s ease-in-out infinite;
-        }
       `}</style>
 
       <div className="flex flex-col items-center relative">
         {/* Outer glow effect */}
         <div
-          className="absolute rounded-full glow-ring"
+          className="absolute rounded-full glow-pulse"
           style={{
             width: effectiveSize + 60,
             height: effectiveSize + 60,
             top: -30,
             left: -30,
-            background: 'radial-gradient(circle, rgba(196,30,58,0.15) 0%, transparent 70%)',
+            background: `radial-gradient(circle, rgba(212,175,55,0.15) 0%, transparent 70%)`,
             pointerEvents: 'none',
           }}
         />
 
         {/* Ring SVG */}
-        <svg
+        <div className="relative">
+          <svg
           width={effectiveSize}
           height={effectiveSize}
           viewBox={`0 0 ${effectiveSize} ${effectiveSize}`}
           className="animate-ring-in"
-          style={{ filter: 'drop-shadow(0 0 20px rgba(196,30,58,0.3))' }}
+          style={{ filter: `drop-shadow(0 0 20px color-mix(in srgb, var(--color-accent) 30%, transparent))` }}
         >
           {/* Decorative outer ring - dashed */}
           <circle
@@ -138,7 +132,7 @@ export default function BaziRing({ birthData, size = 280 }: BaziRingProps) {
             stroke="rgba(255,255,255,0.05)"
             strokeWidth="1"
             strokeDasharray="4 4"
-            className="animate-spin"
+            className="animate-spin glow-pulse"
             style={{ transformOrigin: `${center}px ${center}px` }}
           />
 
@@ -195,22 +189,7 @@ export default function BaziRing({ birthData, size = 280 }: BaziRingProps) {
             strokeWidth="1"
           />
 
-          {/* Center text: Day Branch (地支) */}
-          <text
-            x={center}
-            y={center + 8}
-            textAnchor="middle"
-            fill="#d4af37"
-            fontSize={effectiveSize >= 220 ? (effectiveSize > 220 ? effectiveSize * 0.17 : effectiveSize * 0.15) : effectiveSize * 0.14}
-            fontWeight="bold"
-            style={{
-              textShadow: '0 0 30px rgba(212,175,55,0.8)',
-              filter: 'drop-shadow(0 0 10px rgba(212,175,55,0.5))',
-            }}
-          >
-            {dayBranch}
-          </text>
-
+          
           {/* Small decorative symbols at cardinal points */}
           {effectiveSize > 220 && (
             <>
@@ -294,6 +273,23 @@ export default function BaziRing({ birthData, size = 280 }: BaziRingProps) {
             </>
           )}
         </svg>
+
+        {/* Center text: Day Branch (地支) */}
+        <span
+          className="absolute text-h2 font-bold"
+          style={{
+            color: 'var(--color-accent)',
+            textShadow: '0 0 30px rgba(212,175,55,0.8)',
+            filter: 'drop-shadow(0 0 10px rgba(212,175,55,0.5))',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            pointerEvents: 'none',
+          }}
+        >
+          {dayBranch}
+        </span>
+        </div>
 
         {/* Labels below the ring */}
         {isMobile ? (
