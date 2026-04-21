@@ -105,7 +105,7 @@ export default function Timeline({ baziData, onFortuneSelect }: TimelineProps) {
             <div
               key={startIndex + i}
               role="listitem"
-              className={`flex-shrink-0 w-36 rounded-xl p-4 text-center transition-all cursor-pointer ${
+              className={`stagger-item flex-shrink-0 w-36 rounded-xl p-4 text-center transition-all cursor-pointer ${
                 isCurrent ? 'shadow-lg' : 'hover:scale-[1.02]'
               }`}
               style={{
