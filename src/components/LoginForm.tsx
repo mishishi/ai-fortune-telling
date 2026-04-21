@@ -121,6 +121,7 @@ export default function LoginForm() {
           </div>
 
           <div className="flex gap-2">
+            <label htmlFor="code" className="sr-only">验证码</label>
             <input
               id="code"
               type="text"
