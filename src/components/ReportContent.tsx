@@ -70,7 +70,7 @@ export default function ReportContent({ radarScores, aiAnalysis, isLocked }: Rep
       <div>
         <h2
           className="text-center font-bold mb-4"
-          style={{ color: '#f0c674' }}
+          style={{ color: 'var(--color-accent)' }}
         >
           命盘解读
         </h2>
