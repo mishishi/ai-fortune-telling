@@ -136,7 +136,7 @@ function NameSuggestionsDisplay({ data }: { data?: NameSuggestions }) {
   );
 }
 
-export default function FortuneDisplay({ analysis, isLocked = false }: FortuneDisplayProps) {
+export default function FortuneDisplay({ analysis, isLocked = false, reportId }: FortuneDisplayProps) {
   const [expandedSection, setExpandedSection] = useState<string | null>('overall');
 
   const toggleSection = (key: string) => {
