@@ -61,8 +61,8 @@ export default function ReportContent({ radarScores, aiAnalysis, isLocked }: Rep
       </Accordion>
 
       {/* Fortune Analysis */}
-      <div>
-        <h2 className="text-h3 font-semibold" style={{ color: 'var(--color-accent)' }}>
+      <div className="mt-8">
+        <h2 className="text-h3 font-semibold mb-4" style={{ color: 'var(--color-accent)' }}>
           命盘解读
         </h2>
         <FortuneDisplay analysis={aiAnalysis} isLocked={isLocked} />
