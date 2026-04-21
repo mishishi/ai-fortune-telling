@@ -13,6 +13,8 @@ interface CustomDropdownProps {
 
 export default function CustomDropdown({ id, value, options, onChange, placeholder, error, onBlur }: CustomDropdownProps) {
   const [open, setOpen] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [isRendered, setIsRendered] = useState(false);
   const [dropUp, setDropUp] = useState(false);
   const [focusedIndex, setFocusedIndex] = useState(-1);
   const ref = useRef<HTMLDivElement>(null);
@@ -31,32 +33,48 @@ export default function CustomDropdown({ id, value, options, onChange, placehold
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) {
+        if (open) {
+          setIsAnimating(false);
+          setFocusedIndex(-1);
+          setTimeout(() => {
+            setIsRendered(false);
+          }, 200);
+        }
         setOpen(false);
-        setFocusedIndex(-1);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  }, [open]);
 
   const toggleOpen = useCallback(() => {
-    setOpen(prev => {
-      if (!prev) {
-        // Check if dropdown would go off screen bottom
-        const rect = ref.current?.getBoundingClientRect();
-        if (rect) {
-          const spaceBelow = window.innerHeight - rect.bottom;
-          setDropUp(spaceBelow < 300);
-        }
-        // Set focused index to selected option when opening
-        const selectedIdx = options.findIndex(o => String(o.value) === String(value));
-        setFocusedIndex(options.length > 0 ? (selectedIdx >= 0 ? selectedIdx : 0) : -1);
-      } else {
-        setFocusedIndex(-1);
+    if (open) {
+      // Start exit animation
+      setIsAnimating(false);
+      setFocusedIndex(-1);
+      // Delay unmount to allow exit animation
+      setTimeout(() => {
+        setIsRendered(false);
+      }, 200);
+    } else {
+      // Prepare for entrance animation
+      setIsRendered(true);
+      // Check if dropdown would go off screen bottom
+      const rect = ref.current?.getBoundingClientRect();
+      if (rect) {
+        const spaceBelow = window.innerHeight - rect.bottom;
+        setDropUp(spaceBelow < 300);
       }
-      return !prev;
-    });
-  }, [options, value]);
+      // Set focused index to selected option when opening
+      const selectedIdx = options.findIndex(o => String(o.value) === String(value));
+      setFocusedIndex(options.length > 0 ? (selectedIdx >= 0 ? selectedIdx : 0) : -1);
+      // Start entrance animation after brief delay
+      setTimeout(() => {
+        setIsAnimating(true);
+      }, 10);
+    }
+    setOpen(prev => !prev);
+  }, [options, value, open]);
 
   const handleKeyDown = useCallback((e: KeyboardEvent<HTMLButtonElement>) => {
     if (e.key === 'ArrowDown') {
@@ -87,15 +105,25 @@ export default function CustomDropdown({ id, value, options, onChange, placehold
       e.preventDefault();
       if (open && focusedIndex >= 0) {
         onChange(options[focusedIndex].value);
-        setOpen(false);
+        setIsAnimating(false);
         setFocusedIndex(-1);
+        setTimeout(() => {
+          setIsRendered(false);
+        }, 200);
+        setOpen(false);
       } else {
         toggleOpen();
       }
     } else if (e.key === 'Escape') {
       e.preventDefault();
+      if (open) {
+        setIsAnimating(false);
+        setFocusedIndex(-1);
+        setTimeout(() => {
+          setIsRendered(false);
+        }, 200);
+      }
       setOpen(false);
-      setFocusedIndex(-1);
     }
   }, [open, options, focusedIndex, onChange, toggleOpen]);
 
@@ -129,14 +157,14 @@ export default function CustomDropdown({ id, value, options, onChange, placehold
         </svg>
       </button>
 
-      {open && (
+      {isRendered && (
         <div
           id={listboxId}
           role="listbox"
           aria-labelledby={id}
-          className={`absolute z-50 w-full rounded-[var(--radius-md)] shadow-[var(--shadow-lg)] max-h-[70vh] overflow-y-auto ${
+          className={`absolute z-50 w-full rounded-[var(--radius-md)] shadow-[var(--shadow-lg)] max-h-[70vh] overflow-y-auto transition-all origin-top ${
             dropUp ? 'bottom-full mb-1' : 'top-full mt-1'
-          }`}
+          } ${isAnimating ? 'animate-fade-in-scale' : 'opacity-0 scale-95'}`}
           style={{
             background: 'var(--color-surface)',
             border: '1px solid var(--color-border)',
@@ -176,7 +204,7 @@ export default function CustomDropdown({ id, value, options, onChange, placehold
             </div>
           )}
           {options.length > 0 && (
-            <div className="py-1 stagger-item">
+            <div className="py-1">
               {options.map((option, index) => (
             <button
               key={String(option.value)}
@@ -186,11 +214,11 @@ export default function CustomDropdown({ id, value, options, onChange, placehold
               role="option"
               aria-selected={String(option.value) === String(value)}
               tabIndex={focusedIndex === index ? 0 : -1}
-              onClick={() => { onChange(option.value); setOpen(false); setFocusedIndex(-1); }}
+              onClick={() => { onChange(option.value); setIsAnimating(false); setTimeout(() => { setIsRendered(false); }, 200); setOpen(false); setFocusedIndex(-1); }}
               onMouseEnter={() => setFocusedIndex(index)}
-              className={`w-full px-4 py-2.5 text-left transition-colors focus:outline-none ${
+              className={`w-full px-4 py-2.5 text-left transition-all duration-200 focus:outline-none stagger-item ${
                 String(option.value) === String(value) ? 'text-white' : 'text-gray-300'
-              }`}
+              } hover:-translate-y-0.5 hover:shadow-lg`}
               style={{
                 background: focusedIndex === index
                   ? 'rgba(var(--color-primary-rgb), 0.25)'
