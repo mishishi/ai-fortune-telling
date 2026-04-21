@@ -55,11 +55,11 @@ export function Toggle({ checked, onChange, disabled = false, size = 'md', label
         rounded-full
         overflow-hidden
         transition-colors duration-200 ease-out
-        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-gold)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-bg)]
+        focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--color-gold)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-bg)] focus-visible:shadow-[0_0_12px_var(--color-gold)]
         ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
         ${checked
           ? 'bg-gradient-to-r from-[var(--color-purple)] to-[var(--color-purple-dark)] hover:brightness-110'
-          : 'bg-white/20 hover:bg-white/30'
+          : 'bg-white/20 hover:bg-white/30 hover:brightness-110 hover:saturate-150'
         }
       `}
       style={{
@@ -77,7 +77,7 @@ export function Toggle({ checked, onChange, disabled = false, size = 'md', label
           transition-transform duration-200
           ${checked ? styles.translate : 'left-1'}
         `}
-        style={{ transitionTimingFunction: 'cubic-bezier(0.68, -0.55, 0.265, 1.55)' }}
+        style={{ transitionTimingFunction: 'cubic-bezier(0.34, 1.56, 0.64, 1)' }}
       />
     </button>
   );
