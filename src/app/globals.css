@@ -643,3 +643,129 @@ html {
   letter-spacing: var(--letter-spacing-wider);
   text-transform: uppercase;
 }
+
+/* ========================================
+   ORIENTAL DECORATIVE UTILITIES - 东方美学装饰
+   ======================================== */
+
+/* 书法笔画装饰 — 标题下方的金色渐变线条 */
+.calligraphy-stroke {
+  position: relative;
+  display: inline-block;
+}
+
+.calligraphy-stroke::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    #d4af37 20%,
+    #f5e6c4 50%,
+    #d4af37 80%,
+    transparent 100%);
+  opacity: 0.8;
+}
+
+/* 垂直书法线条 */
+.calligraphy-line {
+  width: 1px;
+  height: 30px;
+  background: linear-gradient(180deg, transparent, #c41e3a, transparent);
+  opacity: 0.6;
+}
+
+/* 金色渐变分割线 */
+.gold-divider {
+  width: 40%;
+  height: 1px;
+  margin: 0 auto;
+  background: linear-gradient(90deg, transparent, #d4af37, transparent);
+}
+
+/* 带朱红点缀的分割线 */
+.gold-divider-accent {
+  width: 60%;
+  height: 1px;
+  margin: 0 auto;
+  background: linear-gradient(90deg, transparent, #d4af37 30%, #c41e3a 50%, #d4af37 70%, transparent);
+}
+
+/* 水墨晕染角落效果 */
+.ink-wash-corner {
+  position: relative;
+}
+
+.ink-wash-corner::before {
+  content: '';
+  position: absolute;
+  top: -20px;
+  right: -20px;
+  width: 100px;
+  height: 100px;
+  background: radial-gradient(ellipse at center, rgba(196, 30, 58, 0.12) 0%, transparent 70%);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* 底部水墨效果 */
+.ink-wash-corner::after {
+  content: '';
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  width: 80px;
+  height: 60px;
+  background: radial-gradient(ellipse at bottom left, rgba(100, 100, 100, 0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* 星辰闪烁 — 用于装饰符号 */
+@keyframes twinkle {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+.twinkle {
+  animation: twinkle 2s ease-in-out infinite;
+}
+
+.twinkle-delay-1 { animation-delay: 0.3s; }
+.twinkle-delay-2 { animation-delay: 0.6s; }
+.twinkle-delay-3 { animation-delay: 0.9s; }
+.twinkle-delay-4 { animation-delay: 1.2s; }
+
+/* 光晕脉动 — 用于外环和选中态 */
+@keyframes glowBreath {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.05);
+  }
+}
+
+.glow-breath {
+  animation: glowBreath 3s ease-in-out infinite;
+}
+
+/* 卷轴展开 — 用于模块进入动画 */
+@keyframes scrollUnfold {
+  0% {
+    clip-path: inset(0 100% 0 0);
+    opacity: 0;
+  }
+  100% {
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+  }
+}
+
+.scroll-unfold {
+  animation: scrollUnfold 600ms ease-out forwards;
+}
