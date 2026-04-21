@@ -114,19 +114,7 @@ export default function ReportCard({ report, onDelete, onCompare, isSelected, sk
   return (
     <div
       onClick={handleClick}
-      className="block rounded-xl p-4 hover:scale-[1.01] transition-all cursor-pointer"
-      style={{
-        background: 'var(--color-surface)',
-        border: '1px solid var(--color-border)',
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.borderColor = 'var(--color-primary)';
-        e.currentTarget.style.boxShadow = 'var(--shadow-glow-primary)';
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.borderColor = 'var(--color-border)';
-        e.currentTarget.style.boxShadow = 'none';
-      }}
+      className="glass-card rounded-[var(--radius-lg)] p-6 hover-lift transition-all duration-300"
     >
       <div className="flex gap-4">
         {/* Mini Radar Chart */}
@@ -139,7 +127,7 @@ export default function ReportCard({ report, onDelete, onCompare, isSelected, sk
           {/* Header */}
           <div className="flex justify-between items-start">
             <div>
-              <h3 className="text-white font-bold text-lg">
+              <h3 className="text-h4 title-underline inline-block">
                 {report.name}
                 <span className="text-sm ml-2" style={{ color: 'var(--color-text-muted)' }}>
                   {report.gender === 'male' ? '男' : '女'}
