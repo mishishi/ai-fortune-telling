@@ -271,19 +271,7 @@ export default function UnlockPanel({ reportId, hiddenSections, isLocked }: Unlo
         <span style={{ fontSize: '10px' }}>▲</span>
       </button>
 
-      {/* Keyframes for spin animation */}
       <style jsx>{`
-        @keyframes spin {
-          from {
-            transform: rotate(0deg);
-          }
-          to {
-            transform: rotate(360deg);
-          }
-        }
-        .spinner {
-          animation: spin 0.8s linear infinite;
-        }
         .unlock-cta-button {
           transform: translateY(0);
         }
