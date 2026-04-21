@@ -164,11 +164,59 @@ function NameSuggestionsDisplay({ data }: { data?: NameSuggestions }) {
   );
 }
 
+// Group separator with tier-based visual weight
+function GroupSeparator({ label, tier }: { label: string; tier: number }) {
+  const opacity = Math.max(0.3, 0.6 - (tier - 1) * 0.1);
+  const leftPadding = (tier - 1) * 12; // Indent based on tier
+
+  return (
+    <div
+      className="flex items-center gap-3 my-4 px-2"
+      style={{ paddingLeft: `${leftPadding}px` }}
+    >
+      <div
+        className="h-px flex-1"
+        style={{
+          background: `linear-gradient(90deg, transparent, rgba(212,175,55,${opacity}), transparent)`
+        }}
+      />
+      <span
+        className="text-xs font-medium tracking-widest uppercase"
+        style={{
+          color: `rgba(212,175,55,${opacity})`,
+          fontFamily: 'var(--font-serif), serif',
+        }}
+      >
+        {label}
+      </span>
+      <div
+        className="h-px flex-1"
+        style={{
+          background: `linear-gradient(90deg, transparent, rgba(212,175,55,${opacity}), transparent)`
+        }}
+      />
+    </div>
+  );
+}
+
 export default function FortuneDisplay({ analysis, isLocked = false, reportId }: FortuneDisplayProps) {
   const [expandedSection, setExpandedSection] = useState<string | null>('overall');
 
   const toggleSection = (key: string) => {
     setExpandedSection(expandedSection === key ? null : key);
+  };
+
+  // Get unique groups in order of first appearance
+  const getGroups = () => {
+    const seen = new Set<string>();
+    const groups: { key: string; section: SectionDef }[] = [];
+    for (const section of visibleSections) {
+      if (section.group && !seen.has(section.group)) {
+        seen.add(section.group);
+        groups.push({ key: section.group, section });
+      }
+    }
+    return groups;
   };
 
   const renderContent = (key: string, forPreview: boolean = false) => {
@@ -193,88 +241,97 @@ export default function FortuneDisplay({ analysis, isLocked = false, reportId }:
 
   return (
     <div className="space-y-3 animate-fade-in-up">
-      {visibleSections.map((section) => {
-        const isExpanded = expandedSection === section.key;
-        const isPreview = isLocked && section.basic;
+      {getGroups().map(({ key: groupKey, section: firstSection }) => {
+        const groupInfo = GROUP_LABELS[groupKey];
+        const groupSections = visibleSections.filter(s => s.group === groupKey);
 
         return (
-          <div
-            key={section.key}
-            className={`rounded-xl overflow-hidden transition-all duration-300 ${
-              section.sub ? 'ml-3' : ''
-            }`}
-            style={{
-              background: 'rgba(26, 21, 37, 0.5)',
-              backdropFilter: 'blur(12px)',
-              border: `1px solid ${isExpanded ? section.color + '50' : 'rgba(212,175,55,0.12)'}`,
-              boxShadow: isExpanded ? `0 0 20px ${section.color}20` : 'none',
-            }}
-          >
-            {/* Header */}
-            <button
-              onClick={() => toggleSection(section.key)}
-              className="w-full px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-white/5 rounded-[var(--radius-md)] transition-colors stagger-item"
-            >
-              <div className="flex items-center gap-3">
+          <div key={groupKey}>
+            <GroupSeparator label={groupInfo.label} tier={groupInfo.tier} />
+            {groupSections.map((section) => {
+              const isExpanded = expandedSection === section.key;
+              const isPreview = isLocked && section.basic;
+
+              return (
                 <div
-                  className="w-2 h-2 rounded-full transition-all duration-300"
+                  key={section.key}
+                  className="rounded-xl overflow-hidden transition-all duration-300"
                   style={{
-                    backgroundColor: section.color,
-                    boxShadow: isExpanded ? `0 0 8px ${section.color}` : 'none',
-                  }}
-                />
-                <h3
-                  className={`font-semibold ${section.sub ? 'text-sm' : 'text-base'}`}
-                  style={{
-                    color: section.color,
-                    fontFamily: section.key === 'overall' || section.key === 'overallPlain'
-                      ? 'var(--font-serif), serif'
-                      : 'inherit',
+                    background: 'rgba(26, 21, 37, 0.5)',
+                    backdropFilter: 'blur(12px)',
+                    border: `1px solid ${isExpanded ? section.color + '50' : 'rgba(212,175,55,0.12)'}`,
+                    boxShadow: isExpanded ? `0 0 20px ${section.color}20` : 'none',
+                    marginLeft: section.sub ? '0' : undefined,
                   }}
                 >
-                  {section.title}
-                </h3>
-                {isPreview && (
-                  <span
-                    className="text-xs px-2 py-0.5 rounded"
+                  {/* Header */}
+                  <button
+                    onClick={() => toggleSection(section.key)}
+                    className="w-full px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-white/5 rounded-[var(--radius-md)] transition-colors stagger-item"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div
+                        className="w-2 h-2 rounded-full transition-all duration-300"
+                        style={{
+                          backgroundColor: section.color,
+                          boxShadow: isExpanded ? `0 0 8px ${section.color}` : 'none',
+                        }}
+                      />
+                      <h3
+                        className={`font-semibold ${section.sub ? 'text-sm' : 'text-base'}`}
+                        style={{
+                          color: section.color,
+                          fontFamily: section.key === 'overall' || section.key === 'overallPlain'
+                            ? 'var(--font-serif), serif'
+                            : 'inherit',
+                        }}
+                      >
+                        {section.title}
+                      </h3>
+                      {isPreview && (
+                        <span
+                          className="text-xs px-2 py-0.5 rounded"
+                          style={{
+                            background: 'rgba(255,255,255,0.08)',
+                            color: 'var(--color-text-muted)',
+                          }}
+                        >
+                          预览
+                        </span>
+                      )}
+                    </div>
+                    <svg
+                      className={`w-5 h-5 transition-all duration-300 ${
+                        isExpanded ? 'rotate-180' : ''
+                      }`}
+                      style={{
+                        color: section.color,
+                        opacity: 0.6,
+                        transform: isExpanded ? 'scale(1.1)' : 'scale(1)',
+                      }}
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+
+                  {/* Content */}
+                  <div
+                    className={`transition-all duration-300 ease-out overflow-hidden`}
                     style={{
-                      background: 'rgba(255,255,255,0.08)',
-                      color: 'var(--color-text-muted)',
+                      maxHeight: isExpanded ? '500px' : '0',
+                      opacity: isExpanded ? 1 : 0,
                     }}
                   >
-                    预览
-                  </span>
-                )}
-              </div>
-              <svg
-                className={`w-5 h-5 transition-all duration-300 ${
-                  isExpanded ? 'rotate-180' : ''
-                }`}
-                style={{
-                  color: section.color,
-                  opacity: 0.6,
-                  transform: isExpanded ? 'scale(1.1)' : 'scale(1)',
-                }}
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
-
-            {/* Content */}
-            <div
-              className={`transition-all duration-300 ease-out overflow-hidden`}
-              style={{
-                maxHeight: isExpanded ? '500px' : '0',
-                opacity: isExpanded ? 1 : 0,
-              }}
-            >
-              <div className="px-5 pb-5">
-                {renderContent(section.key, isPreview)}
-              </div>
-            </div>
+                    <div className="px-5 pb-5">
+                      {renderContent(section.key, isPreview)}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         );
       })}
