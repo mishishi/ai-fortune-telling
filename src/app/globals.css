@@ -116,7 +116,9 @@
   --color-surface: var(--color-surface);
   --color-text: var(--color-text);
   --color-text-muted: var(--color-text-muted);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-sans);
+  --font-serif: var(--font-serif);
+  --font-display: var(--font-display);
   --font-mono: var(--font-geist-mono);
 }
 
@@ -124,9 +126,24 @@
 body {
   background: var(--color-bg);
   color: var(--color-text);
-  font-family: "Noto Serif SC", "PingFang SC", "Microsoft YaHei", "Noto Sans SC", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--font-sans), "PingFang SC", "Microsoft YaHei", -apple-system, BlinkMacSystemFont, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Serif font for headings -东方古籍感 */
+.font-serif {
+  font-family: var(--font-serif), "STSong", "SimSun", serif;
+}
+
+/* Display font for numbers/decorative English -古典装饰感 */
+.font-display {
+  font-family: var(--font-display), "Times New Roman", serif;
+}
+
+/* Mixed: serif for Chinese headings, sans for body */
+.font-oriental {
+  font-family: var(--font-serif), var(--font-sans), "PingFang SC", sans-serif;
 }
 
 /* Noise texture overlay for premium feel */
@@ -177,11 +194,6 @@ html {
 ::selection {
   background: rgba(196, 30, 58, 0.4);
   color: #ffffff;
-}
-
-/* Serif font for headings */
-.font-serif {
-  font-family: "Noto Serif SC", "STSong", "SimSun", serif;
 }
 
 /* Gradient text utility */
