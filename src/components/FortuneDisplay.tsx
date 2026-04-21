@@ -248,6 +248,7 @@ export default function FortuneDisplay({ analysis, isLocked = false, reportId }:
         return (
           <div key={groupKey}>
             <GroupSeparator label={groupInfo.label} tier={groupInfo.tier} />
+            <div className="space-y-4">
             {groupSections.map((section) => {
               const isExpanded = expandedSection === section.key;
               const isPreview = isLocked && section.basic;
@@ -347,6 +348,7 @@ export default function FortuneDisplay({ analysis, isLocked = false, reportId }:
                 </div>
               );
             })}
+            </div>
           </div>
         );
       })}
