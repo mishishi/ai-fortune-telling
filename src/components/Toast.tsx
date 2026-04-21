@@ -35,13 +35,13 @@ export default function Toast({ message, type, onClose }: ToastProps) {
     <>
       <style jsx>{`
         .toast-success {
-          animation: appear 300ms ease-out;
+          animation: toast-appear 300ms ease-out;
         }
         .toast-error {
-          animation: shake 500ms ease-in-out;
+          animation: toast-shake 500ms ease-in-out;
         }
         .icon-success {
-          animation: successPop 300ms ease-out;
+          animation: toast-success-pop 300ms ease-out;
           display: inline-block;
         }
       `}</style>
