@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import UnlockPanel from './UnlockPanel';
 
 interface LuckyElements {
   element?: string;
@@ -30,6 +31,7 @@ interface FortuneDisplayProps {
     luckyElements?: LuckyElements;
     nameSuggestions?: NameSuggestions;
   };
+  reportId?: string;
   isLocked?: boolean; // true = preview mode
 }
 
@@ -249,23 +251,7 @@ export default function FortuneDisplay({ analysis, isLocked = false }: FortuneDi
         );
       })}
 
-      {/* Lock message for preview */}
-      {isLocked && (
-        <div
-          className="mt-6 p-5 rounded-xl text-center transition-all duration-300 hover:scale-[1.02]"
-          style={{
-            background: 'linear-gradient(135deg, rgba(212,175,55,0.08) 0%, rgba(196,30,58,0.08) 100%)',
-            border: '1px solid rgba(212,175,55,0.2)',
-          }}
-        >
-          <p className="font-semibold mb-2" style={{ color: 'var(--color-accent)' }}>
-            解锁完整报告查看更多详情
-          </p>
-          <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>
-            职业推荐 · 贵人方位 · 配偶特征 · 婚恋建议 · 幸运元素 · 起名建议
-          </p>
-        </div>
-      )}
+      <UnlockPanel reportId={reportId || ''} hiddenSections={[]} isLocked={isLocked} />
     </div>
   );
 }
