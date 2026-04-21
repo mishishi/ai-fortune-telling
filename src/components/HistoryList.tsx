@@ -238,14 +238,13 @@ export default function HistoryList() {
       ) : (
         <div className="space-y-4">
           {sortedReports.map(report => (
-            <div className="stagger-item hover-lift bg-[var(--color-surface)] rounded-[var(--radius-lg)] p-5 border border-white/10">
-              <ReportCard
-                report={report}
-                onDelete={() => setDeleteTarget(report.id)}
-                onCompare={handleCompareToggle}
-                isSelected={selectedReportIds.includes(report.id)}
-              />
-            </div>
+            <ReportCard
+              key={report.id}
+              report={report}
+              onDelete={() => setDeleteTarget(report.id)}
+              onCompare={handleCompareToggle}
+              isSelected={selectedReportIds.includes(report.id)}
+            />
           ))}
         </div>
       )}
