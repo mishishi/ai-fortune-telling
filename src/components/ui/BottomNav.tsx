@@ -159,17 +159,17 @@ export default function BottomNav() {
     cursor: 'pointer',
   };
 
-  const indicatorStyle: React.CSSProperties = {
+  const getIndicatorStyle = (label: string): React.CSSProperties => ({
     position: 'absolute',
     left: '50%',
     bottom: '0',
     transform: 'translateX(-50%)',
-    width: '48px',
+    width: `${28 + label.length * 14}px`,
     height: '2px',
     background: 'linear-gradient(90deg, #f0c674, #d4af37)',
     borderRadius: '1px',
-    transition: 'opacity 200ms ease',
-  };
+    transition: 'all 300ms cubic-bezier(0.4, 0, 0.2, 1)',
+  });
 
   const textStyle: React.CSSProperties = {
     fontSize: '10px',
@@ -188,7 +188,7 @@ export default function BottomNav() {
             style={navItemStyle}
           >
             {isActive && (
-              <div style={indicatorStyle} />
+              <div style={getIndicatorStyle(item.label)} />
             )}
             {getIcon(item.icon, isActive)}
             <span
