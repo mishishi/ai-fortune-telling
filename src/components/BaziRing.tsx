@@ -85,20 +85,12 @@ export default function BaziRing({ birthData, size = 280 }: BaziRingProps) {
   return (
     <>
       <style jsx>{`
-        @keyframes ringExpand {
-          from { transform: scale(0.8); opacity: 0; }
-          to { transform: scale(1); opacity: 1; }
-        }
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(10px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
         .animate-ring-in {
-          animation: ringExpand 600ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+          animation: ring-expand 600ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
         }
         .animate-label-in {
           opacity: 0;
-          animation: fadeIn 400ms ease-out forwards;
+          animation: fade-in 400ms ease-out forwards;
         }
       `}</style>
 
