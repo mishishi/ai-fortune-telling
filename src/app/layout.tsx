@@ -4,6 +4,7 @@ import './globals.css';
 import { UserProvider } from '@/contexts/UserContext';
 import { ToastProvider } from '@/contexts/ToastContext';
 import PageTransition from '@/components/PageTransition';
+import BottomNav from '@/components/ui/BottomNav';
 
 const notoSerif = Noto_Serif_SC({
   subsets: ['latin'],
@@ -44,6 +45,7 @@ export default function RootLayout({
           <ToastProvider>
             <PageTransition>
               {children}
+              <BottomNav />
             </PageTransition>
           </ToastProvider>
         </UserProvider>
