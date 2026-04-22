@@ -3,6 +3,24 @@ import { useState } from 'react';
 import CustomDropdown from '@/components/ui/CustomDropdown';
 import { useFormValidation } from '@/hooks/useFormValidation';
 
+type TimeSegment = 'early' | 'middle' | 'late';
+
+// 时辰三段定义：每个时辰的早/中/晚对应的时钟小时和分钟
+const TIME_SEGMENTS: Record<number, { early: { hour: number; minute: number }; middle: { hour: number; minute: number }; late: { hour: number; minute: number } }> = {
+  23: { early: { hour: 23, minute: 0 }, middle: { hour: 0, minute: 0 }, late: { hour: 0, minute: 30 } }, // 子时
+  1: { early: { hour: 1, minute: 0 }, middle: { hour: 2, minute: 0 }, late: { hour: 2, minute: 30 } },  // 丑时
+  3: { early: { hour: 3, minute: 0 }, middle: { hour: 4, minute: 0 }, late: { hour: 4, minute: 30 } },  // 寅时
+  5: { early: { hour: 5, minute: 0 }, middle: { hour: 6, minute: 0 }, late: { hour: 6, minute: 30 } },  // 卯时
+  7: { early: { hour: 7, minute: 0 }, middle: { hour: 8, minute: 0 }, late: { hour: 8, minute: 30 } },  // 辰时
+  9: { early: { hour: 9, minute: 0 }, middle: { hour: 10, minute: 0 }, late: { hour: 10, minute: 30 } }, // 巳时
+  11: { early: { hour: 11, minute: 0 }, middle: { hour: 12, minute: 0 }, late: { hour: 12, minute: 30 } },// 午时
+  13: { early: { hour: 13, minute: 0 }, middle: { hour: 14, minute: 0 }, late: { hour: 14, minute: 30 } },// 未时
+  15: { early: { hour: 15, minute: 0 }, middle: { hour: 16, minute: 0 }, late: { hour: 16, minute: 30 } },// 申时
+  17: { early: { hour: 17, minute: 0 }, middle: { hour: 18, minute: 0 }, late: { hour: 18, minute: 30 } },// 酉时
+  19: { early: { hour: 19, minute: 0 }, middle: { hour: 20, minute: 0 }, late: { hour: 20, minute: 30 } },// 戌时
+  21: { early: { hour: 21, minute: 0 }, middle: { hour: 22, minute: 0 }, late: { hour: 22, minute: 30 } },// 亥时
+};
+
 const PROVINCES = [
   '北京', '天津', '河北', '山西', '内蒙古', '辽宁', '吉林', '黑龙江',
   '上海', '江苏', '浙江', '安徽', '福建', '江西', '山东', '河南',
@@ -36,9 +54,10 @@ export interface BirthFormData {
   year: number;
   month: number;
   day: number;
-  hour: number;
-  minute: number;
+  hour: number;        // 时钟小时（0-23）
+  minute: number;      // 保留但固定为0
   province: string;
+  timeSegment: TimeSegment; // 早/中/晚
 }
 
 function isValidDate(year: number, month: number, day: number): boolean {
@@ -66,12 +85,6 @@ const validationRules = [
     ],
   },
   {
-    field: 'minute',
-    rules: [
-      { test: (v: any) => v >= 0 && v <= 59, message: '分钟必须在 0-59 之间' },
-    ],
-  },
-  {
     field: 'province',
     rules: [
       { test: (v: any) => !!v, message: '请选择出生省份' },
@@ -88,11 +101,17 @@ export default function BirthForm({ onSubmit }: BirthFormProps) {
     month: 1,
     day: 1,
     hour: 8,
-    minute: 0,
+    minute: 0,  // 保留但UI不显示
     province: '',
+    timeSegment: 'middle', // 默认选中"中"
   });
 
   const { errors, validate, clearError, validateAll } = useFormValidation(validationRules);
+
+  // 将 year/month/day 组合为 YYYY-MM-DD 格式用于 date picker
+  const birthDateString = form.year && form.month && form.day
+    ? `${form.year}-${String(form.month).padStart(2, '0')}-${String(form.day).padStart(2, '0')}`
+    : '';
 
   const handleReset = () => {
     setForm({
@@ -104,6 +123,7 @@ export default function BirthForm({ onSubmit }: BirthFormProps) {
       hour: 8,
       minute: 0,
       province: '',
+      timeSegment: 'middle',
     });
   };
 
