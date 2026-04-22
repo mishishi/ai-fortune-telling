@@ -41,21 +41,18 @@ export function getDb() {
       CREATE INDEX IF NOT EXISTS idx_members_userId ON members(userId);
     `);
 
-    // Migration: add push columns if not exist
-    try {
-      db.exec("ALTER TABLE users ADD COLUMN pushEnabled INTEGER DEFAULT 0");
-    } catch (e) {
-      console.error('Migration warning (pushEnabled may already exist):', e);
+    // Migration: add push columns if not exist (ignore errors if columns already exist)
+    const userColumns = db.prepare("PRAGMA table_info(users)").all() as { name: string }[];
+    const hasColumn = (name: string) => userColumns.some(c => c.name === name);
+
+    if (!hasColumn('pushEnabled')) {
+      try { db.exec("ALTER TABLE users ADD COLUMN pushEnabled INTEGER DEFAULT 0"); } catch { /* ignore */ }
     }
-    try {
-      db.exec("ALTER TABLE users ADD COLUMN pushTime TEXT DEFAULT '08:00'");
-    } catch (e) {
-      console.error('Migration warning (pushTime may already exist):', e);
+    if (!hasColumn('pushTime')) {
+      try { db.exec("ALTER TABLE users ADD COLUMN pushTime TEXT DEFAULT '08:00'"); } catch { /* ignore */ }
     }
-    try {
-      db.exec("ALTER TABLE users ADD COLUMN pushSubscription TEXT");
-    } catch (e) {
-      console.error('Migration warning (pushSubscription may already exist):', e);
+    if (!hasColumn('pushSubscription')) {
+      try { db.exec("ALTER TABLE users ADD COLUMN pushSubscription TEXT"); } catch { /* ignore */ }
     }
   }
   return db;
