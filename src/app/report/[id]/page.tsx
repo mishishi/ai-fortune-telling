@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import ReportContent from '@/components/ReportContent';
 import Timeline from '@/components/Timeline';
 import BaziRing from '@/components/BaziRing';
+import BaZiDetailChart from '@/components/BaZiDetailChart';
 import { Accordion } from '@/components/ui/Accordion';
 import ReportHeaderActions from '@/components/ReportHeaderActions';
 import { BirthFormData } from '@/components/BirthForm';
@@ -132,22 +133,30 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
       stem: STEMS[rawBazi.yearPillar.stem] ?? STEMS[0],
       branch: BRANCHES[rawBazi.yearPillar.branch] ?? BRANCHES[0],
       element: computePillarElement(rawBazi.yearPillar.stem, rawBazi.yearPillar.branch, 'year'),
-    } : { stem: STEMS[0], branch: BRANCHES[0], element: ELEMENTS[0] },
+      stemIndex: rawBazi.yearPillar.stem ?? 0,
+      branchIndex: rawBazi.yearPillar.branch ?? 0,
+    } : { stem: STEMS[0], branch: BRANCHES[0], element: ELEMENTS[0], stemIndex: 0, branchIndex: 0 },
     monthPillar: rawBazi.monthPillar ? {
       stem: STEMS[rawBazi.monthPillar.stem] ?? STEMS[0],
       branch: BRANCHES[rawBazi.monthPillar.branch] ?? BRANCHES[0],
       element: computePillarElement(rawBazi.monthPillar.stem, rawBazi.monthPillar.branch, 'month'),
-    } : { stem: STEMS[0], branch: BRANCHES[0], element: ELEMENTS[0] },
+      stemIndex: rawBazi.monthPillar.stem ?? 0,
+      branchIndex: rawBazi.monthPillar.branch ?? 0,
+    } : { stem: STEMS[0], branch: BRANCHES[0], element: ELEMENTS[0], stemIndex: 0, branchIndex: 0 },
     dayPillar: rawBazi.dayPillar ? {
       stem: STEMS[rawBazi.dayPillar.stem] ?? STEMS[0],
       branch: BRANCHES[rawBazi.dayPillar.branch] ?? BRANCHES[0],
       element: ELEMENTS[dayMasterElementIndex] ?? ELEMENTS[0],
-    } : { stem: STEMS[0], branch: BRANCHES[0], element: ELEMENTS[0] },
+      stemIndex: rawBazi.dayPillar.stem ?? 0,
+      branchIndex: rawBazi.dayPillar.branch ?? 0,
+    } : { stem: STEMS[0], branch: BRANCHES[0], element: ELEMENTS[0], stemIndex: 0, branchIndex: 0 },
     hourPillar: rawBazi.hourPillar ? {
       stem: STEMS[rawBazi.hourPillar.stem] ?? STEMS[0],
       branch: BRANCHES[rawBazi.hourPillar.branch] ?? BRANCHES[0],
       element: computePillarElement(rawBazi.hourPillar.stem, rawBazi.hourPillar.branch, 'hour'),
-    } : { stem: STEMS[0], branch: BRANCHES[0], element: ELEMENTS[0] },
+      stemIndex: rawBazi.hourPillar.stem ?? 0,
+      branchIndex: rawBazi.hourPillar.branch ?? 0,
+    } : { stem: STEMS[0], branch: BRANCHES[0], element: ELEMENTS[0], stemIndex: 0, branchIndex: 0 },
   };
 
   // Get zodiac from year branch
@@ -199,6 +208,23 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
             生肖：{zodiac} · 五行：{elementInfo}
           </p>
         </div>
+      </div>
+
+      {/* Detailed BaZi Chart */}
+      <div className="mt-8 corner-brackets px-4 py-4">
+        <Accordion title="详细命盘分析" defaultOpen={false}>
+          <BaZiDetailChart
+            yearPillar={birthData.yearPillar}
+            monthPillar={birthData.monthPillar}
+            dayPillar={birthData.dayPillar}
+            hourPillar={birthData.hourPillar}
+            gender={report.gender as 'male' | 'female'}
+            birthYear={report.year ?? new Date().getFullYear()}
+            birthMonth={report.month ?? 1}
+            birthDay={report.day ?? 1}
+            size={360}
+          />
+        </Accordion>
       </div>
 
       {/* Interactive Report Content */}
