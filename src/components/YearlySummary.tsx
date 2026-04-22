@@ -35,14 +35,6 @@ const DIMENSION_CONFIG = [
   { key: 'mentor', label: '贵人', color: 'var(--color-dimension-mentor)' },
 ] as const;
 
-function getDimensionLabel(key: string): string {
-  return DIMENSION_CONFIG.find(d => d.key === key)?.label || key;
-}
-
-function getDimensionColor(key: string): string {
-  return DIMENSION_CONFIG.find(d => d.key === key)?.color || 'var(--color-text)';
-}
-
 export default function YearlySummary({ latestReport }: YearlySummaryProps) {
   const year = new Date(latestReport.createdAt).getFullYear();
 
