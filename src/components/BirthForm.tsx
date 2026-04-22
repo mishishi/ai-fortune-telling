@@ -214,14 +214,9 @@ export default function BirthForm({ onSubmit }: BirthFormProps) {
           type="date"
           value={birthDateString}
           onChange={(e) => {
-            const date = new Date(e.target.value);
-            if (!isNaN(date.getTime())) {
-              setForm({
-                ...form,
-                year: date.getFullYear(),
-                month: date.getMonth() + 1,
-                day: date.getDate(),
-              });
+            const [year, month, day] = e.target.value.split('-').map(Number);
+            if (year && month && day) {
+              setForm({ ...form, year, month, day });
             }
             clearError('date');
           }}
@@ -264,7 +259,11 @@ export default function BirthForm({ onSubmit }: BirthFormProps) {
         </div>
 
         {/* 早/中/晚三段选择按钮 */}
-        <div className="flex gap-2">
+        <div
+          className="flex gap-2"
+          role="radiogroup"
+          aria-label="出生时辰段"
+        >
           {(['early', 'middle', 'late'] as const).map(segment => (
             <button
               key={segment}
