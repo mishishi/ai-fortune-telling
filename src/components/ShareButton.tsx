@@ -25,10 +25,44 @@ export default function ShareButton({ name, gender, radarScores, overall, create
     if (!cardRef.current) return;
 
     try {
-      const dataUrl = await toPng(cardRef.current, {
+      // Temporarily move to body for capture (html-to-image needs element to be visible in viewport)
+      const card = cardRef.current;
+      const parent = card.parentElement;
+      const nextSibling = card.nextSibling;
+
+      // Save original styles
+      const originalPosition = card.style.position;
+      const originalLeft = card.style.left;
+      const originalTop = card.style.top;
+      const originalOpacity = card.style.opacity;
+
+      // Move to body temporarily
+      document.body.appendChild(card);
+      card.style.position = 'fixed';
+      card.style.left = '0';
+      card.style.top = '0';
+      card.style.opacity = '0';
+      card.style.zIndex = '-1';
+
+      const dataUrl = await toPng(card, {
         quality: 1,
         pixelRatio: 2,
       });
+
+      // Restore original position
+      card.style.position = originalPosition;
+      card.style.left = originalLeft;
+      card.style.top = originalTop;
+      card.style.opacity = originalOpacity;
+
+      // Move back to original parent
+      if (parent) {
+        if (nextSibling) {
+          parent.insertBefore(card, nextSibling);
+        } else {
+          parent.appendChild(card);
+        }
+      }
 
       // Try Web Share API (mobile)
       if (navigator.share && navigator.canShare) {
