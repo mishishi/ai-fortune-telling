@@ -150,7 +150,7 @@ export default function ShareReport({
 
       {/* Floating Share Button */}
       <button
-        onClick={() => setShowModal(true)}
+        onClick={() => { setShowModal(true); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
         className="fixed right-4 top-24 z-40 flex items-center gap-2 px-4 py-3 rounded-xl font-medium text-sm transition-all hover:scale-105 active:scale-95"
         style={{
           background: 'linear-gradient(135deg, var(--color-primary), var(--color-secondary))',
