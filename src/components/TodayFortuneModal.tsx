@@ -243,11 +243,17 @@ export default function TodayFortuneModal({ open, onClose }: { open: boolean; on
         </div>
 
         {/* Push Reminder */}
-        <div className="mx-6 mb-4 p-3 rounded-lg text-center cursor-pointer"
+        <button
+          type="button"
+          className="mx-6 mb-4 p-3 rounded-lg text-center cursor-pointer w-full"
           style={{ background: 'rgba(212, 175, 55, 0.1)', border: '1px solid rgba(212, 175, 55, 0.2)' }}
-          onClick={() => { onClose(); document.getElementById('push-modal-trigger')?.click(); }}>
+          onClick={() => {
+            onClose();
+            document.getElementById('push-modal-trigger')?.click();
+          }}
+        >
           <span style={{ color: 'var(--color-accent)' }}>🔔 开启每日推送提醒</span>
-        </div>
+        </button>
       </div>
     </div>
   );
