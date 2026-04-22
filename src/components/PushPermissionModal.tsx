@@ -29,13 +29,13 @@ export default function PushPermissionModal({ open, onClose, onSubscribed }: Pro
         body: JSON.stringify({ subscription: sub.toJSON(), pushTime: '08:00' }),
       });
       onSubscribed(); onClose();
-    } catch (e: any) { setError(e.message || '订阅失败'); }
+    } catch (e: unknown) { setError(e instanceof Error ? e.message : '订阅失败'); }
     finally { setLoading(false); }
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={loading ? undefined : onClose} />
       <div className="relative w-full max-w-sm rounded-2xl p-6 text-center animate-scale-in"
         style={{ background: 'linear-gradient(180deg, #1a1525 0%, #2d1f3d 100%)', border: '1px solid rgba(212,175,55,0.3)' }}>
         <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-amber-500/20 flex items-center justify-center">
@@ -45,7 +45,7 @@ export default function PushPermissionModal({ open, onClose, onSubscribed }: Pro
         <p className="text-sm text-gray-400 mb-4">每天准时收到今日运势提醒，不错过任何精彩内容</p>
         {error && <div className="mb-4 p-3 rounded-lg bg-red-500/20 text-red-400 text-sm">{error}</div>}
         <div className="flex gap-3">
-          <button onClick={onClose} className="flex-1 px-4 py-2 rounded-full text-sm" style={{ background: 'rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.7)' }}>稍后再说</button>
+          <button onClick={onClose} disabled={loading} className="flex-1 px-4 py-2 rounded-full text-sm" style={{ background: 'rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.7)' }}>稍后再说</button>
           <button onClick={handleSubscribe} disabled={loading} className="flex-1 px-4 py-2 rounded-full text-sm font-medium"
             style={{ background: loading ? 'rgba(212,175,55,0.5)' : 'var(--color-accent)', color: loading ? 'rgba(255,255,255,0.5)' : 'var(--color-bg)' }}>
             {loading ? '开启中...' : '开启提醒'}
@@ -59,5 +59,10 @@ export default function PushPermissionModal({ open, onClose, onSubscribed }: Pro
 function urlBase64ToUint8Array(base64String: string): Uint8Array {
   const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
   const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
-  return new Uint8Array(Buffer.from(base64, 'base64'));
+  const binary = atob(base64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) {
+    bytes[i] = binary.charCodeAt(i);
+  }
+  return bytes;
 }
