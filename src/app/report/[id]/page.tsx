@@ -4,7 +4,7 @@ import ReportContent from '@/components/ReportContent';
 import Timeline from '@/components/Timeline';
 import BaziRing from '@/components/BaziRing';
 import { Accordion } from '@/components/ui/Accordion';
-import ReportEditButton from '@/components/ReportEditButton';
+import ReportHeaderActions from '@/components/ReportHeaderActions';
 import { BirthFormData } from '@/components/BirthForm';
 
 // Conversion maps for Bazi data
@@ -170,7 +170,15 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
         <div className="absolute -bottom-4 -right-4 w-8 h-8 border-r-2 border-b-2 border-[var(--color-accent)] opacity-40" />
 
         {/* Edit button */}
-        <ReportEditButton reportId={id} initialData={editBirthData} />
+        <ReportHeaderActions
+          reportId={id}
+          name={report.name}
+          gender={report.gender}
+          radarScores={radarScores}
+          overall={aiAnalysis.overall}
+          createdAt={report.createdAt}
+          editBirthData={editBirthData}
+        />
 
         <h1
           className="text-h1 font-serif text-white mb-3 title-underline"
