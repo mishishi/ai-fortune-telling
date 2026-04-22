@@ -186,11 +186,6 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
         {/* Edit button */}
         <ReportHeaderActions
           reportId={id}
-          name={report.name}
-          gender={report.gender}
-          radarScores={radarScores}
-          overall={aiAnalysis.overall}
-          createdAt={report.createdAt}
           editBirthData={editBirthData}
         />
 
