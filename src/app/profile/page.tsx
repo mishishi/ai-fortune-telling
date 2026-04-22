@@ -166,6 +166,8 @@ export default function ProfilePage() {
   // Settings state
   const [notifications, setNotifications] = useState(true);
   const [privacyMode, setPrivacyMode] = useState(false);
+  const [pushEnabled, setPushEnabled] = useState(false);
+  const [pushTime, setPushTime] = useState('08:00');
 
   const handleLogout = () => {
     setUser(null);
@@ -440,6 +442,25 @@ export default function ProfilePage() {
                 {privacyMode ? 'ON' : 'OFF'}
               </span>
             </div>
+          </div>
+
+          {/* Push Settings */}
+          <div className="flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/10">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-amber-500/20 flex items-center justify-center">
+                <span className="text-amber-500">🔔</span>
+              </div>
+              <div>
+                <p className="text-white text-sm font-medium">每日运势提醒</p>
+                <p className="text-gray-400 text-xs">{pushEnabled ? `每天 ${pushTime} 推送` : '已关闭'}</p>
+              </div>
+            </div>
+            <Toggle checked={pushEnabled} onChange={(val) => {
+              setPushEnabled(val);
+              if (!val) {
+                fetch('/api/push/unsubscribe', { method: 'DELETE' });
+              }
+            }} />
           </div>
         </div>
       </div>
