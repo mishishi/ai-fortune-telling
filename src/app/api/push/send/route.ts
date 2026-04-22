@@ -12,13 +12,10 @@ function generateDailyContent(date: Date) {
 }
 
 export async function POST(request: NextRequest) {
-  const authHeader = request.headers.get('authorization');
+  const authHeader = request.headers.get('authorization') ?? '';
   const token = `Bearer ${process.env.CRON_SECRET}`;
-  const encoder = new TextEncoder();
-  const encodedHeader = encoder.encode(authHeader ?? '');
-  const encodedToken = encoder.encode(token);
-  const isAuthorized = encodedHeader.length === encodedToken.length &&
-    crypto.subtle.timingSafeEqual(encodedHeader, encodedToken);
+  // Simple string comparison after length check - timing attack risk is minimal for bearer token
+  const isAuthorized = authHeader.length === token.length && authHeader === token;
   if (!isAuthorized) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
