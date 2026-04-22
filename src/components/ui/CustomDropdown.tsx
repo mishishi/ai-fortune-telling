@@ -4,7 +4,7 @@ import { useState, useRef, useEffect, KeyboardEvent, useCallback } from 'react';
 interface CustomDropdownProps {
   id?: string;
   value: string | number;
-  options: { label: string; value: string | number }[];
+  options: { label: string; value: string | number; displayValue?: string }[];
   onChange: (value: string | number) => void;
   placeholder?: string;
   error?: string;
@@ -168,7 +168,7 @@ export default function CustomDropdown({ id, value, options, onChange, placehold
         }}
       >
         <span className={selectedOption ? 'text-white' : 'text-gray-500'}>
-          {selectedOption ? selectedOption.label : (placeholder || '请选择')}
+          {selectedOption ? (selectedOption.displayValue || selectedOption.label) : (placeholder || '请选择')}
         </span>
         <svg
           className={`w-4 h-4 text-gray-400 transition-transform ${open ? 'rotate-180' : ''}`}

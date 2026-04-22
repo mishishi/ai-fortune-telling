@@ -245,7 +245,8 @@ export default function BirthForm({ onSubmit }: BirthFormProps) {
           <CustomDropdown
             value={form.hour}
             options={EARTHLY_BRANCHES.map(b => ({
-              label: `${b.name}（${b.range}）`,
+              label: `${b.name} ${b.range}`,
+              displayValue: b.range,
               value: b.hour,
             }))}
             onChange={v => setForm({ ...form, hour: Number(v) })}
@@ -289,7 +290,7 @@ export default function BirthForm({ onSubmit }: BirthFormProps) {
       <button
         type="submit"
         disabled={loading}
-        className="w-full py-4 rounded-xl font-bold text-lg transition-all duration-200 disabled:opacity-50 hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden"
+        className="w-full py-4 rounded-xl font-bold text-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden cursor-pointer"
         style={{
           background: 'linear-gradient(135deg, var(--color-primary), var(--color-secondary))',
           color: 'white',
