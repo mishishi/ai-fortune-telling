@@ -254,6 +254,39 @@ export default function BirthDatePicker({ year, month, day, error, onChange, onB
             </button>
           </div>
 
+          {/* Today quick select */}
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '8px' }}>
+            <button
+              type="button"
+              onClick={() => {
+                const today = new Date();
+                const tYear = today.getFullYear();
+                const tMonth = today.getMonth() + 1;
+                const tDay = today.getDate();
+                if (tYear >= MIN_YEAR && tYear <= MAX_YEAR) {
+                  setViewYear(tYear);
+                  setViewMonth(tMonth);
+                }
+              }}
+              className="text-xs px-3 py-1 rounded-full transition-colors"
+              style={{
+                background: 'transparent',
+                border: '1px solid var(--color-border)',
+                color: 'var(--color-text-muted)',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'var(--color-surface)';
+                e.currentTarget.style.color = 'var(--color-accent)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'transparent';
+                e.currentTarget.style.color = 'var(--color-text-muted)';
+              }}
+            >
+              今天
+            </button>
+          </div>
+
           {/* Weekday Headers */}
           <div
             style={{
