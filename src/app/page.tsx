@@ -4,6 +4,7 @@ import StarField from '@/components/StarField';
 import AuroraEffect from '@/components/AuroraEffect';
 import BirthForm, { BirthFormData } from '@/components/BirthForm';
 import AIQuestionModal from '@/components/AIQuestionModal';
+import TodayFortuneModal from '@/components/TodayFortuneModal';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/contexts/UserContext';
@@ -36,6 +37,7 @@ export default function HomePage() {
   const [initialLoading, setInitialLoading] = useState(false);
   const [coveredTopics, setCoveredTopics] = useState<string[]>([]);
   const [showDoneButton, setShowDoneButton] = useState(false);
+  const [showTodayFortune, setShowTodayFortune] = useState(false);
   const roundCountRef = useRef(0);
 
   const handleSubmit = async (data: BirthFormData) => {
@@ -223,6 +225,12 @@ export default function HomePage() {
         showDoneButton={showDoneButton}
       />
 
+      <TodayFortuneModal
+        open={showTodayFortune}
+        onClose={() => setShowTodayFortune(false)}
+        userId={user?.userId || ''}
+      />
+
       {/* Top Navigation Bar */}
       <header className="relative z-20 w-full px-4 py-4">
         <div className="max-w-lg mx-auto">
@@ -237,6 +245,19 @@ export default function HomePage() {
 
             {/* Nav Items */}
             <div className="flex items-center gap-1">
+              {/* Today Fortune - only for logged in users */}
+              {user && (
+                <button
+                  onClick={() => setShowTodayFortune(true)}
+                  className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-[var(--color-accent)] hover:bg-[var(--color-accent)]/10 transition-all"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                  </svg>
+                  <span>今日运势</span>
+                </button>
+              )}
+
               {/* History Link */}
               <Link
                 href="/history"
