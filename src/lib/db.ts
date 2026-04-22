@@ -40,6 +40,23 @@ export function getDb() {
       );
       CREATE INDEX IF NOT EXISTS idx_members_userId ON members(userId);
     `);
+
+    // Migration: add push columns if not exist
+    try {
+      db.exec("ALTER TABLE users ADD COLUMN pushEnabled INTEGER DEFAULT 0");
+    } catch (e) {
+      console.error('Migration warning (pushEnabled may already exist):', e);
+    }
+    try {
+      db.exec("ALTER TABLE users ADD COLUMN pushTime TEXT DEFAULT '08:00'");
+    } catch (e) {
+      console.error('Migration warning (pushTime may already exist):', e);
+    }
+    try {
+      db.exec("ALTER TABLE users ADD COLUMN pushSubscription TEXT");
+    } catch (e) {
+      console.error('Migration warning (pushSubscription may already exist):', e);
+    }
   }
   return db;
 }
