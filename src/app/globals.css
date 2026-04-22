@@ -1123,3 +1123,15 @@ html {
 .group-separator {
   animation: group-fade-in 0.4s ease-out forwards;
 }
+
+/* 原生 date picker 深色主题适配 */
+input[type="date"],
+input[type="time"],
+input[type="datetime-local"] {
+  color-scheme: dark;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.8);
+  cursor: pointer;
+}

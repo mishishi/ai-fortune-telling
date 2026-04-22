@@ -22,12 +22,6 @@ export const validationRules = [
     ],
   },
   {
-    field: 'minute',
-    rules: [
-      { test: (v: any) => v >= 0 && v <= 59, message: '分钟必须在 0-59 之间' },
-    ],
-  },
-  {
     field: 'province',
     rules: [
       { test: (v: any) => !!v, message: '请选择出生省份' },
