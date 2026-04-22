@@ -7,6 +7,10 @@ import BaZiDetailChart from '@/components/BaZiDetailChart';
 import { Accordion } from '@/components/ui/Accordion';
 import ReportHeaderActions from '@/components/ReportHeaderActions';
 import { BirthFormData } from '@/components/BirthForm';
+import FengShuiCompass from '@/components/FengShuiCompass';
+import IChingHexagram from '@/components/IChingHexagram';
+import PalmReading from '@/components/PalmReading';
+import FaceReading from '@/components/FaceReading';
 
 // Conversion maps for Bazi data
 const STEMS = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'];
@@ -234,6 +238,46 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
       <div className="mt-8 corner-brackets px-4 py-4">
         <Accordion title="大运时间轴" defaultOpen={false}>
           <Timeline baziData={baziData} />
+        </Accordion>
+      </div>
+
+      {/* Extended Fortune Tools */}
+      <div className="mt-8 corner-brackets px-4 py-4">
+        <Accordion title="扩展命理工具" defaultOpen={false}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Feng Shui Compass */}
+            <div className="p-4 rounded-lg bg-white/5 border border-white/10">
+              <h4 className="text-sm font-bold text-[var(--color-accent)] mb-3 text-center">风水罗盘</h4>
+              <FengShuiCompass birthElement={birthData.dayPillar.element} size={280} />
+            </div>
+
+            {/* I Ching Hexagram */}
+            <div className="p-4 rounded-lg bg-white/5 border border-white/10">
+              <h4 className="text-sm font-bold text-[var(--color-accent)] mb-3 text-center">易经卦象</h4>
+              <IChingHexagram />
+            </div>
+
+            {/* Palm Reading */}
+            <div className="p-4 rounded-lg bg-white/5 border border-white/10">
+              <h4 className="text-sm font-bold text-[var(--color-accent)] mb-3 text-center">手相分析</h4>
+              <PalmReading
+                birthYear={report.year ?? new Date().getFullYear()}
+                birthMonth={report.month ?? 1}
+                birthDay={report.day ?? 1}
+              />
+            </div>
+
+            {/* Face Reading */}
+            <div className="p-4 rounded-lg bg-white/5 border border-white/10">
+              <h4 className="text-sm font-bold text-[var(--color-accent)] mb-3 text-center">面相分析</h4>
+              <FaceReading
+                birthYear={report.year ?? new Date().getFullYear()}
+                birthMonth={report.month ?? 1}
+                birthDay={report.day ?? 1}
+                gender={report.gender}
+              />
+            </div>
+          </div>
         </Accordion>
       </div>
 
