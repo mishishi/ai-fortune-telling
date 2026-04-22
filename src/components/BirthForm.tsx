@@ -204,64 +204,52 @@ export default function BirthForm({ onSubmit }: BirthFormProps) {
         </div>
       </div>
 
-      {/* Date fields */}
+      {/* 出生日期 - 原生 date picker */}
       <div>
-        <label className="block text-sm mb-2" style={{ color: 'var(--color-text-muted)' }}>出生日期</label>
-        <div className="grid grid-cols-3 gap-3">
-          <div>
-            <input
-              id="birth-year"
-              type="number"
-              value={form.year}
-              onChange={e => { setForm({ ...form, year: parseInt(e.target.value) }); clearError('date'); }}
-              onBlur={() => validate('date', null, form)}
-              className="w-full rounded-[var(--radius-md)] px-5 py-4 text-white text-center focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/20 transition-colors border"
-              style={{ background: 'var(--color-surface)', borderColor: errors.date ? 'var(--color-error)' : 'var(--color-border)' }}
-              placeholder="年"
-              min={1900}
-              max={2100}
-              aria-invalid={!!errors.date}
-              aria-describedby={errors.date ? 'birth-date-error' : undefined}
-            />
-          </div>
-          <div>
-            <input
-              id="birth-month"
-              type="number"
-              value={form.month}
-              onChange={e => { setForm({ ...form, month: parseInt(e.target.value) }); clearError('date'); }}
-              onBlur={() => validate('date', null, form)}
-              className="w-full rounded-[var(--radius-md)] px-5 py-4 text-white text-center focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/20 transition-colors border"
-              style={{ background: 'var(--color-surface)', borderColor: errors.date ? 'var(--color-error)' : 'var(--color-border)' }}
-              placeholder="月"
-              min={1}
-              max={12}
-              aria-invalid={!!errors.date}
-            />
-          </div>
-          <div>
-            <input
-              id="birth-day"
-              type="number"
-              value={form.day}
-              onChange={e => { setForm({ ...form, day: parseInt(e.target.value) }); clearError('date'); }}
-              onBlur={() => validate('date', null, form)}
-              className="w-full rounded-[var(--radius-md)] px-5 py-4 text-white text-center focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/20 transition-colors border"
-              style={{ background: 'var(--color-surface)', borderColor: errors.date ? 'var(--color-error)' : 'var(--color-border)' }}
-              placeholder="日"
-              min={1}
-              max={31}
-              aria-invalid={!!errors.date}
-            />
-          </div>
-        </div>
-        {errors.date && <p id="birth-date-error" className="text-xs mt-1" style={{ color: 'var(--color-error)' }}>{errors.date}</p>}
+        <label htmlFor="birth-date" className="block text-sm mb-2" style={{ color: 'var(--color-text-muted)' }}>
+          出生日期
+        </label>
+        <input
+          id="birth-date"
+          type="date"
+          value={birthDateString}
+          onChange={(e) => {
+            const date = new Date(e.target.value);
+            if (!isNaN(date.getTime())) {
+              setForm({
+                ...form,
+                year: date.getFullYear(),
+                month: date.getMonth() + 1,
+                day: date.getDate(),
+              });
+            }
+            clearError('date');
+          }}
+          onBlur={() => validate('date', null, form)}
+          className="w-full rounded-[var(--radius-md)] px-5 py-4 text-white focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/20 transition-colors border"
+          style={{
+            background: 'var(--color-surface)',
+            borderColor: errors.date ? 'var(--color-error)' : 'var(--color-border)',
+            colorScheme: 'dark',
+          }}
+          aria-invalid={!!errors.date}
+          aria-describedby={errors.date ? 'birth-date-error' : undefined}
+        />
+        {errors.date && (
+          <p id="birth-date-error" className="text-xs mt-1" style={{ color: 'var(--color-error)' }}>
+            {errors.date}
+          </p>
+        )}
       </div>
 
-      {/* Time fields - Earthly Branch + Minute */}
-      <div className="grid grid-cols-2 gap-3">
-        <div>
-          <label className="block text-sm mb-2" style={{ color: 'var(--color-text-muted)' }}>出生时辰</label>
+      {/* 出生时辰 - 地支下拉 + 早/中/晚三段选择 */}
+      <div>
+        <label className="block text-sm mb-2" style={{ color: 'var(--color-text-muted)' }}>
+          出生时辰
+        </label>
+
+        {/* 地支下拉选择 */}
+        <div className="mb-3">
           <CustomDropdown
             value={form.hour}
             options={EARTHLY_BRANCHES.map(b => ({
@@ -269,25 +257,43 @@ export default function BirthForm({ onSubmit }: BirthFormProps) {
               displayValue: b.range,
               value: b.hour,
             }))}
-            onChange={v => setForm({ ...form, hour: Number(v) })}
+            onChange={v => {
+              setForm({ ...form, hour: Number(v), timeSegment: 'middle' }); // 切换时辰时默认选中"中"
+            }}
           />
         </div>
-        <div>
-          <label htmlFor="birth-minute" className="block text-sm mb-2" style={{ color: 'var(--color-text-muted)' }}>分</label>
-          <input
-            id="birth-minute"
-            type="number"
-            value={form.minute}
-            onChange={e => { setForm({ ...form, minute: parseInt(e.target.value) }); clearError('minute'); }}
-            onBlur={() => validate('minute', form.minute)}
-            className="w-full rounded-[var(--radius-md)] px-5 py-4 text-white text-center focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/20 transition-colors border"
-            style={{ background: 'var(--color-surface)', borderColor: errors.minute ? 'var(--color-error)' : 'var(--color-border)' }}
-            min={0}
-            max={59}
-            aria-invalid={!!errors.minute}
-            aria-describedby={errors.minute ? 'birth-minute-error' : undefined}
-          />
-          {errors.minute && <p id="birth-minute-error" className="text-xs mt-1" style={{ color: 'var(--color-error)' }}>{errors.minute}</p>}
+
+        {/* 早/中/晚三段选择按钮 */}
+        <div className="flex gap-2">
+          {(['early', 'middle', 'late'] as const).map(segment => (
+            <button
+              key={segment}
+              type="button"
+              onClick={() => {
+                const segmentData = TIME_SEGMENTS[form.hour]?.[segment];
+                if (segmentData) {
+                  setForm({
+                    ...form,
+                    hour: segmentData.hour,
+                    minute: segmentData.minute,
+                    timeSegment: segment,
+                  });
+                }
+              }}
+              className={`flex-1 py-2.5 px-3 rounded-lg text-sm font-medium transition-all ${
+                form.timeSegment === segment
+                  ? 'text-white'
+                  : 'text-gray-400 hover:text-gray-200'
+              }`}
+              style={
+                form.timeSegment === segment
+                  ? { background: 'linear-gradient(135deg, var(--color-primary), var(--color-secondary))' }
+                  : { background: 'var(--color-surface)' }
+              }
+            >
+              {segment === 'early' ? '早' : segment === 'middle' ? '中' : '晚'}
+            </button>
+          ))}
         </div>
       </div>
 
