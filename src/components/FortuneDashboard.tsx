@@ -68,11 +68,24 @@ export default function FortuneDashboard({ reports, currentUserId }: FortuneDash
     return sortedGroups;
   }, [reports]);
 
-  const handleSelectReport = (report: Report, slot: 0 | 1) => {
+  const handleSelectReport = (report: Report) => {
     setSelectedReports(prev => {
-      const newSelected = [...prev] as [Report | null, Report | null];
-      newSelected[slot] = report;
-      return newSelected;
+      // If already selected, deselect it
+      if (prev[0]?.id === report.id) {
+        return [null, prev[1]];
+      }
+      if (prev[1]?.id === report.id) {
+        return [prev[0], null];
+      }
+      // Fill empty slot (prefer slot 0 first)
+      if (!prev[0]) {
+        return [report, prev[1]];
+      }
+      if (!prev[1]) {
+        return [prev[0], report];
+      }
+      // Both filled, replace slot 0 (keep slot 1 as more recent)
+      return [report, prev[1]];
     });
   };
 
@@ -115,7 +128,7 @@ export default function FortuneDashboard({ reports, currentUserId }: FortuneDash
             {group.reports.map(report => (
               <div
                 key={report.id}
-                onClick={() => handleSelectReport(report, 0)}
+                onClick={() => handleSelectReport(report)}
                 className={`
                   p-4 rounded-xl cursor-pointer transition-all
                   ${selectedReports[0]?.id === report.id || selectedReports[1]?.id === report.id
