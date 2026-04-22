@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import BirthForm, { BirthFormData } from '@/components/BirthForm';
 import { useRouter } from 'next/navigation';
 
@@ -90,7 +91,7 @@ export default function BirthDataEditModal({ open, reportId, initialData, onClos
     }
   };
 
-  return (
+  const modalContent = (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 animate-fade-in" style={{ animationDuration: '200ms' }}>
       {/* Backdrop */}
       <div
@@ -186,4 +187,6 @@ export default function BirthDataEditModal({ open, reportId, initialData, onClos
       </div>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 }

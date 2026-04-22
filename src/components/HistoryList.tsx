@@ -10,13 +10,6 @@ import ConfirmModal from './ConfirmModal';
 import { Skeleton } from './Skeleton';
 import { Button } from './ui/Button';
 
-interface Member {
-  id: string;
-  name: string;
-  gender: string;
-  birthDate: string;
-}
-
 interface Report {
   id: string;
   name: string;
@@ -47,23 +40,13 @@ export default function HistoryList() {
   const { showToast } = useToast();
   const [reports, setReports] = useState<Report[]>([]);
   const [loading, setLoading] = useState(true);
-  const [members, setMembers] = useState<Member[]>([]);
-  const [selectedMemberId, setSelectedMemberId] = useState<string>('all');
   const [selectedReportIds, setSelectedReportIds] = useState<string[]>([]);
   const [compareReports, setCompareReports] = useState<[Report, Report] | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
-
-  // Load members from localStorage
-  useEffect(() => {
-    try {
-      const stored = localStorage.getItem('fortune_members');
-      if (stored) {
-        setMembers(JSON.parse(stored));
-      }
-    } catch (err) {
-      console.error('Failed to parse members from localStorage:', err);
-    }
-  }, []);
+  const [timeFilter, setTimeFilter] = useState<'all' | 'week' | 'month'>('all');
+  const [searchKeyword, setSearchKeyword] = useState('');
+  const [page, setPage] = useState(1);
+  const PAGE_SIZE = 10;
 
   // Fetch reports
   useEffect(() => {
@@ -85,18 +68,40 @@ export default function HistoryList() {
     }
   };
 
-  // Filter reports by selected member tab
-  const filteredReports = selectedMemberId === 'all'
-    ? reports
-    : reports.filter(r => r.name === selectedMemberId);
+  // Filter by time range
+  const timeFilteredReports = reports.filter(r => {
+    if (timeFilter === 'all') return true;
+    const created = new Date(r.createdAt);
+    const now = new Date();
+    const diffDays = (now.getTime() - created.getTime()) / (1000 * 60 * 60 * 24);
+    if (timeFilter === 'week') return diffDays <= 7;
+    if (timeFilter === 'month') return diffDays <= 30;
+    return true;
+  });
+
+  // Filter by search keyword
+  const searchedReports = searchKeyword.trim()
+    ? timeFilteredReports.filter(r =>
+        r.name.toLowerCase().includes(searchKeyword.toLowerCase())
+      )
+    : timeFilteredReports;
 
   // Sort by createdAt descending (newest first)
-  const sortedReports = [...filteredReports].sort((a, b) => {
+  const sortedReports = [...searchedReports].sort((a, b) => {
     const dateA = new Date(a.createdAt).getTime();
     const dateB = new Date(b.createdAt).getTime();
     if (isNaN(dateA) || isNaN(dateB)) return 0;
     return dateB - dateA;
   });
+
+  // Reset page when filters change
+  useEffect(() => {
+    setPage(1);
+  }, [timeFilter, searchKeyword]);
+
+  // Paginate
+  const totalPages = Math.ceil(sortedReports.length / PAGE_SIZE);
+  const paginatedReports = sortedReports.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   // Handle delete
   const handleDelete = async () => {
@@ -180,40 +185,58 @@ export default function HistoryList() {
 
   return (
     <div>
-      {/* Member Tabs */}
-      {members.length > 0 && (
-        <div className="relative mb-6">
-          {/* Left gradient mask */}
-          <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-[var(--color-bg-page)] to-transparent z-10 pointer-events-none" />
-          {/* Right gradient mask */}
-          <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-[var(--color-bg-page)] to-transparent z-10 pointer-events-none" />
-          <div className="flex gap-2 overflow-x-auto scrollbar-hide px-4">
+      {/* Search and Time Filter */}
+      <div className="mb-4 space-y-3">
+        {/* Search bar */}
+        <div className="relative">
+          <svg
+            className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          <input
+            type="text"
+            value={searchKeyword}
+            onChange={e => setSearchKeyword(e.target.value)}
+            placeholder="搜索姓名..."
+            className="w-full pl-10 pr-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white placeholder-gray-500 text-sm focus:border-[var(--color-primary)] focus:outline-none transition-colors"
+          />
+          {searchKeyword && (
             <button
-              onClick={() => setSelectedMemberId('all')}
-              className={`px-4 py-2 rounded-full text-sm whitespace-nowrap transition-colors ${
-                selectedMemberId === 'all'
+              onClick={() => setSearchKeyword('')}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          )}
+        </div>
+
+        {/* Time filter tabs */}
+        <div className="flex gap-2">
+          {[
+            { key: 'all', label: '全部' },
+            { key: 'week', label: '最近一周' },
+            { key: 'month', label: '最近一月' },
+          ].map(tab => (
+            <button
+              key={tab.key}
+              onClick={() => setTimeFilter(tab.key as typeof timeFilter)}
+              className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
+                timeFilter === tab.key
                   ? 'bg-[var(--color-primary)] text-white'
                   : 'bg-white/5 text-gray-400 hover:bg-white/10'
               }`}
             >
-              全部
+              {tab.label}
             </button>
-            {members.map(member => (
-              <button
-                key={member.id}
-                onClick={() => setSelectedMemberId(member.name)}
-                className={`px-4 py-2 rounded-full text-sm whitespace-nowrap transition-colors ${
-                  selectedMemberId === member.name
-                    ? 'bg-[var(--color-primary)] text-white'
-                    : 'bg-white/5 text-gray-400 hover:bg-white/10'
-                }`}
-              >
-                {member.name}
-              </button>
-            ))}
-          </div>
+          ))}
         </div>
-      )}
+      </div>
 
       {/* Reports List */}
       {sortedReports.length === 0 ? (
@@ -381,7 +404,7 @@ export default function HistoryList() {
         </div>
       ) : (
         <div className="space-y-4">
-          {sortedReports.map(report => (
+          {paginatedReports.map(report => (
             <ReportCard
               key={report.id}
               report={report}
@@ -390,6 +413,45 @@ export default function HistoryList() {
               isSelected={selectedReportIds.includes(report.id)}
             />
           ))}
+        </div>
+      )}
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-center gap-2 mt-6">
+          <button
+            onClick={() => setPage(p => Math.max(1, p - 1))}
+            disabled={page === 1}
+            className="w-9 h-9 rounded-lg flex items-center justify-center bg-white/5 text-gray-400 hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
+            <button
+              key={p}
+              onClick={() => setPage(p)}
+              className={`w-9 h-9 rounded-lg text-sm font-medium transition-colors ${
+                page === p
+                  ? 'bg-[var(--color-primary)] text-white'
+                  : 'bg-white/5 text-gray-400 hover:bg-white/10'
+              }`}
+            >
+              {p}
+            </button>
+          ))}
+
+          <button
+            onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+            disabled={page === totalPages}
+            className="w-9 h-9 rounded-lg flex items-center justify-center bg-white/5 text-gray-400 hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
         </div>
       )}
 
