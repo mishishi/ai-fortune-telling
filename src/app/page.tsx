@@ -228,7 +228,6 @@ export default function HomePage() {
       <TodayFortuneModal
         open={showTodayFortune}
         onClose={() => setShowTodayFortune(false)}
-        userId={user?.userId || ''}
       />
 
       {/* Top Navigation Bar */}
