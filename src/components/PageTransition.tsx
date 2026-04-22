@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 
 export default function PageTransition({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const [isAnimating, setIsAnimating] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(true);
 
   useEffect(() => {
     // Trigger entrance animation on route change

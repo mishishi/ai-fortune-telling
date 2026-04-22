@@ -8,7 +8,7 @@ import { Accordion } from '@/components/ui/Accordion';
 // Conversion maps for Bazi data
 const STEMS = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'];
 const BRANCHES = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
-const ELEMENTS = ['wood', 'fire', 'earth', 'metal', 'water'];
+const ELEMENTS: Element[] = ['wood', 'fire', 'earth', 'metal', 'water'];
 const ZODIAC_ANIMALS = ['鼠', '牛', '虎', '兔', '龙', '蛇', '马', '羊', '猴', '鸡', '狗', '猪'];
 
 // Element mapping tables (from bazi library)
@@ -22,7 +22,9 @@ const BRANCH_ELEMENTS: Record<number, number> = {
 // Month pillar: element from branch
 // Day pillar: element from dayMaster (stored separately)
 // Hour pillar: element from branch
-function computePillarElement(stem: number, branch: number, pillarType: 'year' | 'month' | 'hour'): string {
+type Element = 'wood' | 'fire' | 'earth' | 'metal' | 'water';
+
+function computePillarElement(stem: number, branch: number, pillarType: 'year' | 'month' | 'hour'): Element {
   let elementIndex: number;
   if (pillarType === 'year') {
     // Year pillar element comes from stem

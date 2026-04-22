@@ -166,7 +166,7 @@ export default function BirthForm({ onSubmit }: BirthFormProps) {
           value={form.name}
           onChange={e => { setForm({ ...form, name: e.target.value }); clearError('name'); }}
           onBlur={() => validate('name', form.name)}
-          className="w-full rounded-[var(--radius-md)] px-5 py-4 text-white placeholder-gray-500 focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/20 transition-colors border"
+          className="w-full rounded-[var(--radius-md)] px-5 py-4 pr-16 text-white placeholder-gray-500 focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/20 transition-colors border"
           style={{
             background: 'var(--color-surface)',
             borderColor: errors.name ? 'var(--color-error)' : 'var(--color-border)',
@@ -176,6 +176,16 @@ export default function BirthForm({ onSubmit }: BirthFormProps) {
           aria-describedby={errors.name ? 'birth-name-error' : undefined}
         />
         {errors.name && <p id="birth-name-error" className="text-xs mt-1" style={{ color: 'var(--color-error)' }}>{errors.name}</p>}
+        <div className="flex justify-between items-center mt-1">
+          <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
+            {form.name.length}/20
+          </p>
+          {form.name.length > 0 && form.name.length < 2 && (
+            <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
+              还需 {2 - form.name.length} 个字符
+            </p>
+          )}
+        </div>
       </div>
 
       {/* Gender field - compact pill style */}

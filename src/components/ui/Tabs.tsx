@@ -17,7 +17,7 @@ export function Tabs({ tabs, defaultTab }: TabsProps) {
   const [activeTab, setActiveTab] = useState(defaultTab || tabs[0]?.id);
   const [focusedTabId, setFocusedTabId] = useState<string | null>(null);
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
-  const [contentVisible, setContentVisible] = useState(activeTab);
+  const [contentVisible, setContentVisible] = useState<string | null>(activeTab);
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const tabListRef = useRef<HTMLDivElement>(null);
 
