@@ -1,7 +1,9 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { Skeleton } from './Skeleton';
+import FortuneTimeline from './FortuneTimeline';
+import YearlySummary from './YearlySummary';
+import RadarCompareView from './RadarCompareView';
 
 interface Report {
   id: string;
@@ -132,18 +134,28 @@ export default function FortuneDashboard({ reports, currentUserId }: FortuneDash
                   </div>
                   <div className="flex gap-2 flex-wrap">
                     {report.radarScores.career !== undefined && (
-                      <span className="text-xs px-2 py-0.5 rounded bg-white/10 text-[var(--color-text-secondary)]">
+                      <span className="text-xs px-2 py-0.5 rounded" style={{ background: 'rgba(var(--color-dimension-career), 0.15)', color: 'var(--color-dimension-career)' }}>
                         事业 {report.radarScores.career}
                       </span>
                     )}
                     {report.radarScores.love !== undefined && (
-                      <span className="text-xs px-2 py-0.5 rounded bg-white/10 text-[var(--color-text-secondary)]">
+                      <span className="text-xs px-2 py-0.5 rounded" style={{ background: 'rgba(var(--color-dimension-love), 0.15)', color: 'var(--color-dimension-love)' }}>
                         感情 {report.radarScores.love}
                       </span>
                     )}
                     {report.radarScores.wealth !== undefined && (
-                      <span className="text-xs px-2 py-0.5 rounded bg-white/10 text-[var(--color-text-secondary)]">
+                      <span className="text-xs px-2 py-0.5 rounded" style={{ background: 'rgba(var(--color-dimension-wealth), 0.15)', color: 'var(--color-dimension-wealth)' }}>
                         财富 {report.radarScores.wealth}
+                      </span>
+                    )}
+                    {report.radarScores.health !== undefined && (
+                      <span className="text-xs px-2 py-0.5 rounded" style={{ background: 'rgba(var(--color-dimension-health), 0.15)', color: 'var(--color-dimension-health)' }}>
+                        健康 {report.radarScores.health}
+                      </span>
+                    )}
+                    {report.radarScores.mentor !== undefined && (
+                      <span className="text-xs px-2 py-0.5 rounded" style={{ background: 'rgba(var(--color-dimension-mentor), 0.15)', color: 'var(--color-dimension-mentor)' }}>
+                        贵人 {report.radarScores.mentor}
                       </span>
                     )}
                   </div>
@@ -154,28 +166,15 @@ export default function FortuneDashboard({ reports, currentUserId }: FortuneDash
         </div>
       ))}
 
-      {/* YearlySummary Placeholder */}
-      <div className="p-6 rounded-xl bg-white/5 border border-white/10">
-        <h3 className="text-lg font-medium text-[var(--color-accent)] mb-3">年度运势总结</h3>
-        <div className="text-[var(--color-text-muted)]">
-          {/* Placeholder for YearlySummary component */}
-          <p className="text-sm">年度运势总结组件 - 待实现</p>
-        </div>
-      </div>
+      {/* YearlySummary */}
+      {reports.length > 0 && (
+        <YearlySummary latestReport={reports[0]} />
+      )}
 
-      {/* RadarCompareView Placeholder */}
-      <div className="p-6 rounded-xl bg-white/5 border border-white/10">
-        <h3 className="text-lg font-medium text-[var(--color-accent)] mb-3">运势对比</h3>
-        <div className="text-[var(--color-text-muted)]">
-          {/* Placeholder for RadarCompareView component */}
-          <p className="text-sm">雷达图对比组件 - 待实现</p>
-          {selectedReports[0] && selectedReports[1] && (
-            <p className="text-xs mt-2 text-[var(--color-text-secondary)]">
-              已选择: {selectedReports[0].name} vs {selectedReports[1].name}
-            </p>
-          )}
-        </div>
-      </div>
+      {/* RadarCompareView */}
+      {selectedReports[0] && selectedReports[1] && (
+        <RadarCompareView reportA={selectedReports[0]} reportB={selectedReports[1]} />
+      )}
     </div>
   );
 }

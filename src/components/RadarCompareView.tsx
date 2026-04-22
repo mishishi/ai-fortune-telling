@@ -87,7 +87,9 @@ export default function RadarCompareView({ reportA, reportB }: RadarCompareViewP
             <h3 className="text-white font-serif text-lg">{reportA.name}</h3>
             <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>{yearA}年</p>
           </div>
-          <RadarChartComponent scores={scoresA} />
+          <div className="min-h-[320px]">
+            <RadarChartComponent scores={scoresA} />
+          </div>
         </div>
 
         {/* Report B */}
@@ -96,7 +98,9 @@ export default function RadarCompareView({ reportA, reportB }: RadarCompareViewP
             <h3 className="text-white font-serif text-lg">{reportB.name}</h3>
             <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>{yearB}年</p>
           </div>
-          <RadarChartComponent scores={scoresB} />
+          <div className="min-h-[320px]">
+            <RadarChartComponent scores={scoresB} />
+          </div>
         </div>
       </div>
 

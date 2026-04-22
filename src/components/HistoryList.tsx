@@ -492,11 +492,11 @@ export default function HistoryList() {
 
       {/* Compare Button */}
       {selectedReportIds.length === 2 && (
-        <div className="fixed bottom-6 left-0 right-0 flex justify-center z-20">
+        <div className="fixed bottom-20 left-0 right-0 flex justify-center z-50">
           <button
             onClick={handleOpenCompare}
             title="选择2个报告进行对比"
-            className="px-8 py-3 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)] text-white font-bold rounded-full shadow-lg hover:shadow-xl transition-all"
+            className="px-8 py-3 bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)] text-white font-bold rounded-full shadow-lg hover:shadow-xl transition-all cursor-pointer"
           >
             开始对比
           </button>
