@@ -27,7 +27,9 @@
       "Bash(pkill -f \"next dev\")",
       "Bash(taskkill /F /IM node.exe)",
       "Bash(npx tsx -e ':*)",
-      "Bash(npx ts-node --esm -e ':*)"
+      "Bash(npx ts-node --esm -e ':*)",
+      "Bash(taskkill //F //IM node.exe)",
+      "Bash(git push:*)"
     ]
   }
 }

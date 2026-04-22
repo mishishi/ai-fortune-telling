@@ -6,15 +6,39 @@ interface Message {
   content: string;
 }
 
+const TOPIC_LABELS: Record<string, string> = {
+  career: '事业',
+  love: '感情',
+  health: '健康',
+  wealth: '财富',
+  family: '家庭',
+};
+
+const KEY_TOPICS = ['career', 'love', 'health'];
+
 interface AIQuestionModalProps {
   open: boolean;
   messages: Message[];
   onSend: (message: string) => Promise<void>;
   onDone: () => void;
   isInitialLoading?: boolean;
+  coveredTopics?: string[];
+  currentRound?: number;
+  totalRounds?: number;
+  showDoneButton?: boolean;
 }
 
-export default function AIQuestionModal({ open, messages, onSend, onDone, isInitialLoading = false }: AIQuestionModalProps) {
+export default function AIQuestionModal({
+  open,
+  messages,
+  onSend,
+  onDone,
+  isInitialLoading = false,
+  coveredTopics = [],
+  currentRound = 1,
+  totalRounds = 2,
+  showDoneButton = false,
+}: AIQuestionModalProps) {
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -116,7 +140,31 @@ export default function AIQuestionModal({ open, messages, onSend, onDone, isInit
               <p className="text-xs" style={{ color: 'var(--color-text-muted)' }}>请回答几个问题以获得更精准的分析</p>
             </div>
           </div>
+          {/* Round progress */}
+          <span className="text-xs font-medium" style={{ color: 'var(--color-text-muted)' }}>
+            第 {currentRound} 轮（共 {totalRounds} 轮）
+          </span>
         </div>
+
+        {/* Topic coverage bar */}
+        {coveredTopics.length > 0 && (
+          <div className="px-6 py-2 border-b border-white/5 flex items-center gap-2 flex-wrap">
+            <span className="text-xs" style={{ color: 'var(--color-text-muted)' }}>已覆盖：</span>
+            {coveredTopics.map(topic => (
+              <span
+                key={topic}
+                className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
+                style={{
+                  background: 'var(--color-primary)',
+                  color: 'white',
+                  opacity: 0.85,
+                }}
+              >
+                {TOPIC_LABELS[topic] || topic}
+              </span>
+            ))}
+          </div>
+        )}
 
         {/* Messages */}
         <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
@@ -172,14 +220,41 @@ export default function AIQuestionModal({ open, messages, onSend, onDone, isInit
               发送
             </button>
           </div>
-          <button
-            onClick={onDone}
-            className="mt-3 w-full py-2 text-sm transition-colors cursor-pointer hover:text-white"
-            style={{ color: 'var(--color-text-muted)' }}
-            aria-label="跳过问答，直接生成报告"
-          >
-            跳过，直接生成报告
-          </button>
+          {!showDoneButton ? (
+            <button
+              onClick={onDone}
+              className="mt-3 w-full py-2 text-sm transition-colors cursor-pointer hover:text-white"
+              style={{ color: 'var(--color-text-muted)' }}
+              aria-label="跳过问答，直接生成报告"
+            >
+              跳过，直接生成报告
+            </button>
+          ) : (
+            <div className="mt-3 text-center">
+              <button
+                onClick={onDone}
+                className="w-full py-3 rounded-xl font-bold text-white transition-all hover:scale-[1.02] active:scale-[0.98]"
+                style={{
+                  background: 'linear-gradient(135deg, var(--color-primary), var(--color-secondary))',
+                  boxShadow: '0 4px 15px rgba(196, 30, 58, 0.3)',
+                }}
+              >
+                ✓ 完成问答，生成报告
+              </button>
+              {/* Missing topic hint */}
+              {(() => {
+                const missing = KEY_TOPICS.filter(t => !coveredTopics.includes(t));
+                if (missing.length > 0) {
+                  return (
+                    <p className="mt-2 text-xs" style={{ color: 'var(--color-text-muted)' }}>
+                      建议再聊聊「{TOPIC_LABELS[missing[0]]}」，分析会更全面
+                    </p>
+                  );
+                }
+                return null;
+              })()}
+            </div>
+          )}
         </div>
       </div>
     </div>

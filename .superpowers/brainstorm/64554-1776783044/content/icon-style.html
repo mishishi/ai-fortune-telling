@@ -1,0 +1,118 @@
+<h2>底部导航栏 — 图标风格</h2>
+<p class="subtitle">选择与项目东方奢华主题最契合的图标风格</p>
+
+<div class="cards">
+  <div class="card" data-choice="outline" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background:#0a0a0f;padding:32px;border-radius:16px;display:flex;justify-content:center;gap:32px">
+        <!-- Outline icons -->
+        <div style="text-align:center">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#d4af37" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+            <polyline points="9,22 9,12 15,12 15,22"/>
+          </svg>
+          <p style="color:#888;font-size:10px;margin-top:6px">首页</p>
+        </div>
+        <div style="text-align:center">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12,6 12,12 16,14"/>
+          </svg>
+          <p style="color:#666;font-size:10px;margin-top:6px">历史</p>
+        </div>
+        <div style="text-align:center">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+          <p style="color:#666;font-size:10px;margin-top:6px">我的</p>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>线框图标 (Outline)</h3>
+      <p>线条轻盈，透气感强。符合东方极简美学，与深色背景形成精致对比。</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="filled" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background:#0a0a0f;padding:32px;border-radius:16px;display:flex;justify-content:center;gap:32px">
+        <!-- Filled icons -->
+        <div style="text-align:center">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="#d4af37">
+            <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+          </svg>
+          <p style="color:#888;font-size:10px;margin-top:6px">首页</p>
+        </div>
+        <div style="text-align:center">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="#555">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12,6 12,12 16,14" stroke="#0a0a0f" stroke-width="2" fill="none"/>
+          </svg>
+          <p style="color:#666;font-size:10px;margin-top:6px">历史</p>
+        </div>
+        <div style="text-align:center">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="#555">
+            <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+          <p style="color:#666;font-size:10px;margin-top:6px">我的</p>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>实心图标 (Filled)</h3>
+      <p>视觉更厚重，有存在感。适合强调导航结构的可辨识度。</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="gradient" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background:#0a0a0f;padding:32px;border-radius:16px;display:flex;justify-content:center;gap:32px">
+        <!-- Gradient icons -->
+        <div style="text-align:center">
+          <svg width="32" height="32" viewBox="0 0 24 24">
+            <defs>
+              <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#f0c674"/>
+                <stop offset="100%" style="stop-color:#d4af37"/>
+              </linearGradient>
+            </defs>
+            <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" fill="url(#gold)"/>
+          </svg>
+          <p style="color:#888;font-size:10px;margin-top:6px">首页</p>
+        </div>
+        <div style="text-align:center">
+          <svg width="32" height="32" viewBox="0 0 24 24">
+            <defs>
+              <linearGradient id="gold2" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#f0c674"/>
+                <stop offset="100%" style="stop-color:#d4af37"/>
+              </linearGradient>
+            </defs>
+            <circle cx="12" cy="12" r="10" fill="url(#gold2)"/>
+          </svg>
+          <p style="color:#666;font-size:10px;margin-top:6px">历史</p>
+        </div>
+        <div style="text-align:center">
+          <svg width="32" height="32" viewBox="0 0 24 24">
+            <defs>
+              <linearGradient id="gold3" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#f0c674"/>
+                <stop offset="100%" style="stop-color:#d4af37"/>
+              </linearGradient>
+            </defs>
+            <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" fill="url(#gold3)"/>
+            <circle cx="12" cy="7" r="4" fill="url(#gold3)"/>
+          </svg>
+          <p style="color:#666;font-size:10px;margin-top:6px">我的</p>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>金色渐变图标</h3>
+      <p>与品牌金色点缀呼应，视觉华丽。推荐！</p>
+    </div>
+  </div>
+</div>

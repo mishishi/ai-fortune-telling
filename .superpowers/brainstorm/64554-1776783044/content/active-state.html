@@ -1,0 +1,117 @@
+<h2>底部导航栏 — 激活态处理</h2>
+<p class="subtitle">选中标签应该怎样呈现？选择最清晰、最精致的方式</p>
+
+<div class="cards">
+  <div class="card" data-choice="color" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background:#0a0a0f;padding:24px 16px;border-radius:16px">
+        <div style="display:flex;justify-content:center;gap:24px">
+          <div style="text-align:center">
+            <svg width="28" height="28" viewBox="0 0 24 24"><defs><linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#f0c674"/><stop offset="100%" style="stop-color:#d4af37"/></linearGradient></defs><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" fill="url(#g1)"/></svg>
+            <p style="color:#d4af37;font-size:10px;margin-top:4px;font-weight:600">首页</p>
+          </div>
+          <div style="text-align:center">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
+            <p style="color:#666;font-size:10px;margin-top:4px">历史</p>
+          </div>
+          <div style="text-align:center">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="1.5"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <p style="color:#666;font-size:10px;margin-top:4px">我的</p>
+          </div>
+        </div>
+        <div style="height:2px;background:#1a1a24;margin-top:12px"></div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A) 颜色变化</h3>
+      <p>激活标签变金色，非激活为灰色。简单直接。</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="underline" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background:#0a0a0f;padding:24px 16px;border-radius:16px">
+        <div style="display:flex;justify-content:center;gap:24px">
+          <div style="text-align:center">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+            <p style="color:#666;font-size:10px;margin-top:4px">首页</p>
+            <div style="height:2px;background:#333;margin-top:6px"></div>
+          </div>
+          <div style="text-align:center">
+            <svg width="28" height="28" viewBox="0 0 24 24"><defs><linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#f0c674"/><stop offset="100%" style="stop-color:#d4af37"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#g2)"/></svg>
+            <p style="color:#d4af37;font-size:10px;margin-top:4px;font-weight:600">历史</p>
+            <div style="height:2px;background:linear-gradient(90deg,#f0c674,#d4af37);margin-top:6px;border-radius:1px"></div>
+          </div>
+          <div style="text-align:center">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="1.5"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <p style="color:#666;font-size:10px;margin-top:4px">我的</p>
+            <div style="height:2px;background:#333;margin-top:6px"></div>
+          </div>
+        </div>
+        <div style="height:2px;background:#1a1a24;margin-top:12px"></div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B) 底部指示条</h3>
+      <p>激活标签下方有一条金色滑动横条。推荐！</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="pill" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background:#0a0a0f;padding:24px 16px;border-radius:16px">
+        <div style="display:flex;justify-content:center;gap:24px">
+          <div style="text-align:center">
+            <div style="background:#1a1a24;padding:8px 12px;border-radius:12px">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+            </div>
+            <p style="color:#666;font-size:10px;margin-top:4px">首页</p>
+          </div>
+          <div style="text-align:center">
+            <div style="background:linear-gradient(135deg,rgba(212,175,55,0.2),rgba(196,30,58,0.1));padding:8px 12px;border-radius:12px;border:1px solid rgba(212,175,55,0.3)">
+              <svg width="28" height="28" viewBox="0 0 24 24"><defs><linearGradient id="g3" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#f0c674"/><stop offset="100%" style="stop-color:#d4af37"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#g3)"/></svg>
+            </div>
+            <p style="color:#d4af37;font-size:10px;margin-top:4px;font-weight:600">历史</p>
+          </div>
+          <div style="text-align:center">
+            <div style="background:#1a1a24;padding:8px 12px;border-radius:12px">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="1.5"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <p style="color:#666;font-size:10px;margin-top:4px">我的</p>
+          </div>
+        </div>
+        <div style="height:2px;background:#1a1a24;margin-top:12px"></div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C) 背景胶囊</h3>
+      <p>激活标签有一个半透明金色背景胶囊，精致感强。</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="scale" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background:#0a0a0f;padding:24px 16px;border-radius:16px">
+        <div style="display:flex;justify-content:center;gap:24px;align-items:flex-end">
+          <div style="text-align:center">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+            <p style="color:#666;font-size:10px;margin-top:4px">首页</p>
+          </div>
+          <div style="text-align:center;transform:scale(1.15)">
+            <svg width="28" height="28" viewBox="0 0 24 24"><defs><linearGradient id="g4" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#f0c674"/><stop offset="100%" style="stop-color:#d4af37"/></linearGradient></defs><circle cx="12" cy="12" r="10" fill="url(#g4)"/></svg>
+            <p style="color:#d4af37;font-size:10px;margin-top:4px;font-weight:600">历史</p>
+          </div>
+          <div style="text-align:center">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="1.5"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <p style="color:#666;font-size:10px;margin-top:4px">我的</p>
+          </div>
+        </div>
+        <div style="height:2px;background:#1a1a24;margin-top:12px"></div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>D) 放大图标</h3>
+      <p>激活图标轻微放大 (1.15x)，配合金色渐变。</p>
+    </div>
+  </div>
+</div>

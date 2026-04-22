@@ -34,6 +34,8 @@ export default function HomePage() {
   const [loadingStep, setLoadingStep] = useState<LoadingStep>('idle');
   const [formVisible, setFormVisible] = useState(true);
   const [initialLoading, setInitialLoading] = useState(false);
+  const [coveredTopics, setCoveredTopics] = useState<string[]>([]);
+  const [showDoneButton, setShowDoneButton] = useState(false);
   const roundCountRef = useRef(0);
 
   const handleSubmit = async (data: BirthFormData) => {
@@ -41,6 +43,8 @@ export default function HomePage() {
     setMessages([]);
     setQuestionRound(0);
     roundCountRef.current = 0;
+    setCoveredTopics([]);
+    setShowDoneButton(false);
     setShowModal(true);
     setInitialLoading(true);
 
@@ -55,8 +59,11 @@ export default function HomePage() {
         }),
       });
       if (res.ok) {
-        const { response } = await res.json();
+        const { response, topic } = await res.json();
         setMessages([{ role: 'assistant', content: response }]);
+        if (topic) {
+          setCoveredTopics([topic]);
+        }
       }
     } catch (error) {
       console.error('Failed to get initial question:', error);
@@ -78,10 +85,9 @@ export default function HomePage() {
     roundCountRef.current += 1;
     setQuestionRound(roundCountRef.current);
 
-    // Check if should end conversation (2-3 rounds)
+    // After 2 rounds, show done button instead of auto-generating
     if (roundCountRef.current >= 2) {
-      // Generate report after 2-3 rounds
-      await generateReport(message);
+      setShowDoneButton(true);
       setLoading(false);
       return;
     }
@@ -97,12 +103,15 @@ export default function HomePage() {
         }),
       });
       if (res.ok) {
-        const { response } = await res.json();
+        const { response, topic } = await res.json();
         // Check if AI says to generate report
         if (response.includes('开始生成报告') || response.includes('生成报告')) {
-          await generateReport(message);
+          setShowDoneButton(true);
         } else {
           setMessages(prev => [...prev, { role: 'assistant', content: response }]);
+          if (topic) {
+            setCoveredTopics(prev => Array.from(new Set([...prev, topic])));
+          }
         }
       }
     } catch (error) {
@@ -117,6 +126,8 @@ export default function HomePage() {
     setLoadingStep('idle');
     setShowModal(false);
     setFormVisible(true);
+    setCoveredTopics([]);
+    setShowDoneButton(false);
     showToast('已取消生成', 'info');
   };
 
@@ -182,6 +193,7 @@ export default function HomePage() {
   };
 
   const handleDone = () => {
+    setShowDoneButton(false);
     generateReport();
   };
 
@@ -205,6 +217,10 @@ export default function HomePage() {
         onSend={handleSend}
         onDone={handleDone}
         isInitialLoading={initialLoading}
+        coveredTopics={coveredTopics}
+        currentRound={roundCountRef.current + 1}
+        totalRounds={2}
+        showDoneButton={showDoneButton}
       />
 
       {/* Top Navigation Bar */}
