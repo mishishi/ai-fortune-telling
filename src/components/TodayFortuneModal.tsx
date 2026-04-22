@@ -1,78 +1,113 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import MiniRadar from './MiniRadar';
+import { useState } from 'react';
 
-interface Report {
-  id: string;
-  name: string;
-  gender: string;
-  createdAt: string;
-  radarScores: {
-    career?: number;
-    love?: number;
-    wealth?: number;
-    health?: number;
-    mentor?: number;
-  };
-  aiAnalysis?: {
-    overall: string;
-    yearly: string;
-  };
+interface TodayFortuneData {
+  zodiac: string;
+  element: string;
+  overall: string;
+  fortune: '大吉' | '吉' | '平' | '凶' | '大凶';
+  yi: string[];
+  ji: string[];
+  luckyColor: string;
+  luckyNumber: number;
+  luckyDirection: string;
+  luckyTime: string;
+  tip: string;
 }
 
-interface TodayFortuneModalProps {
-  open: boolean;
-  onClose: () => void;
-  userId: string;
-}
-
-const LUCKY_COLORS = ['#e74c3c', '#e91e63', '#f1c40f', '#2ecc71', '#3498db', '#9b59b6'];
-const LUCKY_THINGS = ['红色', '金色', '绿色', '蓝色', '紫色', '玉石'];
-const DIRECTIONS = ['东方', '南方', '西方', '北方', '东南', '西南', '东北', '西北'];
-const THINGS = ['水晶', '玉石', '金属', '木质', '水杯', '书籍'];
-
-function getDayFromDate(): number {
-  return new Date().getDate();
-}
-
-function getGanzhiDay(): string {
-  const GANZI = ['甲子', '乙丑', '丙寅', '丁卯', '戊辰', '己巳', '庚午', '辛未', '壬申', '癸酉',
-                 '甲戌', '乙亥', '丙子', '丁丑', '戊寅', '己卯', '庚辰', '辛巳', '壬午', '癸未',
-                 '甲申', '乙酉', '丙戌', '丁亥', '戊子', '己丑', '庚寅', '辛卯', '壬辰', '癸巳',
-                 '甲午', '乙未', '丙申', '丁酉', '戊戌', '己亥', '庚子', '辛丑', '壬寅', '癸丑',
-                 '甲辰', '乙巳', '丙午', '丁未', '戊申', '己酉', '庚戌', '辛亥', '壬子', '癸丑',
-                 '甲寅', '乙卯', '丙辰', '丁巳', '戊午', '己未', '庚申', '辛酉', '壬戌', '癸亥'];
+function getDayFortune(): TodayFortuneData {
   const now = new Date();
-  const start = new Date(now.getFullYear(), 0, 0);
-  const diff = now.getTime() - start.getTime();
-  const oneDay = 1000 * 60 * 60 * 24;
-  const dayOfYear = Math.floor(diff / oneDay);
-  return GANZI[dayOfYear % 60];
+  const dayOfYear = Math.floor((now.getTime() - new Date(now.getFullYear(), 0, 0).getTime()) / (1000 * 60 * 60 * 24));
+  const dayOfMonth = now.getDate();
+  const dayOfWeek = now.getDay();
+  const month = now.getMonth();
+
+  // 八卦运势 cycle
+  const FORTUNES: ('大吉' | '吉' | '平' | '凶' | '大凶')[] = ['大吉', '吉', '平', '凶', '大凶', '吉', '平', '吉', '大吉', '平'];
+  const FORTUNE_DESCRIPTIONS = {
+    '大吉': '今日运势极佳，诸事顺遂，贵人大助，大吉大利！',
+    '吉': '今日运势良好，做事顺利，适宜进取，有意外惊喜。',
+    '平': '今日运势平稳，按部就班，稳中求进，宜守不宜攻。',
+    '凶': '今日运势欠佳，行事阻滞，防有小人口舌是非。',
+    '大凶': '今日诸事不宜，保守为上，切勿冲动，忍得平安。',
+  };
+
+  // 五行颜色
+  const COLORS = ['绿色', '红色', '黄色', '白色', '黑色', '金色', '紫色', '蓝色'];
+  // 幸运数字 (1-9)
+  const NUMBERS = [3, 7, 9, 2, 5, 8, 1, 6, 4];
+  // 方位
+  const DIRECTIONS = ['东方', '东南方', '南方', '西南方', '西方', '西北方', '北方', '东北方'];
+  // 时辰
+  const TIMES = ['子时', '丑时', '寅时', '卯时', '辰时', '巳时', '午时', '未时', '申时', '酉时', '戌时', '亥时'];
+
+  // 宜做的事情
+  const YI_OPTIONS = [
+    '祭祀祈福', '开市交易', '订盟盟约', '搬家入宅', '出行旅游', '婚嫁娶亲',
+    '种植林木', '动土施工', '求职面试', '学习进修', '修身养性', '洽谈合作',
+  ];
+  // 忌做的事情
+  const JI_OPTIONS = [
+    '安葬破土', '词讼争吵', '开业开工', '动怒争执', '远行冒险', '探病问疾',
+    '搬家动土', '投资投机', '签约谈判', '求爱表白', '醉酒宴请', '签署文件',
+  ];
+
+  const fortuneIdx = dayOfYear % FORTUNES.length;
+  const fortune = FORTUNES[fortuneIdx];
+  const colorIdx = (dayOfYear + month) % COLORS.length;
+  const numIdx = (dayOfMonth + dayOfWeek) % NUMBERS.length;
+  const dirIdx = (dayOfYear + dayOfMonth) % DIRECTIONS.length;
+  const timeIdx = (dayOfMonth * 2 + dayOfWeek * 3) % TIMES.length;
+
+  // Select 3 YI and 3 JI items based on day
+  const yiStart = (dayOfYear * 3 + dayOfMonth) % YI_OPTIONS.length;
+  const jiStart = (dayOfYear * 7 + dayOfWeek) % JI_OPTIONS.length;
+  const yi = [
+    YI_OPTIONS[yiStart % YI_OPTIONS.length],
+    YI_OPTIONS[(yiStart + 3) % YI_OPTIONS.length],
+    YI_OPTIONS[(yiStart + 7) % YI_OPTIONS.length],
+  ];
+  const ji = [
+    JI_OPTIONS[jiStart % JI_OPTIONS.length],
+    JI_OPTIONS[(jiStart + 2) % JI_OPTIONS.length],
+    JI_OPTIONS[(jiStart + 5) % JI_OPTIONS.length],
+  ];
+
+  const elements = ['木', '火', '土', '金', '水'];
+  const elementIdx = (dayOfYear + month) % elements.length;
+  const zodiacs = ['鼠', '牛', '虎', '兔', '龙', '蛇', '马', '羊', '猴', '鸡', '狗', '猪'];
+  const zodiacIdx = (dayOfYear + dayOfMonth) % zodiacs.length;
+
+  const tips = [
+    '今日适合静心冥想，与内心对话。',
+    '今日宜主动出击，把握机会。',
+    '今日适合整理思路，制定计划。',
+    '今日财运平稳，谨慎投资。',
+    '今日注意调节情绪，保持平和。',
+    '今日贵人运旺，多与人交流。',
+    '今日事业运上升，积极表现。',
+    '今日感情运佳，多关心身边人。',
+  ];
+  const tipIdx = (dayOfYear + dayOfMonth + dayOfWeek) % tips.length;
+
+  return {
+    zodiac: zodiacs[zodiacIdx],
+    element: elements[elementIdx],
+    overall: FORTUNE_DESCRIPTIONS[fortune],
+    fortune,
+    yi,
+    ji,
+    luckyColor: COLORS[colorIdx],
+    luckyNumber: NUMBERS[numIdx],
+    luckyDirection: DIRECTIONS[dirIdx],
+    luckyTime: TIMES[timeIdx],
+    tip: tips[tipIdx],
+  };
 }
 
-export default function TodayFortuneModal({ open, onClose, userId }: TodayFortuneModalProps) {
-  const [report, setReport] = useState<Report | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (open && userId) {
-      fetch(`/api/reports?userId=${encodeURIComponent(userId)}`)
-        .then(res => res.ok ? res.json() : null)
-        .then(data => {
-          const reports: Report[] = data?.reports || [];
-          if (reports.length > 0) {
-            // Get most recent report
-            const sorted = [...reports].sort((a, b) =>
-              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-            );
-            setReport(sorted[0]);
-          }
-          setLoading(false);
-        })
-        .catch(() => setLoading(false));
-    }
-  }, [open, userId]);
+export default function TodayFortuneModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const [data] = useState<TodayFortuneData>(getDayFortune());
 
   if (!open) return null;
 
@@ -84,127 +119,128 @@ export default function TodayFortuneModal({ open, onClose, userId }: TodayFortun
     weekday: 'long',
   });
 
-  const ganzhiDay = getGanzhiDay();
-  const dayOfMonth = getDayFromDate();
-  const luckyIdx = (dayOfMonth + parseInt(report?.name.charCodeAt(0)?.toString().slice(-1) || '0', 10)) % 6;
-  const dirIdx = (dayOfMonth + parseInt(report?.name.charCodeAt(0)?.toString().slice(-2) || '0', 10)) % 8;
-  const thingIdx = (dayOfMonth * 3 + (report?.name.length || 0)) % 6;
+  const fortuneColors = {
+    '大吉': '#2ecc71',
+    '吉': '#3498db',
+    '平': '#f39c12',
+    '凶': '#e67e22',
+    '大凶': '#e74c3c',
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
-      <div
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-        onClick={onClose}
-      />
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
 
       {/* Modal */}
       <div
-        className="relative w-full max-w-sm rounded-2xl p-6 animate-scale-in"
+        className="relative w-full max-w-md rounded-2xl overflow-hidden animate-scale-in"
         style={{
-          background: 'linear-gradient(135deg, rgba(26, 21, 37, 0.95) 0%, rgba(45, 31, 61, 0.95) 100%)',
-          backdropFilter: 'blur(20px)',
-          border: '1px solid rgba(212, 175, 55, 0.2)',
+          background: 'linear-gradient(180deg, #1a1525 0%, #2d1f3d 100%)',
+          border: '1px solid rgba(212, 175, 55, 0.3)',
         }}
       >
-        {/* Close button */}
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
-        >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-
-        {/* Header */}
-        <div className="text-center mb-4">
-          <div className="text-xs tracking-widest mb-2" style={{ color: 'var(--color-accent)' }}>
+        {/* Header with date */}
+        <div className="px-6 pt-6 pb-4 text-center" style={{ background: 'rgba(212, 175, 55, 0.1)' }}>
+          <div className="text-xs tracking-widest mb-1" style={{ color: 'var(--color-accent)' }}>
             {todayStr}
           </div>
-          <h2 className="text-xl font-serif text-white">
-            {report?.name || '您'}的今日运势
-          </h2>
-          <p className="text-xs text-gray-400 mt-1">今日干支：{ganzhiDay}</p>
+          <h2 className="text-xl font-serif text-white">今日运势</h2>
         </div>
 
-        {loading ? (
-          <div className="py-8 text-center">
-            <div className="w-8 h-8 border-2 border-[var(--color-accent)] border-t-transparent rounded-full animate-spin mx-auto" />
+        {/* Fortune Level */}
+        <div className="px-6 py-4 text-center">
+          <div
+            className="inline-block px-6 py-2 rounded-full text-lg font-bold"
+            style={{
+              background: `rgba(${fortuneColors[data.fortune] === '#2ecc71' ? '46,204,113' : fortuneColors[data.fortune] === '#3498db' ? '52,152,219' : fortuneColors[data.fortune] === '#f39c12' ? '243,156,18' : fortuneColors[data.fortune] === '#e67e22' ? '230,126,34' : '231,76,60'}, 0.2)`,
+              color: fortuneColors[data.fortune],
+              border: `1px solid ${fortuneColors[data.fortune]}`,
+            }}
+          >
+            {data.fortune}
           </div>
-        ) : report ? (
-          <>
-            {/* Mini Radar */}
-            <div className="flex justify-center mb-4">
-              <MiniRadar scores={report.radarScores} size={120} />
-            </div>
+          <p className="mt-3 text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+            {data.overall}
+          </p>
+        </div>
 
-            {/* Scores */}
-            <div className="grid grid-cols-5 gap-1 mb-4">
-              {[
-                { key: 'career', label: '事业' },
-                { key: 'love', label: '感情' },
-                { key: 'wealth', label: '财运' },
-                { key: 'health', label: '健康' },
-                { key: 'mentor', label: '贵人' },
-              ].map(dim => (
-                <div key={dim.key} className="text-center">
-                  <div className="text-xs" style={{ color: `var(--color-dimension-${dim.key})` }}>
-                    {dim.label}
-                  </div>
-                  <div className="text-white font-medium">
-                    {report.radarScores[dim.key as keyof typeof report.radarScores] || 0}
-                  </div>
-                </div>
-              ))}
+        {/* Lucky Items */}
+        <div className="px-6 pb-4">
+          <div className="grid grid-cols-4 gap-2">
+            <div className="text-center p-2 rounded-lg" style={{ background: 'rgba(255,255,255,0.05)' }}>
+              <div className="text-xs text-gray-400 mb-1">幸运色</div>
+              <div className="text-white font-medium">{data.luckyColor}</div>
             </div>
-
-            {/* Lucky items */}
-            <div className="grid grid-cols-3 gap-2 mb-4">
-              <div className="text-center p-2 rounded-lg" style={{ background: 'rgba(255,255,255,0.05)' }}>
-                <div className="text-xs text-gray-400">幸运色</div>
-                <div className="text-sm" style={{ color: LUCKY_COLORS[luckyIdx] }}>
-                  {LUCKY_THINGS[luckyIdx]}
-                </div>
-              </div>
-              <div className="text-center p-2 rounded-lg" style={{ background: 'rgba(255,255,255,0.05)' }}>
-                <div className="text-xs text-gray-400">贵人方位</div>
-                <div className="text-sm text-[var(--color-dimension-mentor)]">
-                  {DIRECTIONS[dirIdx]}
-                </div>
-              </div>
-              <div className="text-center p-2 rounded-lg" style={{ background: 'rgba(255,255,255,0.05)' }}>
-                <div className="text-xs text-gray-400">幸运物</div>
-                <div className="text-sm text-[var(--color-dimension-wealth)]">
-                  {THINGS[thingIdx]}
-                </div>
-              </div>
+            <div className="text-center p-2 rounded-lg" style={{ background: 'rgba(255,255,255,0.05)' }}>
+              <div className="text-xs text-gray-400 mb-1">幸运数</div>
+              <div className="text-white font-medium">{data.luckyNumber}</div>
             </div>
+            <div className="text-center p-2 rounded-lg" style={{ background: 'rgba(255,255,255,0.05)' }}>
+              <div className="text-xs text-gray-400 mb-1">贵人方</div>
+              <div className="text-white font-medium">{data.luckyDirection}</div>
+            </div>
+            <div className="text-center p-2 rounded-lg" style={{ background: 'rgba(255,255,255,0.05)' }}>
+              <div className="text-xs text-gray-400 mb-1">吉时</div>
+              <div className="text-white font-medium">{data.luckyTime}</div>
+            </div>
+          </div>
+        </div>
 
-            {/* Tip */}
+        {/* Yi / Ji */}
+        <div className="px-6 pb-4">
+          <div className="grid grid-cols-2 gap-3">
             <div
-              className="rounded-lg p-3 text-sm"
-              style={{
-                background: 'rgba(212, 175, 55, 0.1)',
-                border: '1px solid rgba(212, 175, 55, 0.2)',
-                color: 'var(--color-text-secondary)',
-              }}
+              className="rounded-lg p-3"
+              style={{ background: 'rgba(46, 204, 113, 0.1)', border: '1px solid rgba(46, 204, 113, 0.3)' }}
             >
-              {report.aiAnalysis?.yearly?.slice(0, 60) || '今日运势平稳，注意把握机会。'}
-              ...
+              <div className="text-xs mb-2" style={{ color: '#2ecc71' }}>宜</div>
+              <div className="space-y-1">
+                {data.yi.map((item, i) => (
+                  <div key={i} className="text-xs text-gray-300">{item}</div>
+                ))}
+              </div>
             </div>
-          </>
-        ) : (
-          <div className="py-8 text-center">
-            <p className="text-gray-400 mb-4">暂无运势数据</p>
-            <a
-              href="/"
-              className="text-sm px-4 py-2 rounded-lg bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary)]/80 transition-colors"
+            <div
+              className="rounded-lg p-3"
+              style={{ background: 'rgba(231, 76, 60, 0.1)', border: '1px solid rgba(231, 76, 60, 0.3)' }}
             >
-              生成报告
-            </a>
+              <div className="text-xs mb-2" style={{ color: '#e74c3c' }}>忌</div>
+              <div className="space-y-1">
+                {data.ji.map((item, i) => (
+                  <div key={i} className="text-xs text-gray-300">{item}</div>
+                ))}
+              </div>
+            </div>
           </div>
-        )}
+        </div>
+
+        {/* Tip */}
+        <div
+          className="mx-6 mb-4 p-3 rounded-lg text-sm"
+          style={{
+            background: 'rgba(212, 175, 55, 0.1)',
+            border: '1px solid rgba(212, 175, 55, 0.2)',
+            color: 'var(--color-accent)',
+          }}
+        >
+          {data.tip}
+        </div>
+
+        {/* Close */}
+        <div className="px-6 pb-6 text-center">
+          <button
+            onClick={onClose}
+            className="px-8 py-2 rounded-full text-sm"
+            style={{
+              background: 'rgba(212, 175, 55, 0.2)',
+              color: 'var(--color-accent)',
+              border: '1px solid rgba(212, 175, 55, 0.3)',
+            }}
+          >
+            我知道了
+          </button>
+        </div>
       </div>
     </div>
   );
