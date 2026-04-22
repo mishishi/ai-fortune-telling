@@ -29,6 +29,16 @@ export function getDb() {
         createdAt TEXT NOT NULL,
         lastLoginAt TEXT NOT NULL
       );
+      CREATE TABLE IF NOT EXISTS members (
+        id TEXT PRIMARY KEY,
+        userId TEXT NOT NULL,
+        name TEXT NOT NULL,
+        gender TEXT NOT NULL,
+        birthData TEXT NOT NULL,
+        createdAt TEXT NOT NULL,
+        updatedAt TEXT NOT NULL
+      );
+      CREATE INDEX IF NOT EXISTS idx_members_userId ON members(userId);
     `);
   }
   return db;

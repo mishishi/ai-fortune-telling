@@ -9,12 +9,42 @@ import ConfirmModal from '@/components/ConfirmModal';
 import CustomDropdown from '@/components/ui/CustomDropdown';
 import BirthDatePicker from '@/components/BirthForm/BirthDatePicker';
 
+interface BirthData {
+  year: number;
+  month: number;
+  day: number;
+  hour: number;
+  minute: number;
+  province: string;
+  timeSegment: 'early' | 'middle' | 'late';
+}
+
 interface FamilyMember {
   id: string;
   name: string;
   gender: 'male' | 'female';
-  birthDate: string;
+  birthData: BirthData;
+  createdAt?: string;
+  updatedAt?: string;
 }
+
+// Helper: convert BirthData to display string YYYY-MM-DD
+const birthDataToDateString = (bd: BirthData): string => {
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${bd.year}-${pad(bd.month)}-${pad(bd.day)}`;
+};
+
+// Helper: convert YYYY-MM-DD string to BirthData (partial)
+const dateStringToBirthData = (str: string, base: Partial<BirthData> = {}): BirthData => {
+  const [year, month, day] = str.split('-').map(Number);
+  return {
+    year, month, day,
+    hour: base.hour ?? 8,
+    minute: base.minute ?? 0,
+    province: base.province ?? '',
+    timeSegment: base.timeSegment ?? 'middle',
+  };
+};
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -33,7 +63,7 @@ export default function ProfilePage() {
     }
   }, [loading, user, router]);
 
-  // Load members from localStorage
+  // Load members from API, with localStorage as cache
   useEffect(() => {
     const stored = localStorage.getItem('fortune_members');
     if (stored) {
@@ -43,42 +73,75 @@ export default function ProfilePage() {
         setMembers([]);
       }
     }
-  }, []);
 
-  const saveMembers = (newMembers: FamilyMember[]) => {
-    setMembers(newMembers);
-    localStorage.setItem('fortune_members', JSON.stringify(newMembers));
-  };
+    // Fetch latest from API
+    fetch('/api/members')
+      .then(r => r.ok ? r.json() : [])
+      .then(apiMembers => {
+        if (apiMembers.length > 0) {
+          setMembers(apiMembers);
+          localStorage.setItem('fortune_members', JSON.stringify(apiMembers));
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const maskPhone = (phone: string) => {
     if (!phone || phone.length < 11) return phone;
     return phone.slice(0, 3) + '****' + phone.slice(-4);
   };
 
-  const handleAdd = () => {
+  const handleAdd = async () => {
     if (!form.name || !form.birthDate) return;
-    const newMember: FamilyMember = {
-      id: crypto.randomUUID(),
-      name: form.name,
-      gender: form.gender,
-      birthDate: form.birthDate,
-    };
-    saveMembers([...members, newMember]);
+    const birthData = dateStringToBirthData(form.birthDate);
+
+    try {
+      const res = await fetch('/api/members', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: form.name, gender: form.gender, birthData }),
+      });
+      if (res.ok) {
+        const newMember: FamilyMember = await res.json();
+        const updated = [newMember, ...members];
+        setMembers(updated);
+        localStorage.setItem('fortune_members', JSON.stringify(updated));
+      }
+    } catch (e) {
+      console.error('Failed to add member:', e);
+    }
     setForm({ name: '', gender: 'male', birthDate: '' });
     setShowAddForm(false);
   };
 
   const handleEdit = (member: FamilyMember) => {
-    setForm({ name: member.name, gender: member.gender, birthDate: member.birthDate });
+    setForm({
+      name: member.name,
+      gender: member.gender,
+      birthDate: birthDataToDateString(member.birthData),
+    });
     setEditingId(member.id);
   };
 
-  const handleUpdate = () => {
+  const handleUpdate = async () => {
     if (!form.name || !form.birthDate || !editingId) return;
-    const updated = members.map(m =>
-      m.id === editingId ? { ...m, name: form.name, gender: form.gender, birthDate: form.birthDate } : m
-    );
-    saveMembers(updated);
+    const birthData = dateStringToBirthData(form.birthDate);
+
+    try {
+      const res = await fetch(`/api/members/${editingId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: form.name, gender: form.gender, birthData }),
+      });
+      if (res.ok) {
+        const updatedMember: FamilyMember = await res.json();
+        const updated = members.map(m => m.id === editingId ? updatedMember : m);
+        setMembers(updated);
+        localStorage.setItem('fortune_members', JSON.stringify(updated));
+      }
+    } catch (e) {
+      console.error('Failed to update member:', e);
+    }
     setForm({ name: '', gender: 'male', birthDate: '' });
     setEditingId(null);
   };
@@ -86,9 +149,16 @@ export default function ProfilePage() {
   const handleDelete = async () => {
     if (!deleteTarget) return;
     setDeleting(true);
-    // Simulate brief delay for feedback
-    await new Promise(resolve => setTimeout(resolve, 200));
-    saveMembers(members.filter(m => m.id !== deleteTarget));
+    try {
+      const res = await fetch(`/api/members/${deleteTarget}`, { method: 'DELETE' });
+      if (res.ok) {
+        const updated = members.filter(m => m.id !== deleteTarget);
+        setMembers(updated);
+        localStorage.setItem('fortune_members', JSON.stringify(updated));
+      }
+    } catch (e) {
+      console.error('Failed to delete member:', e);
+    }
     setDeleteTarget(null);
     setDeleting(false);
   };
@@ -295,7 +365,7 @@ export default function ProfilePage() {
                 <div>
                   <p className="text-white font-medium">{member.name}</p>
                   <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>
-                    {member.gender === 'male' ? '男' : '女'} | {member.birthDate}
+                    {member.gender === 'male' ? '男' : '女'} | {(member.birthData as any)?.year ? birthDataToDateString(member.birthData as BirthData) : (member.birthData as unknown as string)}
                   </p>
                 </div>
                 <div className="flex gap-2">
