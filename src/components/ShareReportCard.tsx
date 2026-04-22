@@ -80,6 +80,8 @@ function SvgRadarChart({ scores, size = 280 }: { scores: Record<string, number>;
 
   return (
     <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+      {/* Background */}
+      <rect x="0" y="0" width={size} height={size} fill="rgba(26,21,37,1)" />
       {/* Grid circles */}
       {gridCircles}
 
@@ -167,11 +169,13 @@ export default function ShareReportCard({
     <div
       style={{
         width: 420,
+        minHeight: 420,
         padding: 32,
         background: 'linear-gradient(135deg, #1a1525 0%, #2d1f3d 50%, #1a1525 100%)',
         fontFamily: 'system-ui, -apple-system, sans-serif',
         color: '#fff',
         boxSizing: 'border-box',
+        display: 'inline-block',
       }}
     >
       {/* Header */}

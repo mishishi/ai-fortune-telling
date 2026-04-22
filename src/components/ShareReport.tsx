@@ -58,44 +58,27 @@ export default function ShareReport({
 
     setGenerating(true);
     try {
-      // Move card to body for capture
       const card = cardRef.current;
-      const parent = card.parentElement;
-      const nextSibling = card.nextSibling;
 
-      // Save original styles
-      const originalPosition = card.style.position;
-      const originalLeft = card.style.left;
-      const originalTop = card.style.top;
-      const originalOpacity = card.style.opacity;
-
-      // Move to body temporarily
-      document.body.appendChild(card);
+      // Make card visible for capture - position it fixed at top-left
       card.style.position = 'fixed';
-      card.style.left = '-9999px';
+      card.style.left = '0';
       card.style.top = '0';
-      card.style.opacity = '1';
       card.style.zIndex = '9999';
+      card.style.opacity = '1';
 
       const dataUrl = await toPng(card, {
         quality: 1,
         pixelRatio: 2,
+        cacheBust: true,
       });
 
-      // Restore original position
-      card.style.position = originalPosition;
-      card.style.left = originalLeft;
-      card.style.top = originalTop;
-      card.style.opacity = originalOpacity;
-
-      // Move back to original parent
-      if (parent) {
-        if (nextSibling) {
-          parent.insertBefore(card, nextSibling);
-        } else {
-          parent.appendChild(card);
-        }
-      }
+      // Restore hidden position
+      card.style.position = 'absolute';
+      card.style.left = '-9999px';
+      card.style.top = '0';
+      card.style.zIndex = '';
+      card.style.opacity = '';
 
       // Try Web Share API (mobile)
       if (navigator.share && navigator.canShare) {
