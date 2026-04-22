@@ -47,6 +47,8 @@ const EARTHLY_BRANCHES = [
 
 interface BirthFormProps {
   onSubmit: (data: BirthFormData) => Promise<void>;
+  initialData?: Partial<BirthFormData>;
+  submitOverride?: (data: BirthFormData) => Promise<void>;
 }
 
 export interface BirthFormData {
@@ -93,18 +95,18 @@ const validationRules = [
   },
 ];
 
-export default function BirthForm({ onSubmit }: BirthFormProps) {
+export default function BirthForm({ onSubmit, initialData, submitOverride }: BirthFormProps) {
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState<BirthFormData>({
-    name: '',
-    gender: 'male',
-    year: new Date().getFullYear(),
-    month: 1,
-    day: 1,
-    hour: 8,
-    minute: 0,  // 保留但UI不显示
-    province: '',
-    timeSegment: 'middle', // 默认选中"中"
+    name: initialData?.name ?? '',
+    gender: initialData?.gender ?? 'male',
+    year: initialData?.year ?? new Date().getFullYear(),
+    month: initialData?.month ?? 1,
+    day: initialData?.day ?? 1,
+    hour: initialData?.hour ?? 8,
+    minute: initialData?.minute ?? 0,
+    province: initialData?.province ?? '',
+    timeSegment: initialData?.timeSegment ?? 'middle',
   });
 
   const { errors, validate, clearError, validateAll } = useFormValidation(validationRules);
@@ -116,15 +118,15 @@ export default function BirthForm({ onSubmit }: BirthFormProps) {
 
   const handleReset = () => {
     setForm({
-      name: '',
-      gender: 'male',
-      year: new Date().getFullYear(),
-      month: 1,
-      day: 1,
-      hour: 8,
-      minute: 0,
-      province: '',
-      timeSegment: 'middle',
+      name: initialData?.name ?? '',
+      gender: initialData?.gender ?? 'male',
+      year: initialData?.year ?? new Date().getFullYear(),
+      month: initialData?.month ?? 1,
+      day: initialData?.day ?? 1,
+      hour: initialData?.hour ?? 8,
+      minute: initialData?.minute ?? 0,
+      province: initialData?.province ?? '',
+      timeSegment: initialData?.timeSegment ?? 'middle',
     });
   };
 
@@ -133,7 +135,11 @@ export default function BirthForm({ onSubmit }: BirthFormProps) {
     if (!validateAll(form)) return;
     setLoading(true);
     try {
-      await onSubmit(form);
+      if (submitOverride) {
+        await submitOverride(form);
+      } else {
+        await onSubmit(form);
+      }
     } finally {
       setLoading(false);
     }
@@ -305,25 +311,27 @@ export default function BirthForm({ onSubmit }: BirthFormProps) {
         {errors.province && <p className="text-xs mt-1" style={{ color: 'var(--color-error)' }}>{errors.province}</p>}
       </div>
 
-      {/* Submit button */}
-      <button
-        type="submit"
-        disabled={loading}
-        className="w-full py-4 rounded-xl font-bold text-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden cursor-pointer"
-        style={{
-          background: 'linear-gradient(135deg, var(--color-primary), var(--color-secondary))',
-          color: 'white',
-          boxShadow: 'var(--shadow-glow-primary)',
-        }}
-      >
-        <span className="relative z-10">{loading ? '解读中...' : '开启命盘解读'}</span>
-        <span
-          className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity"
+      {/* Submit button - only show when not using submitOverride */}
+      {!submitOverride && (
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full py-4 rounded-xl font-bold text-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden cursor-pointer"
           style={{
-            background: 'linear-gradient(135deg, var(--color-primary-hover), var(--color-secondary))',
+            background: 'linear-gradient(135deg, var(--color-primary), var(--color-secondary))',
+            color: 'white',
+            boxShadow: 'var(--shadow-glow-primary)',
           }}
-        />
-      </button>
+        >
+          <span className="relative z-10">{loading ? '解读中...' : '开启命盘解读'}</span>
+          <span
+            className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity"
+            style={{
+              background: 'linear-gradient(135deg, var(--color-primary-hover), var(--color-secondary))',
+            }}
+          />
+        </button>
+      )}
 
       {/* Privacy Notice */}
       <p className="text-center text-xs" style={{ color: 'var(--color-text-muted)' }}>

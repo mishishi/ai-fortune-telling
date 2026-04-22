@@ -4,6 +4,8 @@ import ReportContent from '@/components/ReportContent';
 import Timeline from '@/components/Timeline';
 import BaziRing from '@/components/BaziRing';
 import { Accordion } from '@/components/ui/Accordion';
+import ReportEditButton from '@/components/ReportEditButton';
+import { BirthFormData } from '@/components/BirthForm';
 
 // Conversion maps for Bazi data
 const STEMS = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'];
@@ -76,6 +78,46 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
     aiAnalysis = {} as typeof aiAnalysis;
   }
 
+  // Parse stored birthData for edit functionality
+  let storedBirthData: Partial<BirthFormData> = {};
+  try {
+    storedBirthData = JSON.parse(report.birthData || '{}');
+  } catch (e) {
+    storedBirthData = {};
+  }
+
+  // Determine timeSegment from stored hour
+  const HOUR_TO_SEGMENT: Record<number, 'early' | 'middle' | 'late'> = {
+    23: 'early', 0: 'middle', 0.5: 'late',
+    1: 'early', 2: 'middle', 2.5: 'late',
+    3: 'early', 4: 'middle', 4.5: 'late',
+    5: 'early', 6: 'middle', 6.5: 'late',
+    7: 'early', 8: 'middle', 8.5: 'late',
+    9: 'early', 10: 'middle', 10.5: 'late',
+    11: 'early', 12: 'middle', 12.5: 'late',
+    13: 'early', 14: 'middle', 14.5: 'late',
+    15: 'early', 16: 'middle', 16.5: 'late',
+    17: 'early', 18: 'middle', 18.5: 'late',
+    19: 'early', 20: 'middle', 20.5: 'late',
+    21: 'early', 22: 'middle', 22.5: 'late',
+  };
+  const deriveTimeSegment = (hour: number): 'early' | 'middle' | 'late' => {
+    if (HOUR_TO_SEGMENT[hour] !== undefined) return HOUR_TO_SEGMENT[hour];
+    return 'middle';
+  };
+
+  const editBirthData: BirthFormData = {
+    name: storedBirthData.name ?? report.name ?? '',
+    gender: storedBirthData.gender ?? (report.gender === 'female' ? 'female' : 'male'),
+    year: storedBirthData.year ?? new Date().getFullYear(),
+    month: storedBirthData.month ?? 1,
+    day: storedBirthData.day ?? 1,
+    hour: storedBirthData.hour ?? 8,
+    minute: storedBirthData.minute ?? 0,
+    province: storedBirthData.province ?? '',
+    timeSegment: storedBirthData.timeSegment ?? deriveTimeSegment(storedBirthData.hour ?? 8),
+  };
+
   // Extract dayMaster element for dayPillar
   const rawDayMaster = (baziData as any).dayMaster;
   const dayMasterElementIndex = rawDayMaster?.element ?? 0;
@@ -126,6 +168,9 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
         <div className="absolute -top-4 -right-4 w-8 h-8 border-r-2 border-t-2 border-[var(--color-accent)] opacity-40" />
         <div className="absolute -bottom-4 -left-4 w-8 h-8 border-l-2 border-b-2 border-[var(--color-accent)] opacity-40" />
         <div className="absolute -bottom-4 -right-4 w-8 h-8 border-r-2 border-b-2 border-[var(--color-accent)] opacity-40" />
+
+        {/* Edit button */}
+        <ReportEditButton reportId={id} initialData={editBirthData} />
 
         <h1
           className="text-h1 font-serif text-white mb-3 title-underline"
