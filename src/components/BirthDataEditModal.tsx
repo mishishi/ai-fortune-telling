@@ -91,7 +91,7 @@ export default function BirthDataEditModal({ open, reportId, initialData, onClos
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fade-in" style={{ animationDuration: '200ms' }}>
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 animate-fade-in" style={{ animationDuration: '200ms' }}>
       {/* Backdrop */}
       <div
         className="absolute inset-0 bg-black/60 backdrop-blur-sm"
