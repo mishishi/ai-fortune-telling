@@ -7,30 +7,30 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ variant = 'primary', size = 'md', className = '', children, ...props }, ref) => {
-    const baseStyles = 'inline-flex items-center justify-center font-medium rounded-[var(--radius-lg)] hover-lift duration-150 active:scale-[0.98]';
+    const baseStyles = 'inline-flex items-center justify-center font-medium rounded-[var(--radius-lg)] transition-transform duration-150 hover:-translate-y-0.5 active:scale-[0.97]';
 
     const variants = {
       primary: `
         bg-[var(--color-primary)] text-white
-        hover:bg-[var(--color-primary-hover)] hover:shadow-[var(--shadow-glow-primary)]
+        hover:bg-[var(--color-primary-hover)] hover:shadow-[var(--shadow-glow-primary)] hover:-translate-y-0.5
         active:bg-[var(--color-primary-hover)]
         disabled:opacity-50 disabled:cursor-not-allowed
       `,
       secondary: `
         bg-white/10 text-white
-        hover:bg-white/15 hover:shadow-[var(--shadow-lg)]
+        hover:bg-white/15 hover:shadow-[var(--shadow-lg)] hover:-translate-y-0.5
         active:bg-white/20
         disabled:opacity-50 disabled:cursor-not-allowed
       `,
       ghost: `
         bg-transparent text-[var(--color-text-secondary)]
-        hover:bg-white/5 hover:text-white
+        hover:bg-white/5 hover:text-white hover:-translate-y-0.5
         active:bg-white/10
         disabled:opacity-50 disabled:cursor-not-allowed
       `,
       danger: `
         bg-[var(--color-error)]/20 text-[var(--color-error)]
-        hover:bg-[var(--color-error)]/30 hover:shadow-[var(--shadow-lg)]
+        hover:bg-[var(--color-error)]/30 hover:shadow-[var(--shadow-lg)] hover:-translate-y-0.5
         active:bg-[var(--color-error)]/40
         disabled:opacity-50 disabled:cursor-not-allowed
       `,
