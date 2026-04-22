@@ -10,56 +10,120 @@ const BUTTON_HEIGHT = 48;
 const BUTTON_RADIUS = 24;
 const SPINNER_SIZE = 16;
 
+interface LuckyElements {
+  element?: string;
+  color?: string;
+  number?: string;
+  direction?: string;
+}
+
+interface NameSuggestions {
+  element?: string;
+  suggestions?: string;
+}
+
+interface AnalysisData {
+  overall?: string;
+  overallPlain?: string;
+  career?: string;
+  careerSuggest?: string;
+  mentorDirection?: string;
+  love?: string;
+  spouseDesc?: string;
+  marriageAdvice?: string;
+  wealth?: string;
+  health?: string;
+  fortune?: string;
+  yearly?: string;
+  luckyElements?: LuckyElements;
+  nameSuggestions?: NameSuggestions;
+}
+
 interface UnlockPanelProps {
   reportId: string;
   hiddenSections: string[];
   isLocked: boolean;
+  analysis?: AnalysisData;
 }
 
-interface PreviewItem {
-  key: string;
-  label: string;
-  sample: string;
+// Truncate text to first sentence or max chars
+function truncateText(text: string, maxChars: number = 60): string {
+  if (!text) return '';
+  // Find first sentence ending
+  const firstSentence = text.match(/[^。；？]+[。；？]/);
+  if (firstSentence) {
+    return firstSentence[0].slice(0, maxChars + 3) + '...';
+  }
+  return text.slice(0, maxChars) + '...';
 }
 
-const PREVIEW_ITEMS: PreviewItem[] = [
-  {
-    key: 'careerSuggest',
-    label: '职业推荐',
-    sample: '适合从事文化创意、教育培训类工作，如编辑、教师、设计师等',
-  },
-  {
-    key: 'mentorDirection',
-    label: '贵人方位',
-    sample: '东北方向利于人脉拓展，农历三月、九月贵人运最旺',
-  },
-  {
-    key: 'spouseDesc',
-    label: '配偶特征',
-    sample: '性格温和稳重，年长2-4岁为宜，旺夫/旺妻之相',
-  },
-  {
-    key: 'marriageAdvice',
-    label: '婚恋建议',
-    sample: '今年姻缘运上升，把握秋季9-11月良机，可主动社交',
-  },
-  {
-    key: 'luckyElements',
-    label: '幸运元素',
-    sample: '幸运色：金色、白色；幸运数字：3、7；宜往西北方发展',
-  },
-  {
-    key: 'nameSuggestions',
-    label: '起名建议',
-    sample: '宜用带"金""玉"偏旁的字，五行补木，避免与长辈重字',
-  },
-];
+// Build preview items from actual analysis data
+function buildPreviewItems(hiddenSections: string[], analysis?: AnalysisData) {
+  const items: { key: string; label: string; content: string }[] = [];
 
-export default function UnlockPanel({ reportId, hiddenSections, isLocked }: UnlockPanelProps) {
+  // Map section keys to analysis fields and labels
+  const sectionMap: Record<string, { label: string; getValue: (a: AnalysisData) => string | undefined }> = {
+    careerSuggest: {
+      label: '职业推荐',
+      getValue: (a) => a.careerSuggest,
+    },
+    mentorDirection: {
+      label: '贵人方位',
+      getValue: (a) => a.mentorDirection,
+    },
+    spouseDesc: {
+      label: '配偶特征',
+      getValue: (a) => a.spouseDesc,
+    },
+    marriageAdvice: {
+      label: '婚恋建议',
+      getValue: (a) => a.marriageAdvice,
+    },
+    luckyElements: {
+      label: '幸运元素',
+      getValue: (a) => {
+        const le = a.luckyElements;
+        if (!le) return undefined;
+        const parts = [];
+        if (le.color) parts.push(`幸运色：${le.color}`);
+        if (le.number) parts.push(`幸运数字：${le.number}`);
+        if (le.direction) parts.push(`宜往${le.direction}发展`);
+        return parts.length > 0 ? parts.join('；') + '。' : undefined;
+      },
+    },
+    nameSuggestions: {
+      label: '起名建议',
+      getValue: (a) => {
+        const ns = a.nameSuggestions;
+        if (!ns) return undefined;
+        const parts = [];
+        if (ns.element) parts.push(`补救五行：${ns.element}`);
+        if (ns.suggestions) parts.push(`起名建议：${ns.suggestions}`);
+        return parts.length > 0 ? parts.join('；') : undefined;
+      },
+    },
+  };
+
+  // Only show items that are in hiddenSections and have actual content
+  for (const key of hiddenSections) {
+    const def = sectionMap[key];
+    if (!def) continue;
+    const content = def.getValue(analysis || {});
+    if (!content) continue;
+    items.push({ key, label: def.label, content: truncateText(content, 50) });
+  }
+
+  return items;
+}
+
+export default function UnlockPanel({ reportId, hiddenSections, isLocked, analysis }: UnlockPanelProps) {
   const [isExpanded, setIsExpanded] = useState(true);
   const [buttonState, setButtonState] = useState<'default' | 'loading' | 'success'>('default');
   const isUnlockingRef = useRef(false);
   const { showToast } = useToast();
+
+  // Build preview items from actual analysis data
+  const previewItems = buildPreviewItems(hiddenSections, analysis);
 
   // If already unlocked, don't render
   if (!isLocked) {
@@ -174,7 +238,7 @@ export default function UnlockPanel({ reportId, hiddenSections, isLocked }: Unlo
         >
           包含以下深度内容：
         </p>
-        {PREVIEW_ITEMS.map((item) => (
+        {previewItems.length > 0 ? previewItems.map((item) => (
           <div
             key={item.key}
             style={{
@@ -193,11 +257,15 @@ export default function UnlockPanel({ reportId, hiddenSections, isLocked }: Unlo
               </span>
               <span style={{ color: 'var(--color-text-muted)', fontStyle: 'italic' }}>
                 {' '}
-                — {item.sample}
+                — {item.content}
               </span>
             </span>
           </div>
-        ))}
+        )) : (
+          <p style={{ color: 'var(--color-text-muted)', fontSize: '14px', textAlign: 'center' }}>
+            解锁后查看更多深度分析
+          </p>
+        )}
       </div>
 
       {/* CTA Button */}

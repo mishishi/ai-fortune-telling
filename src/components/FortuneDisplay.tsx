@@ -239,6 +239,9 @@ export default function FortuneDisplay({ analysis, isLocked = false, reportId }:
     ? SECTIONS.filter(s => s.basic && !s.sub && !s.isNested)
     : SECTIONS;
 
+  // Sections hidden when locked (basic: false or sub or nested)
+  const hiddenSections = SECTIONS.filter(s => !s.basic || s.sub || s.isNested);
+
   return (
     <div className="space-y-4 animate-fade-in-up">
       {getGroups().map(({ key: groupKey, section: firstSection }) => {
@@ -353,7 +356,12 @@ export default function FortuneDisplay({ analysis, isLocked = false, reportId }:
         );
       })}
 
-      <UnlockPanel reportId={reportId || ''} hiddenSections={[]} isLocked={isLocked} />
+      <UnlockPanel
+        reportId={reportId || ''}
+        hiddenSections={hiddenSections.map(s => s.key)}
+        isLocked={isLocked}
+        analysis={analysis}
+      />
     </div>
   );
 }
