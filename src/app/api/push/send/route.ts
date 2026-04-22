@@ -13,7 +13,13 @@ function generateDailyContent(date: Date) {
 
 export async function POST(request: NextRequest) {
   const authHeader = request.headers.get('authorization');
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  const token = `Bearer ${process.env.CRON_SECRET}`;
+  const encoder = new TextEncoder();
+  const encodedHeader = encoder.encode(authHeader ?? '');
+  const encodedToken = encoder.encode(token);
+  const isAuthorized = encodedHeader.length === encodedToken.length &&
+    crypto.subtle.timingSafeEqual(encodedHeader, encodedToken);
+  if (!isAuthorized) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -36,7 +42,10 @@ export async function POST(request: NextRequest) {
           db.prepare('UPDATE users SET pushEnabled = 0 WHERE id = ?').run(user.id);
           fail++;
         } else fail++;
-      } catch { fail++; }
+      } catch (err) {
+          console.error(`Failed to send push to user ${user.id}:`, err);
+          fail++;
+        }
     }
     return NextResponse.json({ success: true, sent: success, failed: fail });
   } catch (error) {
