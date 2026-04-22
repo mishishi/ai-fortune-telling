@@ -12,9 +12,13 @@ export async function POST(request: NextRequest) {
     }
 
     const db = getDb();
-    db.prepare(
+    const result = db.prepare(
       'UPDATE users SET pushEnabled = 1, pushTime = ?, pushSubscription = ? WHERE id = ?'
     ).run(pushTime || '08:00', JSON.stringify(subscription), userId);
+
+    if (result.changes === 0) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
 
     return NextResponse.json({ success: true });
   } catch (error) {
