@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { Radar, RadarChart, PolarGrid, PolarAngleAxis, ResponsiveContainer, PolarRadiusAxis } from 'recharts';
+import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis } from 'recharts';
 
 interface RadarChartProps {
   scores: {
@@ -52,9 +52,18 @@ export default function RadarChartComponent({
 
   const ariaLabel = `命盘分析雷达图：事业${scores.career}分、感情${scores.love}分、财运${scores.wealth}分、健康${scores.health}分、贵人${scores.mentor}分`;
 
+  // Prevent Recharts from calculating dimensions when container is hidden
+  // The parent Accordion uses grid-template-rows: 0fr when collapsed
+  const containerStyle: React.CSSProperties = {
+    minWidth: 0,
+    width: '100%',
+    height: 300,
+    contain: 'layout size',
+  };
+
   return (
-    <div className="relative" role="img" aria-label={ariaLabel} style={{ minWidth: 0, width: '100%', height: 300 }}>
-      <ResponsiveContainer width="100%" height="100%">
+    <div className="relative" role="img" aria-label={ariaLabel} style={containerStyle}>
+      <div style={{ width: '100%', height: 300 }}>
         <RadarChart data={data} cx="50%" cy="50%" outerRadius="70%" onClick={handleClick}>
           <PolarGrid stroke="rgba(255,255,255,0.1)" />
           <PolarAngleAxis
@@ -91,7 +100,7 @@ export default function RadarChartComponent({
             );
           })}
         </RadarChart>
-      </ResponsiveContainer>
+      </div>
 
       {/* Click hint */}
       <p className="text-center text-xs mt-2" style={{ color: 'var(--color-text-muted)' }}>
