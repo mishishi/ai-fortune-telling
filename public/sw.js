@@ -1,11 +1,26 @@
 // public/sw.js - Push notification service worker
+self.addEventListener('install', (event) => {
+  event.waitUntil(self.skipWaiting());
+});
+
+self.addEventListener('activate', (event) => {
+  event.waitUntil(clients.claim());
+});
+
 self.addEventListener('push', (event) => {
   if (!event.data) return;
-  const data = event.data.json();
+  let data;
+  try {
+    data = event.data.json();
+  } catch (err) {
+    console.error('Failed to parse push data:', err);
+    return;
+  }
   const options = {
     body: data.body,
     icon: '/icon.png',
     badge: '/badge.png',
+    tag: 'push-notification',
     data: { url: data.url || '/' },
     vibrate: [200, 100, 200],
   };
@@ -20,6 +35,13 @@ self.addEventListener('notificationclick', (event) => {
         return client.focus();
       }
     }
-    if (clients.openWindow) return clients.openWindow(event.notification.data.url);
+    if (clients.openWindow) {
+      const url = event.notification.data.url;
+      return clients.openWindow(url);
+    }
   }));
+});
+
+self.addEventListener('notificationclose', (event) => {
+  // Handle notification close if needed
 });
