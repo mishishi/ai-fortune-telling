@@ -33,7 +33,13 @@
       "Bash(npx eslint:*)",
       "Skill(commit-commands:commit)",
       "Bash(git ls-tree:*)",
-      "Bash(git show:*)"
+      "Bash(git show:*)",
+      "Bash(scripts/start-server.sh:*)",
+      "Bash(bash:*)",
+      "Bash(git check-ignore:*)",
+      "Bash(git worktree:*)",
+      "Bash(npx next:*)",
+      "Bash(git:*)"
     ]
   }
 }

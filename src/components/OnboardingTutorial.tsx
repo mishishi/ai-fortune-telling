@@ -72,6 +72,7 @@ export default function OnboardingTutorial({ onComplete }: OnboardingTutorialPro
     >
       <div
         className="relative w-full max-w-[420px] rounded-2xl overflow-hidden shadow-2xl animate-fadeSlideIn"
+        onClick={(e) => e.stopPropagation()}
         style={{
           background: 'linear-gradient(180deg, #1a1525 0%, #2d1f3d 100%)',
           border: '1px solid rgba(212, 175, 55, 0.2)',
