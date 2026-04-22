@@ -166,6 +166,30 @@ export default function AIQuestionModal({
           </div>
         )}
 
+        {/* First-time user tip */}
+        {messages.length === 0 && !isInitialLoading && (
+          <div className="px-6 py-3 border-b border-white/5 bg-white/5/30">
+            <p className="text-xs mb-2" style={{ color: 'var(--color-text-muted)' }}>
+              <span className="font-medium" style={{ color: 'var(--color-accent)' }}>💡 新手提示</span>
+            </p>
+            <p className="text-xs mb-2" style={{ color: 'var(--color-text-secondary)' }}>
+              告诉 AI 你的困惑，比如：
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {['事业迷茫，不知道适合什么工作', '感情不顺，如何改善', '健康需要注意什么', '财运不好怎么办'].map((example) => (
+                <button
+                  key={example}
+                  type="button"
+                  onClick={() => setInput(example)}
+                  className="text-xs px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-gray-300 hover:bg-white/10 hover:text-white transition-colors"
+                >
+                  {example}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Messages */}
         <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
           {messages.map((msg, index) => (
