@@ -53,8 +53,8 @@ export default function RadarChartComponent({
   const ariaLabel = `命盘分析雷达图：事业${scores.career}分、感情${scores.love}分、财运${scores.wealth}分、健康${scores.health}分、贵人${scores.mentor}分`;
 
   return (
-    <div className="relative" role="img" aria-label={ariaLabel} style={{ minWidth: 0 }}>
-      <ResponsiveContainer width="100%" height={300}>
+    <div className="relative" role="img" aria-label={ariaLabel} style={{ minWidth: 0, width: '100%', height: 300 }}>
+      <ResponsiveContainer width="100%" height="100%">
         <RadarChart data={data} cx="50%" cy="50%" outerRadius="70%" onClick={handleClick}>
           <PolarGrid stroke="rgba(255,255,255,0.1)" />
           <PolarAngleAxis
