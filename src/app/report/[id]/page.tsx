@@ -6,6 +6,7 @@ import BaziRing from '@/components/BaziRing';
 import BaZiDetailChart from '@/components/BaZiDetailChart';
 import { Accordion } from '@/components/ui/Accordion';
 import ReportHeaderActions from '@/components/ReportHeaderActions';
+import ShareReport from '@/components/ShareReport';
 import { BirthFormData } from '@/components/BirthForm';
 import FengShuiCompass from '@/components/FengShuiCompass';
 import IChingHexagram from '@/components/IChingHexagram';
@@ -280,6 +281,19 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
           </div>
         </Accordion>
       </div>
+
+      {/* Floating Share Report Button */}
+      <ShareReport
+        reportId={id}
+        name={report.name}
+        gender={report.gender}
+        birthYear={report.year ?? new Date().getFullYear()}
+        radarScores={radarScores}
+        overall={aiAnalysis.overall}
+        zodiac={zodiac}
+        element={elementInfo}
+        createdAt={report.createdAt}
+      />
 
     </main>
   );

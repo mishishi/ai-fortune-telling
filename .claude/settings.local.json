@@ -29,7 +29,11 @@
       "Bash(npx tsx -e ':*)",
       "Bash(npx ts-node --esm -e ':*)",
       "Bash(taskkill //F //IM node.exe)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(npx eslint:*)",
+      "Skill(commit-commands:commit)",
+      "Bash(git ls-tree:*)",
+      "Bash(git show:*)"
     ]
   }
 }
