@@ -7,6 +7,7 @@ import BaZiDetailChart from '@/components/BaZiDetailChart';
 import { Accordion } from '@/components/ui/Accordion';
 import ReportHeaderActions from '@/components/ReportHeaderActions';
 import ShareReport from '@/components/ShareReport';
+import ReportFollowUpActions from '@/components/ReportFollowUpActions';
 import { BirthFormData } from '@/components/BirthForm';
 import FengShuiCompass from '@/components/FengShuiCompass';
 import IChingHexagram from '@/components/IChingHexagram';
@@ -289,6 +290,9 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
         element={elementInfo}
         createdAt={report.createdAt}
       />
+
+      {/* Floating Follow-up Button */}
+      <ReportFollowUpActions reportId={id} aiAnalysis={aiAnalysis} />
 
     </main>
   );
