@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import CustomDropdown from '@/components/ui/CustomDropdown';
+import BirthDatePicker from './BirthForm/BirthDatePicker';
 import { useFormValidation } from '@/hooks/useFormValidation';
 
 type TimeSegment = 'early' | 'middle' | 'late';
@@ -204,37 +205,19 @@ export default function BirthForm({ onSubmit }: BirthFormProps) {
         </div>
       </div>
 
-      {/* 出生日期 - 原生 date picker */}
+      {/* 出生日期 - 自定义日历选择器 */}
       <div>
-        <label htmlFor="birth-date" className="block text-sm mb-2" style={{ color: 'var(--color-text-muted)' }}>
-          出生日期
-        </label>
-        <input
-          id="birth-date"
-          type="date"
-          value={birthDateString}
-          onChange={(e) => {
-            const [year, month, day] = e.target.value.split('-').map(Number);
-            if (year && month && day) {
-              setForm({ ...form, year, month, day });
-            }
+        <BirthDatePicker
+          year={form.year}
+          month={form.month}
+          day={form.day}
+          error={errors.date}
+          onChange={(y, m, d) => {
+            setForm({ ...form, year: y, month: m, day: d });
             clearError('date');
           }}
           onBlur={() => validate('date', null, form)}
-          className="w-full rounded-[var(--radius-md)] px-5 py-4 text-white focus:outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/20 transition-colors border"
-          style={{
-            background: 'var(--color-surface)',
-            borderColor: errors.date ? 'var(--color-error)' : 'var(--color-border)',
-            colorScheme: 'dark',
-          }}
-          aria-invalid={!!errors.date}
-          aria-describedby={errors.date ? 'birth-date-error' : undefined}
         />
-        {errors.date && (
-          <p id="birth-date-error" className="text-xs mt-1" style={{ color: 'var(--color-error)' }}>
-            {errors.date}
-          </p>
-        )}
       </div>
 
       {/* 出生时辰 - 地支下拉 + 早/中/晚三段选择 */}
@@ -255,6 +238,7 @@ export default function BirthForm({ onSubmit }: BirthFormProps) {
             onChange={v => {
               setForm({ ...form, hour: Number(v), timeSegment: 'middle' }); // 切换时辰时默认选中"中"
             }}
+            dropUp={true}
           />
         </div>
 

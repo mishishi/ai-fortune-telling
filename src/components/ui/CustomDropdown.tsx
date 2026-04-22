@@ -9,9 +9,10 @@ interface CustomDropdownProps {
   placeholder?: string;
   error?: string;
   onBlur?: () => void;
+  dropUp?: boolean; // 强制向上展开，undefined=自动计算
 }
 
-export default function CustomDropdown({ id, value, options, onChange, placeholder, error, onBlur }: CustomDropdownProps) {
+export default function CustomDropdown({ id, value, options, onChange, placeholder, error, onBlur, dropUp: forceDropUp }: CustomDropdownProps) {
   const [open, setOpen] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const [isRendered, setIsRendered] = useState(false);
@@ -76,11 +77,15 @@ export default function CustomDropdown({ id, value, options, onChange, placehold
     } else {
       // Prepare for entrance animation
       setIsRendered(true);
-      // Check if dropdown would go off screen bottom
-      const rect = ref.current?.getBoundingClientRect();
-      if (rect) {
-        const spaceBelow = window.innerHeight - rect.bottom;
-        setDropUp(spaceBelow < 300);
+      // Check if dropdown would go off screen bottom, unless forced
+      if (forceDropUp !== undefined) {
+        setDropUp(forceDropUp);
+      } else {
+        const rect = ref.current?.getBoundingClientRect();
+        if (rect) {
+          const spaceBelow = window.innerHeight - rect.bottom;
+          setDropUp(spaceBelow < 300);
+        }
       }
       // Set focused index to selected option when opening
       const selectedIdx = options.findIndex(o => String(o.value) === String(value));
