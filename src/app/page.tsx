@@ -1,10 +1,11 @@
 'use client';
-import { useState, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import StarField from '@/components/StarField';
 import AuroraEffect from '@/components/AuroraEffect';
 import BirthForm, { BirthFormData } from '@/components/BirthForm';
 import AIQuestionModal from '@/components/AIQuestionModal';
 import TodayFortuneModal from '@/components/TodayFortuneModal';
+import OnboardingTutorial from '@/components/OnboardingTutorial';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/contexts/UserContext';
@@ -38,7 +39,31 @@ export default function HomePage() {
   const [coveredTopics, setCoveredTopics] = useState<string[]>([]);
   const [showDoneButton, setShowDoneButton] = useState(false);
   const [showTodayFortune, setShowTodayFortune] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const roundCountRef = useRef(0);
+
+  // Check localStorage on mount to show onboarding if not completed
+  useEffect(() => {
+    const completed = localStorage.getItem('onboarding_completed');
+    if (!completed) {
+      setShowOnboarding(true);
+    }
+  }, []);
+
+  // Listen for onboarding_completed changes in other tabs
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'onboarding_completed' && e.newValue === 'true') {
+        setShowOnboarding(false);
+      }
+    };
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
+
+  const handleOnboardingComplete = () => {
+    setShowOnboarding(false);
+  };
 
   const handleSubmit = async (data: BirthFormData) => {
     setBirthData(data);
@@ -211,6 +236,7 @@ export default function HomePage() {
 
   return (
     <main className="min-h-screen relative overflow-hidden">
+      {showOnboarding && <OnboardingTutorial onComplete={handleOnboardingComplete} />}
       <StarField />
       <AuroraEffect />
       <AIQuestionModal
