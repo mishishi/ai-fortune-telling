@@ -458,7 +458,11 @@ export default function ProfilePage() {
             <Toggle checked={pushEnabled} onChange={(val) => {
               setPushEnabled(val);
               if (!val) {
-                fetch('/api/push/unsubscribe', { method: 'DELETE' });
+                fetch('/api/push/unsubscribe', { method: 'DELETE' })
+                  .then(res => {
+                    if (!res.ok) console.error('Failed to unsubscribe');
+                  })
+                  .catch(err => console.error('Unsubscribe failed:', err));
               }
             }} />
           </div>
