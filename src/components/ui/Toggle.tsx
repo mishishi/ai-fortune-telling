@@ -28,6 +28,9 @@ const sizeStyles = {
   },
 };
 
+// Spring easing for thumb bounce effect
+const THUMB_SPRING_EASING = 'cubic-bezier(0.34, 1.56, 0.64, 1)';
+
 export function Toggle({ checked, onChange, disabled = false, size = 'md', label }: ToggleProps) {
   const styles = sizeStyles[size];
 
@@ -75,9 +78,9 @@ export function Toggle({ checked, onChange, disabled = false, size = 'md', label
           rounded-full
           bg-white
           transition-transform duration-200
-          ${checked ? styles.translate : 'left-1'}
+          ${checked ? styles.translate : 'left-[2px]'}
         `}
-        style={{ transitionTimingFunction: 'cubic-bezier(0.34, 1.56, 0.64, 1)' }}
+        style={{ transitionTimingFunction: THUMB_SPRING_EASING }}
       />
     </button>
   );
