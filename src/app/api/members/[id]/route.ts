@@ -38,8 +38,8 @@ export async function PUT(
       id
     );
 
-    const updated = db.prepare('SELECT * FROM members WHERE id = ?').get(id);
-    return NextResponse.json(updated);
+    const updated = db.prepare('SELECT * FROM members WHERE id = ?').get(id) as any;
+    return NextResponse.json({ ...updated, birthData: JSON.parse(updated.birthData) });
   } catch (error) {
     console.error('Error updating member:', error);
     return NextResponse.json({ error: 'Failed to update member' }, { status: 500 });

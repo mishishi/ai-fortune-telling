@@ -14,7 +14,13 @@ export async function GET(request: NextRequest) {
       'SELECT * FROM members WHERE userId = ? ORDER BY createdAt DESC'
     ).all(userId);
 
-    return NextResponse.json(members);
+    // Parse birthData JSON strings back to objects
+    const parsed = members.map((m: any) => ({
+      ...m,
+      birthData: JSON.parse(m.birthData),
+    }));
+
+    return NextResponse.json(parsed);
   } catch (error) {
     console.error('Error fetching members:', error);
     return NextResponse.json({ error: 'Failed to fetch members' }, { status: 500 });
@@ -44,9 +50,9 @@ export async function POST(request: NextRequest) {
       'INSERT INTO members (id, userId, name, gender, birthData, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?, ?)'
     ).run(id, userId, name, gender, JSON.stringify(birthData), now, now);
 
-    const member = db.prepare('SELECT * FROM members WHERE id = ?').get(id);
+    const member = db.prepare('SELECT * FROM members WHERE id = ?').get(id) as any;
 
-    return NextResponse.json(member, { status: 201 });
+    return NextResponse.json({ ...member, birthData: JSON.parse(member.birthData) }, { status: 201 });
   } catch (error) {
     console.error('Error creating member:', error);
     return NextResponse.json({ error: 'Failed to create member' }, { status: 500 });
