@@ -7,6 +7,7 @@ import { useToast } from '@/contexts/ToastContext';
 import ReportCard from './ReportCard';
 import CompareView from './CompareView';
 import ConfirmModal from './ConfirmModal';
+import FortuneDashboard from './FortuneDashboard';
 import { Skeleton } from './Skeleton';
 import { Button } from './ui/Button';
 
@@ -46,6 +47,7 @@ export default function HistoryList() {
   const [timeFilter, setTimeFilter] = useState<'all' | 'week' | 'month'>('all');
   const [searchKeyword, setSearchKeyword] = useState('');
   const [page, setPage] = useState(1);
+  const [activeTab, setActiveTab] = useState<'history' | 'fortune'>('history');
   const PAGE_SIZE = 10;
 
   // Fetch reports
@@ -185,6 +187,39 @@ export default function HistoryList() {
 
   return (
     <div>
+      {/* Tab Switching */}
+      <div className="flex gap-2 mb-4">
+        <button
+          onClick={() => setActiveTab('history')}
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            activeTab === 'history'
+              ? 'bg-[var(--color-primary)] text-white'
+              : 'bg-white/5 text-gray-400 hover:bg-white/10'
+          }`}
+        >
+          历史报告
+        </button>
+        <button
+          onClick={() => setActiveTab('fortune')}
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            activeTab === 'fortune'
+              ? 'bg-[var(--color-primary)] text-white'
+              : 'bg-white/5 text-gray-400 hover:bg-white/10'
+          }`}
+        >
+          运势追踪
+        </button>
+      </div>
+
+      {/* Fortune Dashboard */}
+      {activeTab === 'fortune' && (
+        <FortuneDashboard reports={sortedReports} currentUserId={user?.userId || ''} />
+      )}
+
+      {/* History List Content */}
+      {activeTab === 'history' && (
+      <>
+
       {/* Search and Time Filter */}
       <div className="mb-4 space-y-3">
         {/* Search bar */}
@@ -491,6 +526,8 @@ export default function HistoryList() {
         onCancel={() => setDeleteTarget(null)}
         danger
       />
+      </>
+      )}
     </div>
   );
 }
