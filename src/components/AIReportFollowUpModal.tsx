@@ -89,10 +89,10 @@ export default function AIReportFollowUpModal({
     return questions[dimension] || questions.career;
   };
 
-  const handleSend = async () => {
-    if (!input.trim() || loading) return;
-    const userMessage = input.trim();
-    setInput('');
+  const handleSend = async (messageToSend?: string) => {
+    const userMessage = messageToSend || input.trim();
+    if (!userMessage || loading) return;
+    if (!messageToSend) setInput('');
     setLoading(true);
 
     setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
@@ -189,7 +189,7 @@ export default function AIReportFollowUpModal({
                 {getDimensionQuestions(selectedDimension).map((q, i) => (
                   <button
                     key={i}
-                    onClick={() => setInput(q)}
+                    onClick={() => handleSend(q)}
                     className="text-xs px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-gray-300 hover:bg-white/10 transition-colors"
                   >
                     {q}
@@ -251,7 +251,7 @@ export default function AIReportFollowUpModal({
               disabled={loading}
             />
             <button
-              onClick={handleSend}
+              onClick={() => handleSend()}
               disabled={!input.trim() || loading}
               className="px-5 py-2.5 rounded-xl font-bold bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] text-white disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02] active:scale-[0.98] transition-transform"
             >
