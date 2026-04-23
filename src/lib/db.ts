@@ -46,27 +46,30 @@ export function getDb() {
     const hasColumn = (name: string) => userColumns.some(c => c.name === name);
 
     if (!hasColumn('pushEnabled')) {
-      try { db.exec("ALTER TABLE users ADD COLUMN pushEnabled INTEGER DEFAULT 0"); } catch { /* ignore */ }
+      try { db.exec("ALTER TABLE users ADD COLUMN pushEnabled INTEGER DEFAULT 0"); } catch (e) { console.error('Migration pushEnabled failed:', e); }
     }
     if (!hasColumn('pushTime')) {
-      try { db.exec("ALTER TABLE users ADD COLUMN pushTime TEXT DEFAULT '08:00'"); } catch { /* ignore */ }
+      try { db.exec("ALTER TABLE users ADD COLUMN pushTime TEXT DEFAULT '08:00'"); } catch (e) { console.error('Migration pushTime failed:', e); }
     }
     if (!hasColumn('pushSubscription')) {
-      try { db.exec("ALTER TABLE users ADD COLUMN pushSubscription TEXT"); } catch { /* ignore */ }
+      try { db.exec("ALTER TABLE users ADD COLUMN pushSubscription TEXT"); } catch (e) { console.error('Migration pushSubscription failed:', e); }
     }
 
     // Migration: add gamification columns if not exist
     if (!hasColumn('points')) {
-      try { db.exec("ALTER TABLE users ADD COLUMN points INTEGER DEFAULT 0"); } catch { /* ignore */ }
+      try { db.exec("ALTER TABLE users ADD COLUMN points INTEGER DEFAULT 0"); } catch (e) { console.error('Migration points failed:', e); }
     }
     if (!hasColumn('currentStreak')) {
-      try { db.exec("ALTER TABLE users ADD COLUMN currentStreak INTEGER DEFAULT 0"); } catch { /* ignore */ }
+      try { db.exec("ALTER TABLE users ADD COLUMN currentStreak INTEGER DEFAULT 0"); } catch (e) { console.error('Migration currentStreak failed:', e); }
     }
     if (!hasColumn('longestStreak')) {
-      try { db.exec("ALTER TABLE users ADD COLUMN longestStreak INTEGER DEFAULT 0"); } catch { /* ignore */ }
+      try { db.exec("ALTER TABLE users ADD COLUMN longestStreak INTEGER DEFAULT 0"); } catch (e) { console.error('Migration longestStreak failed:', e); }
     }
     if (!hasColumn('badges')) {
-      try { db.exec("ALTER TABLE users ADD COLUMN badges TEXT DEFAULT '[]'"); } catch { /* ignore */ }
+      try { db.exec("ALTER TABLE users ADD COLUMN badges TEXT DEFAULT '[]'"); } catch (e) { console.error('Migration badges failed:', e); }
+    }
+    if (!hasColumn('streakRepairCards')) {
+      try { db.exec("ALTER TABLE users ADD COLUMN streakRepairCards INTEGER DEFAULT 0"); } catch (e) { console.error('Migration streakRepairCards failed:', e); }
     }
 
     // Migration: create checkins table if not exist
@@ -77,12 +80,32 @@ export function getDb() {
           userId TEXT NOT NULL,
           checkinDate TEXT NOT NULL,
           points INTEGER DEFAULT 5,
+          isRepair INTEGER DEFAULT 0,
           createdAt TEXT NOT NULL,
           UNIQUE(userId, checkinDate)
         );
         CREATE INDEX IF NOT EXISTS idx_checkins_userId ON checkins(userId);
       `);
-    } catch { /* ignore */ }
+    } catch (e) { console.error('Migration checkins table failed:', e); }
+
+    // Migration: create analytics events table if not exist
+    try {
+      db.exec(`
+        CREATE TABLE IF NOT EXISTS events (
+          id TEXT PRIMARY KEY,
+          userId TEXT,
+          eventType TEXT NOT NULL,
+          eventData TEXT DEFAULT '{}',
+          url TEXT,
+          referrer TEXT,
+          userAgent TEXT,
+          createdAt TEXT NOT NULL
+        );
+        CREATE INDEX IF NOT EXISTS idx_events_userId ON events(userId);
+        CREATE INDEX IF NOT EXISTS idx_events_eventType ON events(eventType);
+        CREATE INDEX IF NOT EXISTS idx_events_createdAt ON events(createdAt);
+      `);
+    } catch (e) { console.error('Migration events table failed:', e); }
   }
   return db;
 }

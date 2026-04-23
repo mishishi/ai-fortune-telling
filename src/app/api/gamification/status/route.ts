@@ -1,13 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
-
-// Badge definitions
-const BADGE_DEFINITIONS: Record<string, { id: string; name: string; icon: string }> = {
-  first_checkin: { id: 'first_checkin', name: '初来乍到', icon: '🌱' },
-  streak_7: { id: 'streak_7', name: '坚持7天', icon: '🔥' },
-  streak_30: { id: 'streak_30', name: '恒心30天', icon: '💎' },
-  points_100: { id: 'points_100', name: '资深命理师', icon: '⭐' },
-};
+import { BADGE_DEFINITIONS } from '@/lib/constants/gamification';
 
 function getTodayDate(): string {
   return new Date().toISOString().split('T')[0];
@@ -45,14 +38,14 @@ export async function GET(request: NextRequest) {
   }
 
   const badges = userBadgeIds
-    .filter((badgeId: string) => BADGE_DEFINITIONS[badgeId])
+    .filter((badgeId: string) => BADGE_DEFINITIONS[badgeId as keyof typeof BADGE_DEFINITIONS])
     .map((badgeId: string) => ({
-      ...BADGE_DEFINITIONS[badgeId],
+      ...BADGE_DEFINITIONS[badgeId as keyof typeof BADGE_DEFINITIONS],
       earnedAt: null, // earnedAt not stored in database
     }));
 
-  // 5. Calculate canUnlockPremium (true if points >= 100)
-  const canUnlockPremium = (user.points || 0) >= 100;
+  // 5. Calculate canUnlockPremium (true if streak >= 30)
+  const canUnlockPremium = (user.currentStreak || 0) >= 30;
 
   // 6. Return status response
   return NextResponse.json({
