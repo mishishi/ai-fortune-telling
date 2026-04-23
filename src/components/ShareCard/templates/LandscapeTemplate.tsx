@@ -151,18 +151,24 @@ function LandscapeBaGuaRing() {
   const centerY = 240;
 
   return (
-    <svg
-      width="460"
-      height="520"
-      viewBox="0 0 460 520"
+    <div
       style={{
         position: 'absolute',
         top: 0,
         left: 0,
+        right: 0,
+        bottom: 0,
         pointerEvents: 'none',
         zIndex: 0,
       }}
     >
+      <svg
+        width="100%"
+        height="100%"
+        viewBox="0 0 420 480"
+        preserveAspectRatio="none"
+        style={{ display: 'block' }}
+      >
       {/* Outer ring - subtle ink style */}
       <circle
         cx={centerX}
@@ -218,6 +224,7 @@ function LandscapeBaGuaRing() {
         );
       })}
     </svg>
+    </div>
   );
 }
 
@@ -329,6 +336,7 @@ function OrnateBorder() {
         <circle cx="0" cy="5" r="2" fill="#8b7355" />
       </g>
     </svg>
+    </div>
   );
 }
 
