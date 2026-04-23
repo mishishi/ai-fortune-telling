@@ -52,55 +52,52 @@ export default function RadarChartComponent({
 
   const ariaLabel = `命盘分析雷达图：事业${scores.career}分、感情${scores.love}分、财运${scores.wealth}分、健康${scores.health}分、贵人${scores.mentor}分`;
 
-  // Prevent Recharts from calculating dimensions when container is hidden
-  // The parent Accordion uses grid-template-rows: 0fr when collapsed
-  const containerStyle: React.CSSProperties = {
-    minWidth: 0,
-    width: '100%',
-    height: 300,
-    contain: 'layout size',
-  };
-
   return (
-    <div className="relative" role="img" aria-label={ariaLabel} style={containerStyle}>
-      <div style={{ width: '100%', height: 300 }}>
-        <RadarChart data={data} cx="50%" cy="50%" outerRadius="70%" onClick={handleClick}>
-          <PolarGrid stroke="rgba(255,255,255,0.1)" />
-          <PolarAngleAxis
-            dataKey="dimension"
-            tick={{ fill: 'var(--color-text-muted)', fontSize: 13 }}
-          />
-          <PolarRadiusAxis
-            angle={90}
-            domain={[0, 100]}
-            tick={{ fill: 'var(--color-text-muted)', fontSize: 10 }}
-            tickCount={5}
-          />
-          {DIMENSIONS.map((d) => {
-            const isActive = activeDimension === d.key;
-            const isHovered = hoveredDimension === d.key;
-            const color = DIMENSION_COLORS[d.key];
+    <div className="relative" role="img" aria-label={ariaLabel} style={{ width: 300, height: 300 }}>
+      <RadarChart
+        width={300}
+        height={300}
+        cx="50%"
+        cy="50%"
+        outerRadius="70%"
+        data={data}
+        onClick={handleClick}
+      >
+        <PolarGrid stroke="rgba(255,255,255,0.1)" />
+        <PolarAngleAxis
+          dataKey="dimension"
+          tick={{ fill: '#9ca3af', fontSize: 13 }}
+        />
+        <PolarRadiusAxis
+          angle={90}
+          domain={[0, 100]}
+          tick={{ fill: '#9ca3af', fontSize: 10 }}
+          tickCount={5}
+        />
+        {DIMENSIONS.map((d) => {
+          const isActive = activeDimension === d.key;
+          const isHovered = hoveredDimension === d.key;
+          const color = DIMENSION_COLORS[d.key];
 
-            return (
-              <Radar
-                key={d.key}
-                name={d.label}
-                dataKey="value"
-                stroke={isActive ? color : isHovered ? color : 'rgba(123,104,238,0.5)'}
-                fill={color}
-                fillOpacity={isActive ? 0.5 : isHovered ? 0.3 : 0.15}
-                strokeWidth={isActive ? 3 : 2}
-                style={{
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease',
-                }}
-                onMouseEnter={() => setHoveredDimension(d.key)}
-                onMouseLeave={() => setHoveredDimension(null)}
-              />
-            );
-          })}
-        </RadarChart>
-      </div>
+          return (
+            <Radar
+              key={d.key}
+              name={d.label}
+              dataKey="value"
+              stroke={isActive ? color : isHovered ? color : 'rgba(123,104,238,0.5)'}
+              fill={color}
+              fillOpacity={isActive ? 0.5 : isHovered ? 0.3 : 0.15}
+              strokeWidth={isActive ? 3 : 2}
+              style={{
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+              }}
+              onMouseEnter={() => setHoveredDimension(d.key)}
+              onMouseLeave={() => setHoveredDimension(null)}
+            />
+          );
+        })}
+      </RadarChart>
 
       {/* Click hint */}
       <p className="text-center text-xs mt-2" style={{ color: 'var(--color-text-muted)' }}>

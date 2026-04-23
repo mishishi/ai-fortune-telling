@@ -111,8 +111,35 @@ export default function FortuneDashboard({ reports, currentUserId }: FortuneDash
     );
   }
 
+  const selectedCount = (selectedReports[0] ? 1 : 0) + (selectedReports[1] ? 1 : 0);
+
   return (
     <div className="space-y-6">
+      {/* Selection Instruction */}
+      <div
+        className="rounded-lg p-4 text-center"
+        style={{
+          background: 'rgba(212, 175, 55, 0.1)',
+          border: '1px solid rgba(212, 175, 55, 0.2)',
+        }}
+      >
+        {selectedCount === 0 && (
+          <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>
+            点击选择两份报告进行对比分析
+          </p>
+        )}
+        {selectedCount === 1 && (
+          <p className="text-sm" style={{ color: 'var(--color-accent)' }}>
+            已选择 1 份报告，请再选择 1 份
+          </p>
+        )}
+        {selectedCount === 2 && (
+          <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+            已选择 2 份报告，对比分析如下
+          </p>
+        )}
+      </div>
+
       {/* Year Grouped Reports */}
       {yearGroups.map(group => (
         <div key={group.year} className="space-y-3">
@@ -125,18 +152,36 @@ export default function FortuneDashboard({ reports, currentUserId }: FortuneDash
 
           {/* Reports in this year */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-            {group.reports.map(report => (
+            {group.reports.map(report => {
+              const isSelected = selectedReports[0]?.id === report.id || selectedReports[1]?.id === report.id;
+              const slot = selectedReports[0]?.id === report.id ? 'A' : selectedReports[1]?.id === report.id ? 'B' : null;
+
+              return (
               <div
                 key={report.id}
                 onClick={() => handleSelectReport(report)}
                 className={`
-                  p-4 rounded-xl cursor-pointer transition-all
-                  ${selectedReports[0]?.id === report.id || selectedReports[1]?.id === report.id
+                  p-4 rounded-xl cursor-pointer transition-all relative
+                  ${isSelected
                     ? 'bg-[var(--color-primary)]/20 border-2 border-[var(--color-primary)]'
                     : 'bg-white/5 border border-white/10 hover:border-white/20'
                   }
                 `}
               >
+                {/* Slot indicator badge */}
+                {slot && (
+                  <div
+                    className="absolute -top-2 -right-2 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold"
+                    style={{
+                      background: 'var(--color-primary)',
+                      color: 'white',
+                      boxShadow: '0 2px 8px rgba(196, 30, 58, 0.4)',
+                    }}
+                  >
+                    {slot}
+                  </div>
+                )}
+
                 {/* Placeholder content - to be replaced with FortuneTimeline */}
                 <div className="space-y-2">
                   <div className="flex justify-between items-start">
@@ -147,34 +192,35 @@ export default function FortuneDashboard({ reports, currentUserId }: FortuneDash
                   </div>
                   <div className="flex gap-2 flex-wrap">
                     {report.radarScores.career !== undefined && (
-                      <span className="text-xs px-2 py-0.5 rounded" style={{ background: 'rgba(var(--color-dimension-career), 0.15)', color: 'var(--color-dimension-career)' }}>
+                      <span className="text-xs px-2 py-0.5 rounded" style={{ background: 'rgba(196,30,58,0.15)', color: '#c41e3a' }}>
                         事业 {report.radarScores.career}
                       </span>
                     )}
                     {report.radarScores.love !== undefined && (
-                      <span className="text-xs px-2 py-0.5 rounded" style={{ background: 'rgba(var(--color-dimension-love), 0.15)', color: 'var(--color-dimension-love)' }}>
+                      <span className="text-xs px-2 py-0.5 rounded" style={{ background: 'rgba(107,91,149,0.15)', color: '#6b5b95' }}>
                         感情 {report.radarScores.love}
                       </span>
                     )}
                     {report.radarScores.wealth !== undefined && (
-                      <span className="text-xs px-2 py-0.5 rounded" style={{ background: 'rgba(var(--color-dimension-wealth), 0.15)', color: 'var(--color-dimension-wealth)' }}>
+                      <span className="text-xs px-2 py-0.5 rounded" style={{ background: 'rgba(212,175,55,0.15)', color: '#d4af37' }}>
                         财富 {report.radarScores.wealth}
                       </span>
                     )}
                     {report.radarScores.health !== undefined && (
-                      <span className="text-xs px-2 py-0.5 rounded" style={{ background: 'rgba(var(--color-dimension-health), 0.15)', color: 'var(--color-dimension-health)' }}>
+                      <span className="text-xs px-2 py-0.5 rounded" style={{ background: 'rgba(45,106,79,0.15)', color: '#2d6a4f' }}>
                         健康 {report.radarScores.health}
                       </span>
                     )}
                     {report.radarScores.mentor !== undefined && (
-                      <span className="text-xs px-2 py-0.5 rounded" style={{ background: 'rgba(var(--color-dimension-mentor), 0.15)', color: 'var(--color-dimension-mentor)' }}>
+                      <span className="text-xs px-2 py-0.5 rounded" style={{ background: 'rgba(30,58,95,0.15)', color: '#1e3a5f' }}>
                         贵人 {report.radarScores.mentor}
                       </span>
                     )}
                   </div>
                 </div>
               </div>
-            ))}
+            );
+            })}
           </div>
         </div>
       ))}
