@@ -43,14 +43,20 @@ export default function AIReportFollowUpModal({
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+    if (open) {
+      document.body.style.overflow = 'hidden';
+      setTimeout(() => inputRef.current?.focus(), 100);
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [open]);
 
   useEffect(() => {
-    if (open) {
-      setTimeout(() => inputRef.current?.focus(), 100);
-    }
-  }, [open]);
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  }, [messages]);
 
   const getDimensionQuestions = (dimension: string): string[] => {
     const questions: Record<string, string[]> = {
@@ -118,16 +124,20 @@ export default function AIReportFollowUpModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0"
       onClick={onClose}
-      style={{ background: 'rgba(0, 0, 0, 0.7)', backdropFilter: 'blur(8px)' }}
+      style={{ background: 'rgba(0, 0, 0, 0.7)', backdropFilter: 'blur(8px)', zIndex: 150 }}
     >
       <div
-        className="relative w-full max-w-lg rounded-2xl overflow-hidden shadow-2xl flex flex-col max-h-[80vh]"
+        className="fixed left-4 right-4 max-w-lg mx-auto rounded-2xl overflow-hidden shadow-2xl flex flex-col"
         onClick={e => e.stopPropagation()}
         style={{
           background: 'linear-gradient(180deg, #1a1525 0%, #2d1f3d 100%)',
           border: '1px solid rgba(212, 175, 55, 0.2)',
+          top: '80px',
+          height: 'auto',
+          maxHeight: 'calc(100vh - 160px)',
+          overflow: 'hidden',
         }}
       >
         {/* Header */}
@@ -153,7 +163,7 @@ export default function AIReportFollowUpModal({
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="flex-1 overflow-y-auto p-6 pb-2" style={{ minHeight: 0 }}>
           {/* Dimension Tabs */}
           <div className="flex gap-2 mb-4 flex-wrap">
             {Object.entries(DIMENSION_LABELS).map(([key, label]) => (
@@ -172,7 +182,7 @@ export default function AIReportFollowUpModal({
           </div>
 
           {/* Quick Questions */}
-          {messages.length === 0 && !loading && (
+          {!loading && (
             <div className="mb-4 p-3 rounded-xl bg-white/5 border border-white/10">
               <p className="text-xs mb-2" style={{ color: 'var(--color-text-muted)' }}>试试这样问：</p>
               <div className="flex flex-wrap gap-2">
@@ -190,7 +200,7 @@ export default function AIReportFollowUpModal({
           )}
 
           {/* Messages */}
-          <div className="space-y-3 mb-4">
+          <div className="space-y-3 mb-4 pb-2">
             {messages.map((msg, index) => (
               <div
                 key={index}
