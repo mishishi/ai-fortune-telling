@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Skeleton } from './Skeleton';
 import { Button } from './ui/Button';
 import CheckinSuccessModal from './CheckinSuccessModal';
+import MilestoneModal from './MilestoneModal';
 
 interface Badge {
   id: string;
@@ -28,6 +29,8 @@ interface CheckinResponse {
   currentStreak: number;
   newBadges: string[];
   unlockedFeature?: string | null;
+  newRewards?: { type: string; amount: number; milestoneName: string }[];
+  streakRepairCards?: number;
 }
 
 export default function CheckinCard() {
@@ -35,6 +38,7 @@ export default function CheckinCard() {
   const [loading, setLoading] = useState(true);
   const [checkingIn, setCheckingIn] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showMilestoneModal, setShowMilestoneModal] = useState(false);
   const [checkinResult, setCheckinResult] = useState<CheckinResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -179,7 +183,11 @@ export default function CheckinCard() {
         </div>
 
         {/* Current Streak */}
-        <div className="flex items-center gap-3 mb-6">
+        <div
+          className="flex items-center gap-3 mb-2 cursor-pointer"
+          onClick={() => setShowMilestoneModal(true)}
+          title="点击查看里程碑"
+        >
           <div
             className="w-12 h-12 rounded-full flex items-center justify-center"
             style={{ background: 'rgba(231, 76, 60, 0.2)' }}
@@ -197,6 +205,45 @@ export default function CheckinCard() {
               </span>
             </div>
           </div>
+        </div>
+
+        {/* Milestone Progress Bar */}
+        <div className="mb-6">
+          {(() => {
+            const milestone = status.currentStreak < 7
+              ? { days: 7, target: '补签卡', remaining: 7 - status.currentStreak, progress: (status.currentStreak / 7) * 100 }
+              : status.currentStreak < 30
+              ? { days: 30, target: '高级报告解锁券', remaining: 30 - status.currentStreak, progress: ((status.currentStreak - 7) / 23) * 100 }
+              : { days: 30, target: '已达成', remaining: 0, progress: 100 };
+
+            return (
+              <>
+                <div className="flex items-center justify-between text-xs mb-1">
+                  <span style={{ color: 'var(--color-text-muted)' }}>
+                    {milestone.target === '已达成'
+                      ? '已达成全部里程碑'
+                      : `再签到 ${milestone.remaining} 天获得${milestone.target}`}
+                  </span>
+                  <button
+                    onClick={() => setShowMilestoneModal(true)}
+                    className="text-xs hover:underline"
+                    style={{ color: 'var(--color-accent)' }}
+                  >
+                    查看详情 &gt;
+                  </button>
+                </div>
+                <div className="h-2 rounded-full bg-white/10 overflow-hidden">
+                  <div
+                    className="h-full rounded-full transition-all duration-500"
+                    style={{
+                      width: `${Math.min(100, milestone.progress)}%`,
+                      background: 'linear-gradient(90deg, #f0c674, #e67e22)',
+                    }}
+                  />
+                </div>
+              </>
+            );
+          })()}
         </div>
 
         {/* Stats Grid */}
@@ -296,8 +343,15 @@ export default function CheckinCard() {
           totalPoints={checkinResult.totalPoints}
           currentStreak={checkinResult.currentStreak}
           unlockedFeature={checkinResult.unlockedFeature}
+          newRewards={'newRewards' in checkinResult ? checkinResult.newRewards : []}
+          streakRepairCards={'streakRepairCards' in checkinResult ? checkinResult.streakRepairCards : 0}
         />
       )}
+
+      <MilestoneModal
+        isOpen={showMilestoneModal}
+        onClose={() => setShowMilestoneModal(false)}
+      />
     </>
   );
 }
