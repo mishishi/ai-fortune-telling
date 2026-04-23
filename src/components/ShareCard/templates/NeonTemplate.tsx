@@ -2,6 +2,10 @@
 
 import { ShareCardData } from '../types';
 
+// BaGua (八卦) symbols for decoration
+const BAGUA_SYMBOLS = ['☰', '☱', '☲', '☳', '☴', '☵', '☶', '☷'];
+const ZODIAC_ANIMALS = ['鼠', '牛', '虎', '兔', '龙', '蛇', '马', '羊', '猴', '鸡', '狗', '猪'];
+
 const DIMENSIONS = [
   { key: 'career', label: '事业', color: '#00ffff', angle: 90 },
   { key: 'love', label: '感情', color: '#ff00ff', angle: 162 },
@@ -133,13 +137,134 @@ function SvgRadarChart({ scores, size = 280 }: { scores: Record<string, number>;
   );
 }
 
-// Geometric line decoration component
-function GeometricDecorations() {
+// Ornate border decoration component
+function OrnateBorder() {
   return (
     <svg
-      width="420"
-      height="480"
-      viewBox="0 0 420 480"
+      width="460"
+      height="520"
+      viewBox="0 0 460 520"
+      style={{
+        position: 'absolute',
+        top: -20,
+        left: -20,
+        pointerEvents: 'none',
+        zIndex: 0,
+      }}
+    >
+      {/* Outer golden border with neon glow */}
+      <rect
+        x="10"
+        y="10"
+        width="440"
+        height="500"
+        fill="none"
+        stroke="url(#neonGoldGradient)"
+        strokeWidth="3"
+        rx="8"
+        style={{ filter: 'drop-shadow(0 0 8px rgba(0,255,255,0.4)) drop-shadow(0 0 16px rgba(255,0,255,0.3)' }}
+      />
+
+      {/* Inner decorative border */}
+      <rect
+        x="18"
+        y="18"
+        width="424"
+        height="484"
+        fill="none"
+        stroke="rgba(0,255,255,0.25)"
+        strokeWidth="1"
+        strokeDasharray="4 2"
+        rx="6"
+      />
+
+      {/* Corner ornaments - top left */}
+      <g transform="translate(10, 10)">
+        <path d="M 0 40 Q 0 0 40 0" fill="none" stroke="#00ffff" strokeWidth="2" style={{ filter: 'drop-shadow(0 0 4px rgba(0,255,255,0.8))' }} />
+        <circle cx="8" cy="8" r="3" fill="#ff00ff" style={{ filter: 'drop-shadow(0 0 6px rgba(255,0,255,0.8))' }} />
+        <circle cx="20" cy="5" r="2" fill="#00ffff" opacity="0.6" style={{ filter: 'drop-shadow(0 0 3px rgba(0,255,255,0.6))' }} />
+        <circle cx="5" cy="20" r="2" fill="#ff00ff" opacity="0.6" style={{ filter: 'drop-shadow(0 0 3px rgba(255,0,255,0.6))' }} />
+      </g>
+
+      {/* Corner ornaments - top right */}
+      <g transform="translate(450, 10) scale(-1, 1)">
+        <path d="M 0 40 Q 0 0 40 0" fill="none" stroke="#00ffff" strokeWidth="2" style={{ filter: 'drop-shadow(0 0 4px rgba(0,255,255,0.8))' }} />
+        <circle cx="8" cy="8" r="3" fill="#ff00ff" style={{ filter: 'drop-shadow(0 0 6px rgba(255,0,255,0.8))' }} />
+        <circle cx="20" cy="5" r="2" fill="#00ffff" opacity="0.6" style={{ filter: 'drop-shadow(0 0 3px rgba(0,255,255,0.6))' }} />
+        <circle cx="5" cy="20" r="2" fill="#ff00ff" opacity="0.6" style={{ filter: 'drop-shadow(0 0 3px rgba(255,0,255,0.6))' }} />
+      </g>
+
+      {/* Corner ornaments - bottom left */}
+      <g transform="translate(10, 510) scale(1, -1)">
+        <path d="M 0 40 Q 0 0 40 0" fill="none" stroke="#00ffff" strokeWidth="2" style={{ filter: 'drop-shadow(0 0 4px rgba(0,255,255,0.8))' }} />
+        <circle cx="8" cy="8" r="3" fill="#ff00ff" style={{ filter: 'drop-shadow(0 0 6px rgba(255,0,255,0.8))' }} />
+        <circle cx="20" cy="5" r="2" fill="#00ffff" opacity="0.6" style={{ filter: 'drop-shadow(0 0 3px rgba(0,255,255,0.6))' }} />
+        <circle cx="5" cy="20" r="2" fill="#ff00ff" opacity="0.6" style={{ filter: 'drop-shadow(0 0 3px rgba(255,0,255,0.6))' }} />
+      </g>
+
+      {/* Corner ornaments - bottom right */}
+      <g transform="translate(450, 510) scale(-1, -1)">
+        <path d="M 0 40 Q 0 0 40 0" fill="none" stroke="#00ffff" strokeWidth="2" style={{ filter: 'drop-shadow(0 0 4px rgba(0,255,255,0.8))' }} />
+        <circle cx="8" cy="8" r="3" fill="#ff00ff" style={{ filter: 'drop-shadow(0 0 6px rgba(255,0,255,0.8))' }} />
+        <circle cx="20" cy="5" r="2" fill="#00ffff" opacity="0.6" style={{ filter: 'drop-shadow(0 0 3px rgba(0,255,255,0.6))' }} />
+        <circle cx="5" cy="20" r="2" fill="#ff00ff" opacity="0.6" style={{ filter: 'drop-shadow(0 0 3px rgba(255,0,255,0.6))' }} />
+      </g>
+
+      {/* Side decorative elements - left */}
+      <g transform="translate(10, 260)">
+        <line x1="0" y1="-60" x2="0" y2="60" stroke="rgba(0,255,255,0.5)" strokeWidth="1" style={{ filter: 'drop-shadow(0 0 3px rgba(0,255,255,0.6))' }} />
+        <circle cx="0" cy="-40" r="2" fill="#00ffff" opacity="0.5" style={{ filter: 'drop-shadow(0 0 3px rgba(0,255,255,0.6))' }} />
+        <circle cx="0" cy="0" r="3" fill="#ff00ff" style={{ filter: 'drop-shadow(0 0 6px rgba(255,0,255,0.8))' }} />
+        <circle cx="0" cy="40" r="2" fill="#00ffff" opacity="0.5" style={{ filter: 'drop-shadow(0 0 3px rgba(0,255,255,0.6))' }} />
+      </g>
+
+      {/* Side decorative elements - right */}
+      <g transform="translate(450, 260)">
+        <line x1="0" y1="-60" x2="0" y2="60" stroke="rgba(0,255,255,0.5)" strokeWidth="1" style={{ filter: 'drop-shadow(0 0 3px rgba(0,255,255,0.6))' }} />
+        <circle cx="0" cy="-40" r="2" fill="#00ffff" opacity="0.5" style={{ filter: 'drop-shadow(0 0 3px rgba(0,255,255,0.6))' }} />
+        <circle cx="0" cy="0" r="3" fill="#ff00ff" style={{ filter: 'drop-shadow(0 0 6px rgba(255,0,255,0.8))' }} />
+        <circle cx="0" cy="40" r="2" fill="#00ffff" opacity="0.5" style={{ filter: 'drop-shadow(0 0 3px rgba(0,255,255,0.6))' }} />
+      </g>
+
+      {/* Top center ornament */}
+      <g transform="translate(230, 10)">
+        <path d="M -20 0 L 0 -15 L 20 0" fill="none" stroke="#00ffff" strokeWidth="1.5" style={{ filter: 'drop-shadow(0 0 4px rgba(0,255,255,0.8))' }} />
+        <circle cx="0" cy="-8" r="3" fill="#ff00ff" style={{ filter: 'drop-shadow(0 0 6px rgba(255,0,255,0.8))' }} />
+      </g>
+
+      {/* Bottom center ornament */}
+      <g transform="translate(230, 510)">
+        <path d="M -20 0 L 0 15 L 20 0" fill="none" stroke="#00ffff" strokeWidth="1.5" style={{ filter: 'drop-shadow(0 0 4px rgba(0,255,255,0.8))' }} />
+        <circle cx="0" cy="8" r="3" fill="#ff00ff" style={{ filter: 'drop-shadow(0 0 6px rgba(255,0,255,0.8))' }} />
+      </g>
+
+      {/* Gradient definitions */}
+      <defs>
+        <linearGradient id="neonGoldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#00ffff" />
+          <stop offset="50%" stopColor="#ff00ff" />
+          <stop offset="100%" stopColor="#00ffff" />
+        </linearGradient>
+      </defs>
+    </svg>
+  );
+}
+
+interface NeonTemplateProps {
+  data: ShareCardData;
+}
+
+// BaGua decoration ring for NeonTemplate
+function NeonBaGuaRing() {
+  const radius = 200;
+  const centerX = 210;
+  const centerY = 240;
+
+  return (
+    <svg
+      width="460"
+      height="520"
+      viewBox="0 0 460 520"
       style={{
         position: 'absolute',
         top: 0,
@@ -148,36 +273,61 @@ function GeometricDecorations() {
         zIndex: 1,
       }}
     >
-      {/* Top left corner lines */}
-      <path d="M 0 60 L 0 0 L 60 0" fill="none" stroke="rgba(0,255,255,0.5)" strokeWidth="2" />
-      <path d="M 0 80 L 0 0 L 80 0" fill="none" stroke="rgba(255,0,255,0.3)" strokeWidth="1" />
+      {/* Outer ring with neon glow */}
+      <circle
+        cx={centerX}
+        cy={centerY}
+        r={radius + 30}
+        fill="none"
+        stroke="rgba(0,255,255,0.12)"
+        strokeWidth="1"
+        strokeDasharray="2 4"
+        style={{ filter: 'drop-shadow(0 0 6px rgba(0,255,255,0.3))' }}
+      />
 
-      {/* Top right corner lines */}
-      <path d="M 420 60 L 420 0 L 360 0" fill="none" stroke="rgba(0,255,255,0.5)" strokeWidth="2" />
-      <path d="M 420 80 L 420 0 L 340 0" fill="none" stroke="rgba(255,0,255,0.3)" strokeWidth="1" />
+      {/* BaGua symbols positioned around the circle */}
+      {BAGUA_SYMBOLS.map((symbol, i) => {
+        const angle = (i * 45 - 90) * (Math.PI / 180);
+        const x = centerX + (radius + 45) * Math.cos(angle);
+        const y = centerY + (radius + 45) * Math.sin(angle);
+        return (
+          <text
+            key={i}
+            x={x}
+            y={y}
+            textAnchor="middle"
+            dominantBaseline="middle"
+            fill="rgba(0,255,255,0.35)"
+            fontSize="14"
+            fontFamily="serif"
+            style={{ filter: 'drop-shadow(0 0 4px rgba(0,255,255,0.5))' }}
+          >
+            {symbol}
+          </text>
+        );
+      })}
 
-      {/* Bottom left corner lines */}
-      <path d="M 0 420 L 0 480 L 60 480" fill="none" stroke="rgba(0,255,255,0.5)" strokeWidth="2" />
-      <path d="M 0 400 L 0 480 L 80 480" fill="none" stroke="rgba(255,0,255,0.3)" strokeWidth="1" />
-
-      {/* Bottom right corner lines */}
-      <path d="M 420 420 L 420 480 L 360 480" fill="none" stroke="rgba(0,255,255,0.5)" strokeWidth="2" />
-      <path d="M 420 400 L 420 480 L 340 480" fill="none" stroke="rgba(255,0,255,0.3)" strokeWidth="1" />
-
-      {/* Diagonal accent lines */}
-      <line x1="0" y1="0" x2="40" y2="40" stroke="rgba(255,255,0,0.4)" strokeWidth="1" />
-      <line x1="420" y1="0" x2="380" y2="40" stroke="rgba(255,255,0,0.4)" strokeWidth="1" />
-      <line x1="0" y1="480" x2="40" y2="440" stroke="rgba(255,255,0,0.4)" strokeWidth="1" />
-      <line x1="420" y1="480" x2="380" y2="440" stroke="rgba(255,255,0,0.4)" strokeWidth="1" />
-
-      {/* Center crosshair decoration */}
-      <circle cx="210" cy="240" r="180" fill="none" stroke="rgba(0,255,255,0.1)" strokeWidth="1" strokeDasharray="4 8" />
+      {/* Inner ring with zodiac animals */}
+      {ZODIAC_ANIMALS.map((animal, i) => {
+        const angle = (i * 30 - 90) * (Math.PI / 180);
+        const x = centerX + (radius - 15) * Math.cos(angle);
+        const y = centerY + (radius - 15) * Math.sin(angle);
+        return (
+          <text
+            key={i}
+            x={x}
+            y={y}
+            textAnchor="middle"
+            dominantBaseline="middle"
+            fill="rgba(255,0,255,0.2)"
+            fontSize="9"
+          >
+            {animal}
+          </text>
+        );
+      })}
     </svg>
   );
-}
-
-interface NeonTemplateProps {
-  data: ShareCardData;
 }
 
 export default function NeonTemplate({ data }: NeonTemplateProps) {
@@ -198,8 +348,23 @@ export default function NeonTemplate({ data }: NeonTemplateProps) {
         overflow: 'hidden',
       }}
     >
-      {/* Geometric decorations */}
-      <GeometricDecorations />
+      {/* Animated gradient overlay */}
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          background: 'linear-gradient(45deg, rgba(0,255,255,0.03) 0%, rgba(255,0,255,0.03) 50%, rgba(255,255,0,0.03) 100%)',
+          animation: 'neonGradientShift 4s ease-in-out infinite',
+          pointerEvents: 'none',
+          zIndex: 0,
+        }}
+      />
+
+      {/* Ornate border decoration */}
+      <OrnateBorder />
+
+      {/* BaGua ring decoration */}
+      <NeonBaGuaRing />
 
       {/* 顶部标题 */}
       <div style={{ textAlign: 'center', marginBottom: 20, position: 'relative', zIndex: 2 }}>
@@ -336,6 +501,7 @@ export default function NeonTemplate({ data }: NeonTemplateProps) {
         color: 'rgba(0,255,255,0.6)',
         textShadow: '0 0 8px rgba(0,255,255,0.8)',
         letterSpacing: 1,
+        zIndex: 2,
       }}>
         ◈ 霓虹命盘
       </div>
@@ -347,9 +513,18 @@ export default function NeonTemplate({ data }: NeonTemplateProps) {
         color: 'rgba(255,0,255,0.6)',
         textShadow: '0 0 8px rgba(255,0,255,0.8)',
         fontStyle: 'italic',
+        zIndex: 2,
       }}>
         ai-fortune.app
       </div>
+
+      {/* CSS animations for this template */}
+      <style>{`
+        @keyframes neonGradientShift {
+          0%, 100% { opacity: 0.5; transform: translateX(-3%) translateY(-3%); }
+          50% { opacity: 1; transform: translateX(3%) translateY(3%); }
+        }
+      `}</style>
     </div>
   );
 }

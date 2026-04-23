@@ -2,6 +2,10 @@
 
 import { ShareCardData } from '../types';
 
+// BaGua (八卦) symbols for decoration
+const BAGUA_SYMBOLS = ['☰', '☱', '☲', '☳', '☴', '☵', '☶', '☷'];
+const ZODIAC_ANIMALS = ['鼠', '牛', '虎', '兔', '龙', '蛇', '马', '羊', '猴', '鸡', '狗', '猪'];
+
 const DIMENSIONS = [
   { key: 'career', label: '事业', color: '#2c2c2c', angle: 90 },
   { key: 'love', label: '感情', color: '#2c2c2c', angle: 162 },
@@ -150,6 +154,188 @@ interface LandscapeTemplateProps {
   data: ShareCardData;
 }
 
+// BaGua decoration ring for LandscapeTemplate (ink wash style)
+function LandscapeBaGuaRing() {
+  const radius = 200;
+  const centerX = 210;
+  const centerY = 240;
+
+  return (
+    <svg
+      width="460"
+      height="520"
+      viewBox="0 0 460 520"
+      style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        pointerEvents: 'none',
+        zIndex: 0,
+      }}
+    >
+      {/* Outer ring - subtle ink style */}
+      <circle
+        cx={centerX}
+        cy={centerY}
+        r={radius + 30}
+        fill="none"
+        stroke="#8b7355"
+        strokeWidth="0.5"
+        strokeOpacity="0.15"
+        strokeDasharray="2 4"
+      />
+
+      {/* BaGua symbols positioned around the circle - ink wash style */}
+      {BAGUA_SYMBOLS.map((symbol, i) => {
+        const angle = (i * 45 - 90) * (Math.PI / 180);
+        const x = centerX + (radius + 45) * Math.cos(angle);
+        const y = centerY + (radius + 45) * Math.sin(angle);
+        return (
+          <text
+            key={i}
+            x={x}
+            y={y}
+            textAnchor="middle"
+            dominantBaseline="middle"
+            fill="#8b7355"
+            fillOpacity="0.3"
+            fontSize="14"
+            fontFamily="serif"
+          >
+            {symbol}
+          </text>
+        );
+      })}
+
+      {/* Inner ring with zodiac animals */}
+      {ZODIAC_ANIMALS.map((animal, i) => {
+        const angle = (i * 30 - 90) * (Math.PI / 180);
+        const x = centerX + (radius - 15) * Math.cos(angle);
+        const y = centerY + (radius - 15) * Math.sin(angle);
+        return (
+          <text
+            key={i}
+            x={x}
+            y={y}
+            textAnchor="middle"
+            dominantBaseline="middle"
+            fill="#8b7355"
+            fillOpacity="0.2"
+            fontSize="9"
+          >
+            {animal}
+          </text>
+        );
+      })}
+    </svg>
+  );
+}
+
+// Ornate border decoration component (ink-wash style for landscape)
+function OrnateBorder() {
+  return (
+    <svg
+      width="460"
+      height="520"
+      viewBox="0 0 460 520"
+      style={{
+        position: 'absolute',
+        top: -20,
+        left: -20,
+        pointerEvents: 'none',
+        zIndex: 0,
+      }}
+    >
+      {/* Outer subtle ink border */}
+      <rect
+        x="10"
+        y="10"
+        width="440"
+        height="500"
+        fill="none"
+        stroke="#8b7355"
+        strokeWidth="1.5"
+        rx="4"
+        strokeOpacity="0.2"
+      />
+
+      {/* Inner decorative border */}
+      <rect
+        x="18"
+        y="18"
+        width="424"
+        height="484"
+        fill="none"
+        stroke="#8b7355"
+        strokeWidth="0.5"
+        strokeDasharray="4 2"
+        rx="3"
+        strokeOpacity="0.15"
+      />
+
+      {/* Corner ornaments - top left (ink wash style) */}
+      <g transform="translate(10, 10)" opacity="0.25">
+        <path d="M 0 35 Q 0 0 35 0" fill="none" stroke="#8b7355" strokeWidth="1.5" />
+        <circle cx="6" cy="6" r="2.5" fill="#8b7355" />
+        <circle cx="16" cy="4" r="1.5" fill="#8b7355" />
+        <circle cx="4" cy="16" r="1.5" fill="#8b7355" />
+      </g>
+
+      {/* Corner ornaments - top right */}
+      <g transform="translate(450, 10) scale(-1, 1)" opacity="0.25">
+        <path d="M 0 35 Q 0 0 35 0" fill="none" stroke="#8b7355" strokeWidth="1.5" />
+        <circle cx="6" cy="6" r="2.5" fill="#8b7355" />
+        <circle cx="16" cy="4" r="1.5" fill="#8b7355" />
+        <circle cx="4" cy="16" r="1.5" fill="#8b7355" />
+      </g>
+
+      {/* Corner ornaments - bottom left */}
+      <g transform="translate(10, 510) scale(1, -1)" opacity="0.25">
+        <path d="M 0 35 Q 0 0 35 0" fill="none" stroke="#8b7355" strokeWidth="1.5" />
+        <circle cx="6" cy="6" r="2.5" fill="#8b7355" />
+        <circle cx="16" cy="4" r="1.5" fill="#8b7355" />
+        <circle cx="4" cy="16" r="1.5" fill="#8b7355" />
+      </g>
+
+      {/* Corner ornaments - bottom right */}
+      <g transform="translate(450, 510) scale(-1, -1)" opacity="0.25">
+        <path d="M 0 35 Q 0 0 35 0" fill="none" stroke="#8b7355" strokeWidth="1.5" />
+        <circle cx="6" cy="6" r="2.5" fill="#8b7355" />
+        <circle cx="16" cy="4" r="1.5" fill="#8b7355" />
+        <circle cx="4" cy="16" r="1.5" fill="#8b7355" />
+      </g>
+
+      {/* Side decorative elements - left */}
+      <g transform="translate(10, 260)" opacity="0.2">
+        <line x1="0" y1="-50" x2="0" y2="50" stroke="#8b7355" strokeWidth="0.75" />
+        <circle cx="0" cy="-30" r="1.5" fill="#8b7355" />
+        <circle cx="0" cy="0" r="2" fill="#8b7355" />
+        <circle cx="0" cy="30" r="1.5" fill="#8b7355" />
+      </g>
+
+      {/* Side decorative elements - right */}
+      <g transform="translate(450, 260)" opacity="0.2">
+        <line x1="0" y1="-50" x2="0" y2="50" stroke="#8b7355" strokeWidth="0.75" />
+        <circle cx="0" cy="-30" r="1.5" fill="#8b7355" />
+        <circle cx="0" cy="0" r="2" fill="#8b7355" />
+        <circle cx="0" cy="30" r="1.5" fill="#8b7355" />
+      </g>
+
+      {/* Top center ornament */}
+      <g transform="translate(230, 10)" opacity="0.2">
+        <path d="M -15 0 L 0 -10 L 15 0" fill="none" stroke="#8b7355" strokeWidth="1" />
+        <circle cx="0" cy="-5" r="2" fill="#8b7355" />
+      </g>
+
+      {/* Bottom center ornament */}
+      <g transform="translate(230, 510)" opacity="0.2">
+        <path d="M -15 0 L 0 10 L 15 0" fill="none" stroke="#8b7355" strokeWidth="1" />
+        <circle cx="0" cy="5" r="2" fill="#8b7355" />
+      </g>
+    </svg>
+  );
+}
+
 export default function LandscapeTemplate({ data }: LandscapeTemplateProps) {
   const genderText = data.gender === 'male' ? '男' : '女';
 
@@ -168,8 +354,14 @@ export default function LandscapeTemplate({ data }: LandscapeTemplateProps) {
         overflow: 'hidden',
       }}
     >
+      {/* Ornate border decoration */}
+      <OrnateBorder />
+
+      {/* BaGua ring decoration */}
+      <LandscapeBaGuaRing />
+
       {/* 顶部标题 */}
-      <div style={{ textAlign: 'center', marginBottom: 24, position: 'relative' }}>
+      <div style={{ textAlign: 'center', marginBottom: 24, position: 'relative', zIndex: 2 }}>
         <div style={{ fontSize: 10, color: '#8b7355', marginBottom: 8, letterSpacing: 4 }}>
           · AI 命理分析报告 ·
         </div>
@@ -182,12 +374,12 @@ export default function LandscapeTemplate({ data }: LandscapeTemplateProps) {
       </div>
 
       {/* 雷达图区域 */}
-      <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', marginBottom: 28 }}>
+      <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', marginBottom: 28, zIndex: 2 }}>
         <SvgRadarChart scores={data.radarScores} size={220} />
       </div>
 
       {/* 进度条 - 细横线风格 */}
-      <div style={{ marginBottom: 20, padding: '0 20px' }}>
+      <div style={{ marginBottom: 20, padding: '0 20px', position: 'relative', zIndex: 2 }}>
         {DIMENSIONS.map(dim => {
           const score = data.radarScores[dim.key as keyof typeof data.radarScores] || 0;
           const fillWidth = (score / 100) * 100;
@@ -231,10 +423,10 @@ export default function LandscapeTemplate({ data }: LandscapeTemplateProps) {
       )}
 
       {/* 水印 - 山水意境风格 */}
-      <div style={{ position: 'absolute', bottom: 14, left: 20, fontSize: 9, color: '#8b7355', letterSpacing: 1, opacity: 0.7 }}>
+      <div style={{ position: 'absolute', bottom: 14, left: 20, fontSize: 9, color: '#8b7355', letterSpacing: 1, opacity: 0.7, zIndex: 2 }}>
         · 山水命盘 ·
       </div>
-      <div style={{ position: 'absolute', bottom: 14, right: 20, fontSize: 9, color: '#4a7c59', fontStyle: 'italic', opacity: 0.6 }}>
+      <div style={{ position: 'absolute', bottom: 14, right: 20, fontSize: 9, color: '#4a7c59', fontStyle: 'italic', opacity: 0.6, zIndex: 2 }}>
         ai-fortune.app
       </div>
     </div>
