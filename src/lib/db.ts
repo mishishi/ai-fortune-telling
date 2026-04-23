@@ -70,16 +70,19 @@ export function getDb() {
     }
 
     // Migration: create checkins table if not exist
-    db.exec(`
-      CREATE TABLE IF NOT EXISTS checkins (
-        id TEXT PRIMARY KEY,
-        userId TEXT NOT NULL,
-        checkinDate TEXT NOT NULL,
-        points INTEGER DEFAULT 5,
-        createdAt TEXT NOT NULL,
-        UNIQUE(userId, checkinDate)
-      );
-    `);
+    try {
+      db.exec(`
+        CREATE TABLE IF NOT EXISTS checkins (
+          id TEXT PRIMARY KEY,
+          userId TEXT NOT NULL,
+          checkinDate TEXT NOT NULL,
+          points INTEGER DEFAULT 5,
+          createdAt TEXT NOT NULL,
+          UNIQUE(userId, checkinDate)
+        );
+        CREATE INDEX IF NOT EXISTS idx_checkins_userId ON checkins(userId);
+      `);
+    } catch { /* ignore */ }
   }
   return db;
 }
