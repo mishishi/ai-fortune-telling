@@ -7,6 +7,7 @@ import AIQuestionModal from '@/components/AIQuestionModal';
 import TodayFortuneModal from '@/components/TodayFortuneModal';
 import PushPermissionModal from '@/components/PushPermissionModal';
 import OnboardingTutorial from '@/components/OnboardingTutorial';
+import DailyFortuneCard from '@/components/DailyFortuneCard';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/contexts/UserContext';
@@ -342,7 +343,7 @@ export default function HomePage() {
       {/* Main Content */}
       <div className="relative z-10 flex flex-col items-center justify-center min-h-[calc(100vh-80px)] px-4 py-8">
         {/* Hero Section */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-8">
           <h1
             className="text-h1 md:text-display font-serif text-white mb-4 text-center"
             style={{ textShadow: '0 0 40px rgba(196,30,58,0.6)' }}
@@ -353,6 +354,13 @@ export default function HomePage() {
             输入出生信息，开启你的生命密码
           </p>
         </div>
+
+        {/* Daily Fortune Card - only show when user is logged in */}
+        {user && (
+          <div className="w-full max-w-md mx-auto mb-6">
+            <DailyFortuneCard userId={user.userId} />
+          </div>
+        )}
 
         {/* Form / Loading */}
         <div
