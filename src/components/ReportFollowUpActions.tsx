@@ -30,10 +30,12 @@ export default function ReportFollowUpActions({ reportId, aiAnalysis }: ReportFo
       {/* Floating Follow-up Button */}
       <button
         onClick={() => setShowModal(true)}
-        className="fixed right-6 bottom-6 z-40 flex items-center gap-2 px-5 py-3 rounded-full font-bold text-white shadow-lg hover:scale-105 active:scale-95 transition-transform"
+        className="fixed right-6 flex items-center gap-2 px-5 py-3 rounded-full font-bold text-white shadow-lg hover:scale-105 active:scale-95 transition-transform"
         style={{
           background: 'linear-gradient(135deg, var(--color-primary), var(--color-secondary))',
           boxShadow: '0 4px 20px rgba(196, 30, 58, 0.4)',
+          bottom: '80px',
+          zIndex: 110,
         }}
       >
         <span className="text-lg">💬</span>

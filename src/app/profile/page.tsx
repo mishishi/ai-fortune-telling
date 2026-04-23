@@ -9,6 +9,8 @@ import ConfirmModal from '@/components/ConfirmModal';
 import PushPermissionModal from '@/components/PushPermissionModal';
 import CustomDropdown from '@/components/ui/CustomDropdown';
 import BirthDatePicker from '@/components/BirthForm/BirthDatePicker';
+import CheckinCard from '@/components/CheckinCard';
+import BadgeWall from '@/components/BadgeWall';
 
 interface BirthData {
   year: number;
@@ -199,15 +201,8 @@ export default function ProfilePage() {
         <div className="absolute -bottom-4 -left-4 w-8 h-8 border-l-2 border-b-2 border-[var(--color-accent)] opacity-40" />
         <div className="absolute -bottom-4 -right-4 w-8 h-8 border-r-2 border-b-2 border-[var(--color-accent)] opacity-40" />
 
-        <Link
-          href="/"
-          className="inline-flex items-center text-gray-400 hover:text-white transition-colors mb-4"
-        >
-          <span className="mr-1">←</span>
-          返回首页
-        </Link>
         <h1
-          className="text-h1 font-serif text-white title-underline"
+          className="text-h1 font-serif text-white"
           style={{ textShadow: '0 0 20px rgba(240,198,116,0.3)' }}
         >
           个人档案
@@ -394,6 +389,16 @@ export default function ProfilePage() {
         )}
       </div>
 
+      {/* Daily Checkin */}
+      <div className="mb-6">
+        <CheckinCard />
+      </div>
+
+      {/* Badge Wall */}
+      <div className="mb-6">
+        <BadgeWall />
+      </div>
+
       {/* Settings Section */}
       <div className="mb-6 glass-card rounded-[var(--radius-lg)] p-5">
         <h2 className="text-lg font-semibold text-white mb-4">设置</h2>
@@ -457,19 +462,24 @@ export default function ProfilePage() {
                 <p className="text-gray-400 text-xs">{pushEnabled ? `每天 ${pushTime} 推送` : '已关闭'}</p>
               </div>
             </div>
-            <Toggle checked={pushEnabled} onChange={(val) => {
-              if (val) {
-                // Show push permission modal to subscribe
-                setShowPushModal(true);
-              } else {
-                setPushEnabled(false);
-                fetch('/api/push/unsubscribe', { method: 'DELETE' })
-                  .then(res => {
-                    if (!res.ok) console.error('Failed to unsubscribe');
-                  })
-                  .catch(err => console.error('Unsubscribe failed:', err));
-              }
-            }} />
+            <div className="flex items-center gap-3">
+              <Toggle checked={pushEnabled} onChange={(val) => {
+                if (val) {
+                  // Show push permission modal to subscribe
+                  setShowPushModal(true);
+                } else {
+                  setPushEnabled(false);
+                  fetch('/api/push/unsubscribe', { method: 'DELETE' })
+                    .then(res => {
+                      if (!res.ok) console.error('Failed to unsubscribe');
+                    })
+                    .catch(err => console.error('Unsubscribe failed:', err));
+                }
+              }} />
+              <span className="text-sm font-medium w-8" style={{ color: pushEnabled ? 'var(--color-primary)' : 'var(--color-text-muted)' }}>
+                {pushEnabled ? 'ON' : 'OFF'}
+              </span>
+            </div>
           </div>
 
           {/* View Tutorial Again */}

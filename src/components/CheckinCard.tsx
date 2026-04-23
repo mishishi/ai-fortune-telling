@@ -42,6 +42,11 @@ export default function CheckinCard() {
     try {
       setError(null);
       const res = await fetch('/api/gamification/status');
+      if (res.status === 401) {
+        // User not logged in - silently stop loading, don't show error
+        setLoading(false);
+        return;
+      }
       if (!res.ok) {
         const data = await res.json();
         throw new Error(data.error || '获取签到状态失败');
@@ -77,6 +82,10 @@ export default function CheckinCard() {
       const data: CheckinResponse = await res.json();
       setCheckinResult(data);
       setShowSuccessModal(true);
+
+      // Trigger badge refresh via localStorage event (cross-tab) and custom event (same-tab)
+      localStorage.setItem('checkin_updated', Date.now().toString());
+      window.dispatchEvent(new Event('checkinUpdated'));
 
       // Refresh status after successful checkin
       await fetchStatus();
