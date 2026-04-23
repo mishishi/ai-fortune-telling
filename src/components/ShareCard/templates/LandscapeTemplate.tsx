@@ -224,18 +224,24 @@ function LandscapeBaGuaRing() {
 // Ornate border decoration component (ink-wash style for landscape)
 function OrnateBorder() {
   return (
-    <svg
-      width="460"
-      height="520"
-      viewBox="0 0 460 520"
+    <div
       style={{
         position: 'absolute',
-        top: -20,
-        left: -20,
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
         pointerEvents: 'none',
         zIndex: 0,
       }}
     >
+      <svg
+        width="100%"
+        height="100%"
+        viewBox="0 0 420 480"
+        preserveAspectRatio="none"
+        style={{ display: 'block' }}
+      >
       {/* Outer subtle ink border */}
       <rect
         x="10"
