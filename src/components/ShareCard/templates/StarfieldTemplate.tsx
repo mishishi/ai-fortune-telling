@@ -128,126 +128,135 @@ function SvgRadarChart({ scores, size = 280 }: { scores: Record<string, number>;
 // Ornate border decoration component
 function OrnateBorder() {
   return (
-    <svg
-      width="460"
-      height="520"
-      viewBox="0 0 460 520"
+    <div
       style={{
         position: 'absolute',
-        top: -20,
-        left: -20,
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
         pointerEvents: 'none',
         zIndex: 0,
       }}
     >
-      {/* Outer golden border */}
-      <rect
-        x="10"
-        y="10"
-        width="440"
-        height="500"
-        fill="none"
-        stroke="url(#goldGradient)"
-        strokeWidth="3"
-        rx="8"
-      />
+      <svg
+        width="100%"
+        height="100%"
+        viewBox="0 0 420 480"
+        preserveAspectRatio="none"
+        style={{ display: 'block' }}
+      >
+        {/* Outer golden border */}
+        <rect
+          x="8"
+          y="8"
+          width="404"
+          height="464"
+          fill="none"
+          stroke="url(#goldGradient)"
+          strokeWidth="2"
+          rx="6"
+        />
 
-      {/* Inner decorative border */}
-      <rect
-        x="18"
-        y="18"
-        width="424"
-        height="484"
-        fill="none"
-        stroke="rgba(212, 175, 55, 0.3)"
-        strokeWidth="1"
-        strokeDasharray="4 2"
-        rx="6"
-      />
+        {/* Inner decorative border */}
+        <rect
+          x="14"
+          y="14"
+          width="392"
+          height="452"
+          fill="none"
+          stroke="rgba(212, 175, 55, 0.3)"
+          strokeWidth="1"
+          strokeDasharray="4 2"
+          rx="4"
+        />
 
-      {/* Corner ornaments - top left */}
-      <g transform="translate(10, 10)">
-        <path d="M 0 40 Q 0 0 40 0" fill="none" stroke="#d4af37" strokeWidth="2" />
-        <circle cx="8" cy="8" r="3" fill="#d4af37" />
-        <circle cx="20" cy="5" r="2" fill="#d4af37" opacity="0.6" />
-        <circle cx="5" cy="20" r="2" fill="#d4af37" opacity="0.6" />
-      </g>
+        {/* Corner ornaments - top left */}
+        <g transform="translate(8, 8)">
+          <path d="M 0 30 Q 0 0 30 0" fill="none" stroke="#d4af37" strokeWidth="1.5" />
+          <circle cx="6" cy="6" r="2.5" fill="#d4af37" />
+          <circle cx="15" cy="4" r="1.5" fill="#d4af37" opacity="0.6" />
+          <circle cx="4" cy="15" r="1.5" fill="#d4af37" opacity="0.6" />
+        </g>
 
-      {/* Corner ornaments - top right */}
-      <g transform="translate(450, 10) scale(-1, 1)">
-        <path d="M 0 40 Q 0 0 40 0" fill="none" stroke="#d4af37" strokeWidth="2" />
-        <circle cx="8" cy="8" r="3" fill="#d4af37" />
-        <circle cx="20" cy="5" r="2" fill="#d4af37" opacity="0.6" />
-        <circle cx="5" cy="20" r="2" fill="#d4af37" opacity="0.6" />
-      </g>
+        {/* Corner ornaments - top right */}
+        <g transform="translate(412, 8) scale(-1, 1)">
+          <path d="M 0 30 Q 0 0 30 0" fill="none" stroke="#d4af37" strokeWidth="1.5" />
+          <circle cx="6" cy="6" r="2.5" fill="#d4af37" />
+          <circle cx="15" cy="4" r="1.5" fill="#d4af37" opacity="0.6" />
+          <circle cx="4" cy="15" r="1.5" fill="#d4af37" opacity="0.6" />
+        </g>
 
-      {/* Corner ornaments - bottom left */}
-      <g transform="translate(10, 510) scale(1, -1)">
-        <path d="M 0 40 Q 0 0 40 0" fill="none" stroke="#d4af37" strokeWidth="2" />
-        <circle cx="8" cy="8" r="3" fill="#d4af37" />
-        <circle cx="20" cy="5" r="2" fill="#d4af37" opacity="0.6" />
-        <circle cx="5" cy="20" r="2" fill="#d4af37" opacity="0.6" />
-      </g>
+        {/* Corner ornaments - bottom left */}
+        <g transform="translate(8, 472) scale(1, -1)">
+          <path d="M 0 30 Q 0 0 30 0" fill="none" stroke="#d4af37" strokeWidth="1.5" />
+          <circle cx="6" cy="6" r="2.5" fill="#d4af37" />
+          <circle cx="15" cy="4" r="1.5" fill="#d4af37" opacity="0.6" />
+          <circle cx="4" cy="15" r="1.5" fill="#d4af37" opacity="0.6" />
+        </g>
 
-      {/* Corner ornaments - bottom right */}
-      <g transform="translate(450, 510) scale(-1, -1)">
-        <path d="M 0 40 Q 0 0 40 0" fill="none" stroke="#d4af37" strokeWidth="2" />
-        <circle cx="8" cy="8" r="3" fill="#d4af37" />
-        <circle cx="20" cy="5" r="2" fill="#d4af37" opacity="0.6" />
-        <circle cx="5" cy="20" r="2" fill="#d4af37" opacity="0.6" />
-      </g>
+        {/* Corner ornaments - bottom right */}
+        <g transform="translate(412, 472) scale(-1, -1)">
+          <path d="M 0 30 Q 0 0 30 0" fill="none" stroke="#d4af37" strokeWidth="1.5" />
+          <circle cx="6" cy="6" r="2.5" fill="#d4af37" />
+          <circle cx="15" cy="4" r="1.5" fill="#d4af37" opacity="0.6" />
+          <circle cx="4" cy="15" r="1.5" fill="#d4af37" opacity="0.6" />
+        </g>
 
-      {/* Side decorative elements - left */}
-      <g transform="translate(10, 260)">
-        <line x1="0" y1="-60" x2="0" y2="60" stroke="#d4af37" strokeWidth="1" opacity="0.4" />
-        <circle cx="0" cy="-40" r="2" fill="#d4af37" opacity="0.5" />
-        <circle cx="0" cy="0" r="3" fill="#d4af37" />
-        <circle cx="0" cy="40" r="2" fill="#d4af37" opacity="0.5" />
-      </g>
+        {/* Side decorative elements - left */}
+        <g transform="translate(8, 240)">
+          <line x1="0" y1="-40" x2="0" y2="40" stroke="#d4af37" strokeWidth="1" opacity="0.4" />
+          <circle cx="0" cy="-30" r="1.5" fill="#d4af37" opacity="0.5" />
+          <circle cx="0" cy="0" r="2" fill="#d4af37" />
+          <circle cx="0" cy="30" r="1.5" fill="#d4af37" opacity="0.5" />
+        </g>
 
-      {/* Side decorative elements - right */}
-      <g transform="translate(450, 260)">
-        <line x1="0" y1="-60" x2="0" y2="60" stroke="#d4af37" strokeWidth="1" opacity="0.4" />
-        <circle cx="0" cy="-40" r="2" fill="#d4af37" opacity="0.5" />
-        <circle cx="0" cy="0" r="3" fill="#d4af37" />
-        <circle cx="0" cy="40" r="2" fill="#d4af37" opacity="0.5" />
-      </g>
+        {/* Side decorative elements - right */}
+        <g transform="translate(412, 240)">
+          <line x1="0" y1="-40" x2="0" y2="40" stroke="#d4af37" strokeWidth="1" opacity="0.4" />
+          <circle cx="0" cy="-30" r="1.5" fill="#d4af37" opacity="0.5" />
+          <circle cx="0" cy="0" r="2" fill="#d4af37" />
+          <circle cx="0" cy="30" r="1.5" fill="#d4af37" opacity="0.5" />
+        </g>
 
-      {/* Top center ornament */}
-      <g transform="translate(230, 10)">
-        <path d="M -20 0 L 0 -15 L 20 0" fill="none" stroke="#d4af37" strokeWidth="1.5" />
-        <circle cx="0" cy="-8" r="3" fill="#d4af37" />
-      </g>
+        {/* Top center ornament */}
+        <g transform="translate(210, 8)">
+          <path d="M -15 0 L 0 -10 L 15 0" fill="none" stroke="#d4af37" strokeWidth="1" />
+          <circle cx="0" cy="-5" r="2" fill="#d4af37" />
+        </g>
 
-      {/* Bottom center ornament */}
-      <g transform="translate(230, 510)">
-        <path d="M -20 0 L 0 15 L 20 0" fill="none" stroke="#d4af37" strokeWidth="1.5" />
-        <circle cx="0" cy="8" r="3" fill="#d4af37" />
-      </g>
+        {/* Bottom center ornament */}
+        <g transform="translate(210, 472)">
+          <path d="M -15 0 L 0 10 L 15 0" fill="none" stroke="#d4af37" strokeWidth="1" />
+          <circle cx="0" cy="5" r="2" fill="#d4af37" />
+        </g>
 
-      {/* Gradient definitions */}
-      <defs>
-        <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#d4af37" />
-          <stop offset="50%" stopColor="#f0c674" />
-          <stop offset="100%" stopColor="#d4af37" />
-        </linearGradient>
-      </defs>
-    </svg>
+        {/* Gradient definitions */}
+        <defs>
+          <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#d4af37" />
+            <stop offset="50%" stopColor="#f0c674" />
+            <stop offset="100%" stopColor="#d4af37" />
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
   );
 }
 
 // BaGua decoration ring
 function BaGuaRing() {
-  const radius = 200;
+  // Scale down to fit 420x480 card (card padding is 32 on each side, so inner area is ~356x416)
+  const scale = 0.85;
+  const radius = 200 * scale;
   const centerX = 210;
   const centerY = 240;
 
   return (
     <svg
-      width="460"
-      height="520"
-      viewBox="0 0 460 520"
+      width="420"
+      height="480"
+      viewBox="0 0 420 480"
       style={{
         position: 'absolute',
         top: 0,
@@ -260,9 +269,9 @@ function BaGuaRing() {
       <circle
         cx={centerX}
         cy={centerY}
-        r={radius + 30}
+        r={radius + 25}
         fill="none"
-        stroke="rgba(212, 175, 55, 0.15)"
+        stroke="rgba(212, 175, 55, 0.12)"
         strokeWidth="1"
         strokeDasharray="2 4"
       />
@@ -270,8 +279,8 @@ function BaGuaRing() {
       {/* BaGua symbols positioned around the circle */}
       {BAGUA_SYMBOLS.map((symbol, i) => {
         const angle = (i * 45 - 90) * (Math.PI / 180);
-        const x = centerX + (radius + 45) * Math.cos(angle);
-        const y = centerY + (radius + 45) * Math.sin(angle);
+        const x = centerX + (radius + 38) * Math.cos(angle);
+        const y = centerY + (radius + 38) * Math.sin(angle);
         return (
           <text
             key={i}
@@ -279,10 +288,10 @@ function BaGuaRing() {
             y={y}
             textAnchor="middle"
             dominantBaseline="middle"
-            fill="rgba(212, 175, 55, 0.4)"
-            fontSize="14"
+            fill="rgba(212, 175, 55, 0.35)"
+            fontSize="12"
             fontFamily="serif"
-            style={{ filter: 'drop-shadow(0 0 4px rgba(212, 175, 55, 0.3))' }}
+            style={{ filter: 'drop-shadow(0 0 3px rgba(212, 175, 55, 0.25))' }}
           >
             {symbol}
           </text>
@@ -292,8 +301,8 @@ function BaGuaRing() {
       {/* Inner ring with zodiac animals */}
       {ZODIAC_ANIMALS.map((animal, i) => {
         const angle = (i * 30 - 90) * (Math.PI / 180);
-        const x = centerX + (radius - 15) * Math.cos(angle);
-        const y = centerY + (radius - 15) * Math.sin(angle);
+        const x = centerX + (radius - 12) * Math.cos(angle);
+        const y = centerY + (radius - 12) * Math.sin(angle);
         return (
           <text
             key={i}
@@ -301,8 +310,8 @@ function BaGuaRing() {
             y={y}
             textAnchor="middle"
             dominantBaseline="middle"
-            fill="rgba(212, 175, 55, 0.25)"
-            fontSize="9"
+            fill="rgba(212, 175, 55, 0.2)"
+            fontSize="8"
           >
             {animal}
           </text>
@@ -324,7 +333,6 @@ export default function StarfieldTemplate({ data }: StarfieldTemplateProps) {
       className="starfield-card"
       style={{
         width: 420,
-        minHeight: 480,
         padding: 32,
         background: 'linear-gradient(135deg, #1a1525 0%, #2d1f3d 50%, #1a1525 100%)',
         fontFamily: 'system-ui, -apple-system, sans-serif',
@@ -332,7 +340,7 @@ export default function StarfieldTemplate({ data }: StarfieldTemplateProps) {
         boxSizing: 'border-box',
         display: 'inline-block',
         position: 'relative',
-        overflow: 'hidden',
+        overflow: 'visible',
       }}
     >
       {/* Animated gradient overlay */}
