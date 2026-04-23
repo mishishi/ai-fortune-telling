@@ -40,7 +40,7 @@ export default function MiniRadar({ scores, size = 80 }: MiniRadarProps) {
   // Single Radar reading "value" - shows one pentagon with correct shape
   // Multiple colored Radars would overlap identically; use one unified radar instead
   return (
-    <div style={{ width: size, height: size, minWidth: 0, minHeight: 0 }}>
+    <div className="mx-auto" style={{ width: size, height: size, minWidth: 0, minHeight: 0 }}>
       <RadarChart
         width={size}
         height={size}

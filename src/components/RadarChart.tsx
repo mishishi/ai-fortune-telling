@@ -53,7 +53,7 @@ export default function RadarChartComponent({
   const ariaLabel = `命盘分析雷达图：事业${scores.career}分、感情${scores.love}分、财运${scores.wealth}分、健康${scores.health}分、贵人${scores.mentor}分`;
 
   return (
-    <div className="relative" role="img" aria-label={ariaLabel} style={{ width: 300, height: 300 }}>
+    <div className="relative mx-auto" role="img" aria-label={ariaLabel} style={{ width: 300, height: 300 }}>
       <RadarChart
         width={300}
         height={300}
