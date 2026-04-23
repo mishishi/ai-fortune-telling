@@ -287,17 +287,6 @@ export default function HomePage() {
                 </button>
               )}
 
-              {/* History Link */}
-              <Link
-                href="/history"
-                className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-gray-300 hover:bg-white/10 hover:text-white transition-all"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <span>历史报告</span>
-              </Link>
-
               {/* User Status */}
               {user ? (
                 <Link
