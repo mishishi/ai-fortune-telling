@@ -1,6 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 
+// Dimension weights for calculating overall score
+const DIMENSION_WEIGHTS = { career: 0.3, love: 0.25, wealth: 0.25, health: 0.2 };
+
+// Score bounds
+const SCORE_MIN = 60;
+const SCORE_MAX = 100;
+
+// Lucky hour bounds
+const LUCKY_HOUR_MIN = 7;
+const LUCKY_HOUR_MAX = 11;
+
+// Moderate and low bounds for score labels
+const MODERATE_BOUND = 20;
+const LOW_BOUND = 50;
+
 export interface DailyFortuneResponse {
   hasReport: boolean;
   date: string;
@@ -61,7 +76,7 @@ function calculateDimensions(
   // Add daily variation (+/- 5 points) based on day of year
   const variation = (idx: number) => {
     const val = (dayOfYear * (idx + 1) * 7) % 11 - 5;
-    return Math.max(60, Math.min(100, (radarScores as any)[idx === 0 ? 'career' : idx === 1 ? 'love' : idx === 2 ? 'wealth' : 'health'] + val));
+    return Math.max(SCORE_MIN, Math.min(SCORE_MAX, (radarScores as any)[idx === 0 ? 'career' : idx === 1 ? 'love' : idx === 2 ? 'wealth' : 'health'] + val));
   };
 
   return {
@@ -196,6 +211,7 @@ export async function GET(request: NextRequest) {
     try {
       radarScores = JSON.parse(report.radarScores || '{"career":75,"love":75,"wealth":75,"health":75,"mentor":75}');
     } catch (e) {
+      console.error('Failed to parse radar scores:', e);
       // Use default scores
     }
 
@@ -204,10 +220,10 @@ export async function GET(request: NextRequest) {
 
     // Calculate overall score (weighted average)
     const overallScore = Math.round(
-      dimensions.career * 0.3 +
-      dimensions.love * 0.25 +
-      dimensions.wealth * 0.25 +
-      dimensions.health * 0.2
+      dimensions.career * DIMENSION_WEIGHTS.career +
+      dimensions.love * DIMENSION_WEIGHTS.love +
+      dimensions.wealth * DIMENSION_WEIGHTS.wealth +
+      dimensions.health * DIMENSION_WEIGHTS.health
     );
 
     // Determine overall label based on score

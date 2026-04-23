@@ -3,10 +3,6 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
-interface Report {
-  id: string;
-}
-
 interface DailyFortuneData {
   hasReport: boolean;
   date: string;
@@ -28,10 +24,9 @@ interface DailyFortuneData {
 
 interface DailyFortuneCardProps {
   userId?: string;
-  report?: Report;
 }
 
-export default function DailyFortuneCard({ userId, report }: DailyFortuneCardProps) {
+export default function DailyFortuneCard({ userId }: DailyFortuneCardProps) {
   const [data, setData] = useState<DailyFortuneData | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -140,8 +135,6 @@ export default function DailyFortuneCard({ userId, report }: DailyFortuneCardPro
     return 'var(--color-error)';
   };
 
-  const scoreLabel = data.overallScore >= 85 ? '极佳' : data.overallScore >= 75 ? '优秀' : data.overallScore >= 65 ? '良好' : data.overallScore >= 55 ? '平稳' : '欠佳';
-
   return (
     <div
       className="w-full max-w-md mx-auto rounded-2xl overflow-hidden"
@@ -196,7 +189,7 @@ export default function DailyFortuneCard({ userId, report }: DailyFortuneCardPro
           {/* Score Label */}
           <div>
             <div className="text-lg font-serif text-white">
-              综合运势{scoreLabel}
+              综合运势{data.overallLabel}
             </div>
             <div className="text-sm mt-1" style={{ color: 'var(--color-text-secondary)' }}>
               ☀️ 今日运势表现优异
