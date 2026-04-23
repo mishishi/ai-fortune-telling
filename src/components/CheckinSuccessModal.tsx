@@ -11,6 +11,8 @@ interface CheckinSuccessModalProps {
   totalPoints: number;
   currentStreak: number;
   unlockedFeature?: string | null;
+  newRewards?: { type: string; amount: number; milestoneName: string }[];
+  streakRepairCards?: number;
 }
 
 export default function CheckinSuccessModal({
@@ -21,6 +23,8 @@ export default function CheckinSuccessModal({
   totalPoints,
   currentStreak,
   unlockedFeature,
+  newRewards = [],
+  streakRepairCards = 0,
 }: CheckinSuccessModalProps) {
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -117,6 +121,32 @@ export default function CheckinSuccessModal({
             <div className="text-sm font-medium" style={{ color: '#2ecc71' }}>
               {unlockedFeature}
             </div>
+          </div>
+        )}
+
+        {/* New Milestone Rewards */}
+        {newRewards.length > 0 && (
+          <div
+            className="mb-6 p-4 rounded-xl"
+            style={{
+              background: 'rgba(212, 175, 55, 0.1)',
+              border: '1px solid rgba(212, 175, 55, 0.3)',
+            }}
+          >
+            <div className="text-xs mb-2" style={{ color: 'var(--color-accent)' }}>
+              里程碑奖励
+            </div>
+            {newRewards.map((reward, index) => (
+              <div key={index} className="text-sm font-medium" style={{ color: 'var(--color-accent)' }}>
+                {reward.type === 'repairCard' && `🎫 补签卡 x${reward.amount}`}
+                {reward.type === 'premiumCoupon' && `📜 高级报告解锁券 x${reward.amount}`}
+              </div>
+            ))}
+            {streakRepairCards > 0 && (
+              <div className="text-xs mt-2" style={{ color: 'var(--color-text-muted)' }}>
+                当前拥有 {streakRepairCards} 张补签卡
+              </div>
+            )}
           </div>
         )}
 

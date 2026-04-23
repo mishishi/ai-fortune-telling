@@ -32,7 +32,9 @@ export async function GET(request: NextRequest) {
   // Build milestone status
   const milestones = MILESTONES.map(milestone => {
     const isCompleted = currentStreak >= milestone.days;
-    const isNewlyCompleted = userBadges.includes(milestone.id);
+    // Note: isNewlyCompleted is set to false since we don't track session-based milestone completion
+    // The CheckinSuccessModal already celebrates newly earned rewards when they happen
+    const isNewlyCompleted = false;
     const daysRemaining = isCompleted ? 0 : milestone.days - currentStreak;
 
     return {

@@ -70,12 +70,14 @@ export async function POST(request: NextRequest) {
 
   // Check for milestone rewards
   const newRewards: { type: string; amount: number; milestoneName: string }[] = [];
+  const newlyCompletedMilestones: string[] = [];
   let streakRepairCards = user.streakRepairCards || 0;
 
   for (const milestone of MILESTONES) {
     const milestoneKey = milestone.id;
     if (currentStreak >= milestone.days && !userBadges.includes(milestoneKey)) {
       userBadges.push(milestoneKey);
+      newlyCompletedMilestones.push(milestoneKey);
       if (milestone.rewardType === 'repairCard') {
         streakRepairCards += milestone.rewardAmount;
         newRewards.push({
@@ -143,6 +145,7 @@ export async function POST(request: NextRequest) {
     currentStreak,
     newBadges: newBadges.map(b => b.name),
     newRewards,
+    newlyCompletedMilestones,
     streakRepairCards,
     unlockedFeature,
   });

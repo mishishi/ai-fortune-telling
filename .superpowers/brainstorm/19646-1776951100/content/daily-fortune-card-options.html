@@ -1,0 +1,93 @@
+<h2>首页每日运势卡片 - 方案选择</h2>
+<p class="subtitle">两种设计风格，请点击选择</p>
+
+<div class="options">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>简洁版</h3>
+      <p>综合运势分 + 今日宜/忌 + 吉时吉方</p>
+    </div>
+  </div>
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>丰富版</h3>
+      <p>增加详细维度评分 + 命主提示语</p>
+    </div>
+  </div>
+</div>
+
+<div class="mockup" style="margin-top: 32px">
+  <div class="mockup-header">A 简洁版 预览</div>
+  <div class="mockup-body">
+    <div style="background: linear-gradient(135deg, #1a1a3e 0%, #0a0e27 100%); border-radius: 16px; padding: 20px; color: #fff; font-family: system-ui;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <span style="color: #f0c674; font-size: 14px;">📅 今日运势</span>
+        <span style="color: #888; font-size: 12px;">甲辰年 三月初三</span>
+      </div>
+      <div style="background: rgba(255,255,255,0.05); border-radius: 12px; padding: 16px; margin-bottom: 12px;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <span style="font-size: 32px;">☀️</span>
+          <div>
+            <div style="color: #f0c674; font-size: 24px; font-weight: bold;">82分</div>
+            <div style="color: #888; font-size: 12px;">综合运势优秀</div>
+          </div>
+        </div>
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+        <div style="background: rgba(76,175,80,0.2); border-radius: 8px; padding: 12px;">
+          <div style="color: #81c784; font-size: 12px;">宜</div>
+          <div style="color: #fff; font-size: 13px;">求职、表白、洽谈</div>
+        </div>
+        <div style="background: rgba(244,67,54,0.2); border-radius: 8px; padding: 12px;">
+          <div style="color: #e57373; font-size: 12px;">忌</div>
+          <div style="color: #fff; font-size: 13px;">投资、签约</div>
+        </div>
+      </div>
+      <div style="margin-top: 12px; color: #aaa; font-size: 12px;">🕐 最佳时段：上午9-11点</div>
+    </div>
+  </div>
+</div>
+
+<div class="mockup" style="margin-top: 24px">
+  <div class="mockup-header">B 丰富版 预览</div>
+  <div class="mockup-body">
+    <div style="background: linear-gradient(135deg, #1a1a3e 0%, #0a0e27 100%); border-radius: 16px; padding: 20px; color: #fff; font-family: system-ui;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <span style="color: #f0c674; font-size: 14px;">📅 今日运势</span>
+        <span style="color: #888; font-size: 12px;">甲辰年 三月初三</span>
+      </div>
+      <div style="background: rgba(255,255,255,0.05); border-radius: 12px; padding: 16px; margin-bottom: 12px;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <span style="font-size: 32px;">☀️</span>
+          <div>
+            <div style="color: #f0c674; font-size: 24px; font-weight: bold;">82分</div>
+            <div style="color: #888; font-size: 12px;">综合运势优秀</div>
+          </div>
+        </div>
+      </div>
+      <div style="display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap;">
+        <span style="background: rgba(123,104,238,0.3); color: #b19cd9; padding: 4px 10px; border-radius: 20px; font-size: 11px;">💼 事业 85</span>
+        <span style="background: rgba(255,182,193,0.3); color: #ffb6c1; padding: 4px 10px; border-radius: 20px; font-size: 11px;">💕 感情 78</span>
+        <span style="background: rgba(255,215,0,0.3); color: #ffd700; padding: 4px 10px; border-radius: 20px; font-size: 11px;">💰 财富 72</span>
+        <span style="background: rgba(144,238,144,0.3); color: #90ee90; padding: 4px 10px; border-radius: 20px; font-size: 11px;">🏥 健康 88</span>
+      </div>
+      <div style="background: rgba(240,198,116,0.1); border-left: 3px solid #f0c674; padding: 10px 12px; margin-bottom: 12px;">
+        <div style="color: #f0c674; font-size: 11px;">💡 命主提示</div>
+        <div style="color: #ccc; font-size: 12px; margin-top: 4px;">今日贵人运旺盛，宜主动出击把握机遇</div>
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+        <div style="background: rgba(76,175,80,0.2); border-radius: 8px; padding: 12px;">
+          <div style="color: #81c784; font-size: 12px;">宜</div>
+          <div style="color: #fff; font-size: 13px;">求职、表白、洽谈</div>
+        </div>
+        <div style="background: rgba(244,67,54,0.2); border-radius: 8px; padding: 12px;">
+          <div style="color: #e57373; font-size: 12px;">忌</div>
+          <div style="color: #fff; font-size: 13px;">投资、签约</div>
+        </div>
+      </div>
+      <div style="margin-top: 12px; color: #aaa; font-size: 12px;">🕐 最佳时段：上午9-11点</div>
+    </div>
+  </div>
+</div>
