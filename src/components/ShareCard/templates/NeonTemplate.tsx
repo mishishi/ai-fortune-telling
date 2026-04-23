@@ -150,88 +150,88 @@ function OrnateBorder() {
       >
       {/* Outer golden border with neon glow */}
       <rect
-        x="10"
-        y="10"
-        width="440"
-        height="500"
+        x="8"
+        y="8"
+        width="404"
+        height="464"
         fill="none"
         stroke="url(#neonGoldGradient)"
-        strokeWidth="3"
-        rx="8"
+        strokeWidth="2"
+        rx="6"
         style={{ filter: 'drop-shadow(0 0 8px rgba(0,255,255,0.4)) drop-shadow(0 0 16px rgba(255,0,255,0.3)' }}
       />
 
       {/* Inner decorative border */}
       <rect
-        x="18"
-        y="18"
-        width="424"
-        height="484"
+        x="14"
+        y="14"
+        width="392"
+        height="452"
         fill="none"
         stroke="rgba(0,255,255,0.25)"
         strokeWidth="1"
         strokeDasharray="4 2"
-        rx="6"
+        rx="4"
       />
 
       {/* Corner ornaments - top left */}
-      <g transform="translate(10, 10)">
-        <path d="M 0 40 Q 0 0 40 0" fill="none" stroke="#00ffff" strokeWidth="2" style={{ filter: 'drop-shadow(0 0 4px rgba(0,255,255,0.8))' }} />
-        <circle cx="8" cy="8" r="3" fill="#ff00ff" style={{ filter: 'drop-shadow(0 0 6px rgba(255,0,255,0.8))' }} />
-        <circle cx="20" cy="5" r="2" fill="#00ffff" opacity="0.6" style={{ filter: 'drop-shadow(0 0 3px rgba(0,255,255,0.6))' }} />
-        <circle cx="5" cy="20" r="2" fill="#ff00ff" opacity="0.6" style={{ filter: 'drop-shadow(0 0 3px rgba(255,0,255,0.6))' }} />
+      <g transform="translate(8, 8)">
+        <path d="M 0 30 Q 0 0 30 0" fill="none" stroke="#00ffff" strokeWidth="1.5" style={{ filter: 'drop-shadow(0 0 4px rgba(0,255,255,0.8))' }} />
+        <circle cx="6" cy="6" r="2.5" fill="#ff00ff" style={{ filter: 'drop-shadow(0 0 6px rgba(255,0,255,0.8))' }} />
+        <circle cx="15" cy="4" r="1.5" fill="#00ffff" opacity="0.6" style={{ filter: 'drop-shadow(0 0 3px rgba(0,255,255,0.6))' }} />
+        <circle cx="4" cy="15" r="1.5" fill="#ff00ff" opacity="0.6" style={{ filter: 'drop-shadow(0 0 3px rgba(255,0,255,0.6))' }} />
       </g>
 
       {/* Corner ornaments - top right */}
-      <g transform="translate(450, 10) scale(-1, 1)">
-        <path d="M 0 40 Q 0 0 40 0" fill="none" stroke="#00ffff" strokeWidth="2" style={{ filter: 'drop-shadow(0 0 4px rgba(0,255,255,0.8))' }} />
-        <circle cx="8" cy="8" r="3" fill="#ff00ff" style={{ filter: 'drop-shadow(0 0 6px rgba(255,0,255,0.8))' }} />
-        <circle cx="20" cy="5" r="2" fill="#00ffff" opacity="0.6" style={{ filter: 'drop-shadow(0 0 3px rgba(0,255,255,0.6))' }} />
-        <circle cx="5" cy="20" r="2" fill="#ff00ff" opacity="0.6" style={{ filter: 'drop-shadow(0 0 3px rgba(255,0,255,0.6))' }} />
+      <g transform="translate(412, 8) scale(-1, 1)">
+        <path d="M 0 30 Q 0 0 30 0" fill="none" stroke="#00ffff" strokeWidth="1.5" style={{ filter: 'drop-shadow(0 0 4px rgba(0,255,255,0.8))' }} />
+        <circle cx="6" cy="6" r="2.5" fill="#ff00ff" style={{ filter: 'drop-shadow(0 0 6px rgba(255,0,255,0.8))' }} />
+        <circle cx="15" cy="4" r="1.5" fill="#00ffff" opacity="0.6" style={{ filter: 'drop-shadow(0 0 3px rgba(0,255,255,0.6))' }} />
+        <circle cx="4" cy="15" r="1.5" fill="#ff00ff" opacity="0.6" style={{ filter: 'drop-shadow(0 0 3px rgba(255,0,255,0.6))' }} />
       </g>
 
       {/* Corner ornaments - bottom left */}
-      <g transform="translate(10, 510) scale(1, -1)">
-        <path d="M 0 40 Q 0 0 40 0" fill="none" stroke="#00ffff" strokeWidth="2" style={{ filter: 'drop-shadow(0 0 4px rgba(0,255,255,0.8))' }} />
-        <circle cx="8" cy="8" r="3" fill="#ff00ff" style={{ filter: 'drop-shadow(0 0 6px rgba(255,0,255,0.8))' }} />
-        <circle cx="20" cy="5" r="2" fill="#00ffff" opacity="0.6" style={{ filter: 'drop-shadow(0 0 3px rgba(0,255,255,0.6))' }} />
-        <circle cx="5" cy="20" r="2" fill="#ff00ff" opacity="0.6" style={{ filter: 'drop-shadow(0 0 3px rgba(255,0,255,0.6))' }} />
+      <g transform="translate(8, 472) scale(1, -1)">
+        <path d="M 0 30 Q 0 0 30 0" fill="none" stroke="#00ffff" strokeWidth="1.5" style={{ filter: 'drop-shadow(0 0 4px rgba(0,255,255,0.8))' }} />
+        <circle cx="6" cy="6" r="2.5" fill="#ff00ff" style={{ filter: 'drop-shadow(0 0 6px rgba(255,0,255,0.8))' }} />
+        <circle cx="15" cy="4" r="1.5" fill="#00ffff" opacity="0.6" style={{ filter: 'drop-shadow(0 0 3px rgba(0,255,255,0.6))' }} />
+        <circle cx="4" cy="15" r="1.5" fill="#ff00ff" opacity="0.6" style={{ filter: 'drop-shadow(0 0 3px rgba(255,0,255,0.6))' }} />
       </g>
 
       {/* Corner ornaments - bottom right */}
-      <g transform="translate(450, 510) scale(-1, -1)">
-        <path d="M 0 40 Q 0 0 40 0" fill="none" stroke="#00ffff" strokeWidth="2" style={{ filter: 'drop-shadow(0 0 4px rgba(0,255,255,0.8))' }} />
-        <circle cx="8" cy="8" r="3" fill="#ff00ff" style={{ filter: 'drop-shadow(0 0 6px rgba(255,0,255,0.8))' }} />
-        <circle cx="20" cy="5" r="2" fill="#00ffff" opacity="0.6" style={{ filter: 'drop-shadow(0 0 3px rgba(0,255,255,0.6))' }} />
-        <circle cx="5" cy="20" r="2" fill="#ff00ff" opacity="0.6" style={{ filter: 'drop-shadow(0 0 3px rgba(255,0,255,0.6))' }} />
+      <g transform="translate(412, 472) scale(-1, -1)">
+        <path d="M 0 30 Q 0 0 30 0" fill="none" stroke="#00ffff" strokeWidth="1.5" style={{ filter: 'drop-shadow(0 0 4px rgba(0,255,255,0.8))' }} />
+        <circle cx="6" cy="6" r="2.5" fill="#ff00ff" style={{ filter: 'drop-shadow(0 0 6px rgba(255,0,255,0.8))' }} />
+        <circle cx="15" cy="4" r="1.5" fill="#00ffff" opacity="0.6" style={{ filter: 'drop-shadow(0 0 3px rgba(0,255,255,0.6))' }} />
+        <circle cx="4" cy="15" r="1.5" fill="#ff00ff" opacity="0.6" style={{ filter: 'drop-shadow(0 0 3px rgba(255,0,255,0.6))' }} />
       </g>
 
       {/* Side decorative elements - left */}
-      <g transform="translate(10, 260)">
-        <line x1="0" y1="-60" x2="0" y2="60" stroke="rgba(0,255,255,0.5)" strokeWidth="1" style={{ filter: 'drop-shadow(0 0 3px rgba(0,255,255,0.6))' }} />
-        <circle cx="0" cy="-40" r="2" fill="#00ffff" opacity="0.5" style={{ filter: 'drop-shadow(0 0 3px rgba(0,255,255,0.6))' }} />
-        <circle cx="0" cy="0" r="3" fill="#ff00ff" style={{ filter: 'drop-shadow(0 0 6px rgba(255,0,255,0.8))' }} />
-        <circle cx="0" cy="40" r="2" fill="#00ffff" opacity="0.5" style={{ filter: 'drop-shadow(0 0 3px rgba(0,255,255,0.6))' }} />
+      <g transform="translate(8, 240)">
+        <line x1="0" y1="-40" x2="0" y2="40" stroke="rgba(0,255,255,0.5)" strokeWidth="1" style={{ filter: 'drop-shadow(0 0 3px rgba(0,255,255,0.6))' }} />
+        <circle cx="0" cy="-30" r="2" fill="#00ffff" opacity="0.5" style={{ filter: 'drop-shadow(0 0 3px rgba(0,255,255,0.6))' }} />
+        <circle cx="0" cy="0" r="2.5" fill="#ff00ff" style={{ filter: 'drop-shadow(0 0 6px rgba(255,0,255,0.8))' }} />
+        <circle cx="0" cy="30" r="2" fill="#00ffff" opacity="0.5" style={{ filter: 'drop-shadow(0 0 3px rgba(0,255,255,0.6))' }} />
       </g>
 
       {/* Side decorative elements - right */}
-      <g transform="translate(450, 260)">
-        <line x1="0" y1="-60" x2="0" y2="60" stroke="rgba(0,255,255,0.5)" strokeWidth="1" style={{ filter: 'drop-shadow(0 0 3px rgba(0,255,255,0.6))' }} />
-        <circle cx="0" cy="-40" r="2" fill="#00ffff" opacity="0.5" style={{ filter: 'drop-shadow(0 0 3px rgba(0,255,255,0.6))' }} />
-        <circle cx="0" cy="0" r="3" fill="#ff00ff" style={{ filter: 'drop-shadow(0 0 6px rgba(255,0,255,0.8))' }} />
-        <circle cx="0" cy="40" r="2" fill="#00ffff" opacity="0.5" style={{ filter: 'drop-shadow(0 0 3px rgba(0,255,255,0.6))' }} />
+      <g transform="translate(412, 240)">
+        <line x1="0" y1="-40" x2="0" y2="40" stroke="rgba(0,255,255,0.5)" strokeWidth="1" style={{ filter: 'drop-shadow(0 0 3px rgba(0,255,255,0.6))' }} />
+        <circle cx="0" cy="-30" r="2" fill="#00ffff" opacity="0.5" style={{ filter: 'drop-shadow(0 0 3px rgba(0,255,255,0.6))' }} />
+        <circle cx="0" cy="0" r="2.5" fill="#ff00ff" style={{ filter: 'drop-shadow(0 0 6px rgba(255,0,255,0.8))' }} />
+        <circle cx="0" cy="30" r="2" fill="#00ffff" opacity="0.5" style={{ filter: 'drop-shadow(0 0 3px rgba(0,255,255,0.6))' }} />
       </g>
 
       {/* Top center ornament */}
-      <g transform="translate(230, 10)">
-        <path d="M -20 0 L 0 -15 L 20 0" fill="none" stroke="#00ffff" strokeWidth="1.5" style={{ filter: 'drop-shadow(0 0 4px rgba(0,255,255,0.8))' }} />
-        <circle cx="0" cy="-8" r="3" fill="#ff00ff" style={{ filter: 'drop-shadow(0 0 6px rgba(255,0,255,0.8))' }} />
+      <g transform="translate(210, 8)">
+        <path d="M -15 0 L 0 -10 L 15 0" fill="none" stroke="#00ffff" strokeWidth="1" style={{ filter: 'drop-shadow(0 0 4px rgba(0,255,255,0.8))' }} />
+        <circle cx="0" cy="-5" r="2" fill="#ff00ff" style={{ filter: 'drop-shadow(0 0 6px rgba(255,0,255,0.8))' }} />
       </g>
 
       {/* Bottom center ornament */}
-      <g transform="translate(230, 510)">
-        <path d="M -20 0 L 0 15 L 20 0" fill="none" stroke="#00ffff" strokeWidth="1.5" style={{ filter: 'drop-shadow(0 0 4px rgba(0,255,255,0.8))' }} />
-        <circle cx="0" cy="8" r="3" fill="#ff00ff" style={{ filter: 'drop-shadow(0 0 6px rgba(255,0,255,0.8))' }} />
+      <g transform="translate(210, 472)">
+        <path d="M -15 0 L 0 10 L 15 0" fill="none" stroke="#00ffff" strokeWidth="1" style={{ filter: 'drop-shadow(0 0 4px rgba(0,255,255,0.8))' }} />
+        <circle cx="0" cy="5" r="2" fill="#ff00ff" style={{ filter: 'drop-shadow(0 0 6px rgba(255,0,255,0.8))' }} />
       </g>
 
       {/* Gradient definitions */}
@@ -253,7 +253,9 @@ interface NeonTemplateProps {
 
 // BaGua decoration ring for NeonTemplate
 function NeonBaGuaRing() {
-  const radius = 200;
+  // Scale down to fit within 420x480 viewBox
+  const scale = 0.85;
+  const radius = 200 * scale;
   const centerX = 210;
   const centerY = 240;
 
@@ -280,7 +282,7 @@ function NeonBaGuaRing() {
       <circle
         cx={centerX}
         cy={centerY}
-        r={radius + 30}
+        r={radius + 25}
         fill="none"
         stroke="rgba(0,255,255,0.12)"
         strokeWidth="1"
@@ -291,8 +293,8 @@ function NeonBaGuaRing() {
       {/* BaGua symbols positioned around the circle */}
       {BAGUA_SYMBOLS.map((symbol, i) => {
         const angle = (i * 45 - 90) * (Math.PI / 180);
-        const x = centerX + (radius + 45) * Math.cos(angle);
-        const y = centerY + (radius + 45) * Math.sin(angle);
+        const x = centerX + (radius + 38) * Math.cos(angle);
+        const y = centerY + (radius + 38) * Math.sin(angle);
         return (
           <text
             key={i}
@@ -313,8 +315,8 @@ function NeonBaGuaRing() {
       {/* Inner ring with zodiac animals */}
       {ZODIAC_ANIMALS.map((animal, i) => {
         const angle = (i * 30 - 90) * (Math.PI / 180);
-        const x = centerX + (radius - 15) * Math.cos(angle);
-        const y = centerY + (radius - 15) * Math.sin(angle);
+        const x = centerX + (radius - 12) * Math.cos(angle);
+        const y = centerY + (radius - 12) * Math.sin(angle);
         return (
           <text
             key={i}
