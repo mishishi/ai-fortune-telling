@@ -153,22 +153,6 @@ export default function DailyFortuneCard({ userId }: DailyFortuneCardProps) {
               </div>
             </div>
 
-          {/* Header */}
-          <div
-            className="px-5 py-3 flex items-center justify-between"
-            style={{ background: 'rgba(212, 175, 55, 0.08)' }}
-          >
-            <div className="flex items-center gap-2">
-              <span className="text-lg">📅</span>
-              <span className="text-sm" style={{ color: 'var(--color-accent)' }}>
-                今日运势
-              </span>
-            </div>
-            <span className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
-              {data.lunarDate}
-            </span>
-          </div>
-
           {/* Main Score Section */}
           <div className="px-5 py-4">
             <div className="flex items-center gap-4">
