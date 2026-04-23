@@ -5,10 +5,10 @@ const CHECKIN_POINTS = 5;
 
 // Badge definitions
 const BADGE_DEFINITIONS = {
-  first_checkin: { id: 'first_checkin', name: '初来乍到', emoji: '🌱' },
-  streak_7: { id: 'streak_7', name: '坚持', emoji: '🔥' },
-  streak_30: { id: 'streak_30', name: '高级报告功能', emoji: '💎' },
-  points_100: { id: 'points_100', name: '资深命理师', emoji: '⭐' },
+  first_checkin: { id: 'first_checkin', name: '初来乍到', icon: '🌱' },
+  streak_7: { id: 'streak_7', name: '坚持7天', icon: '🔥' },
+  streak_30: { id: 'streak_30', name: '高级报告功能', icon: '💎' },
+  points_100: { id: 'points_100', name: '资深命理师', icon: '⭐' },
 };
 
 function generateId(): string {
@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
   const checkinId = generateId();
   const now = new Date().toISOString();
 
-  const newBadges: { id: string; name: string; emoji: string }[] = db.transaction(() => {
+  const newBadges: { id: string; name: string; icon: string }[] = db.transaction(() => {
     // Insert checkin record
     db.prepare(
       'INSERT INTO checkins (id, userId, checkinDate, points, createdAt) VALUES (?, ?, ?, ?, ?)'
@@ -86,7 +86,7 @@ export async function POST(request: NextRequest) {
     ).run(totalPoints, currentStreak, longestStreak, userId);
 
     // Check for new badges
-    const earnedBadges: { id: string; name: string; emoji: string }[] = [];
+    const earnedBadges: { id: string; name: string; icon: string }[] = [];
 
     // first_checkin: any checkin
     if (!userBadges.includes('first_checkin')) {
