@@ -355,12 +355,9 @@ export default function HomePage() {
           </p>
         </div>
 
-        {/* Daily Fortune Card - only show when user is logged in */}
-        {user && (
-          <div className="w-full max-w-md mx-auto mb-6">
-            <DailyFortuneCard userId={user.userId} />
-          </div>
-        )}
+        <div className="w-full max-w-md mx-auto mb-6">
+          <DailyFortuneCard userId={user?.userId} />
+        </div>
 
         {/* Form / Loading */}
         <div
