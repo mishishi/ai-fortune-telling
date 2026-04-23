@@ -54,6 +54,32 @@ export function getDb() {
     if (!hasColumn('pushSubscription')) {
       try { db.exec("ALTER TABLE users ADD COLUMN pushSubscription TEXT"); } catch { /* ignore */ }
     }
+
+    // Migration: add gamification columns if not exist
+    if (!hasColumn('points')) {
+      try { db.exec("ALTER TABLE users ADD COLUMN points INTEGER DEFAULT 0"); } catch { /* ignore */ }
+    }
+    if (!hasColumn('currentStreak')) {
+      try { db.exec("ALTER TABLE users ADD COLUMN currentStreak INTEGER DEFAULT 0"); } catch { /* ignore */ }
+    }
+    if (!hasColumn('longestStreak')) {
+      try { db.exec("ALTER TABLE users ADD COLUMN longestStreak INTEGER DEFAULT 0"); } catch { /* ignore */ }
+    }
+    if (!hasColumn('badges')) {
+      try { db.exec("ALTER TABLE users ADD COLUMN badges TEXT DEFAULT '[]'"); } catch { /* ignore */ }
+    }
+
+    // Migration: create checkins table if not exist
+    db.exec(`
+      CREATE TABLE IF NOT EXISTS checkins (
+        id TEXT PRIMARY KEY,
+        userId TEXT NOT NULL,
+        checkinDate TEXT NOT NULL,
+        points INTEGER DEFAULT 5,
+        createdAt TEXT NOT NULL,
+        UNIQUE(userId, checkinDate)
+      );
+    `);
   }
   return db;
 }
