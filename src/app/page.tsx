@@ -5,6 +5,7 @@ import AuroraEffect from '@/components/AuroraEffect';
 import BirthForm, { BirthFormData } from '@/components/BirthForm';
 import AIQuestionModal from '@/components/AIQuestionModal';
 import TodayFortuneModal from '@/components/TodayFortuneModal';
+import PushPermissionModal from '@/components/PushPermissionModal';
 import OnboardingTutorial from '@/components/OnboardingTutorial';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -40,6 +41,7 @@ export default function HomePage() {
   const [showDoneButton, setShowDoneButton] = useState(false);
   const [showTodayFortune, setShowTodayFortune] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [showPushModal, setShowPushModal] = useState(false);
   const roundCountRef = useRef(0);
 
   // Check localStorage on mount to show onboarding if not completed
@@ -254,6 +256,20 @@ export default function HomePage() {
       <TodayFortuneModal
         open={showTodayFortune}
         onClose={() => setShowTodayFortune(false)}
+      />
+
+      <PushPermissionModal
+        open={showPushModal}
+        onClose={() => setShowPushModal(false)}
+        onSubscribed={() => showToast('已开启每日推送提醒')}
+      />
+
+      {/* Hidden trigger for TodayFortuneModal push button */}
+      <button
+        id="push-modal-trigger"
+        className="hidden"
+        onClick={() => setShowPushModal(true)}
+        aria-hidden="true"
       />
 
       {/* Top Navigation Bar */}

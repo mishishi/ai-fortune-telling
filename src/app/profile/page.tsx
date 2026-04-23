@@ -6,6 +6,7 @@ import { useUser } from '@/contexts/UserContext';
 import { Button } from '@/components/ui/Button';
 import { Toggle } from '@/components/ui';
 import ConfirmModal from '@/components/ConfirmModal';
+import PushPermissionModal from '@/components/PushPermissionModal';
 import CustomDropdown from '@/components/ui/CustomDropdown';
 import BirthDatePicker from '@/components/BirthForm/BirthDatePicker';
 
@@ -168,6 +169,7 @@ export default function ProfilePage() {
   const [privacyMode, setPrivacyMode] = useState(false);
   const [pushEnabled, setPushEnabled] = useState(false);
   const [pushTime, setPushTime] = useState('08:00');
+  const [showPushModal, setShowPushModal] = useState(false);
 
   const handleLogout = () => {
     setUser(null);
@@ -456,8 +458,11 @@ export default function ProfilePage() {
               </div>
             </div>
             <Toggle checked={pushEnabled} onChange={(val) => {
-              setPushEnabled(val);
-              if (!val) {
+              if (val) {
+                // Show push permission modal to subscribe
+                setShowPushModal(true);
+              } else {
+                setPushEnabled(false);
                 fetch('/api/push/unsubscribe', { method: 'DELETE' })
                   .then(res => {
                     if (!res.ok) console.error('Failed to unsubscribe');
@@ -510,6 +515,16 @@ export default function ProfilePage() {
         onConfirm={handleDelete}
         onCancel={() => setDeleteTarget(null)}
         danger
+      />
+
+      {/* Push Permission Modal */}
+      <PushPermissionModal
+        open={showPushModal}
+        onClose={() => setShowPushModal(false)}
+        onSubscribed={() => {
+          setPushEnabled(true);
+          setShowPushModal(false);
+        }}
       />
     </main>
   );
