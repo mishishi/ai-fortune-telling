@@ -40,8 +40,8 @@ export default function ShareReportModal({ data, open, onClose, onGenerateImage,
     <div className="fixed inset-0 z-50 flex items-center justify-center" onClick={onClose}>
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
       <div
-        className="relative z-10 w-full max-w-lg p-6 rounded-2xl"
-        style={{ background: 'var(--color-surface)', border: '1px solid rgba(212,175,55,0.2)' }}
+        className="relative z-10 w-full max-w-lg p-6 rounded-2xl overflow-y-auto"
+        style={{ background: 'var(--color-surface)', border: '1px solid rgba(212,175,55,0.2)', maxHeight: '90vh' }}
         onClick={e => e.stopPropagation()}
       >
         <h3 className="text-lg font-bold mb-1 text-center" style={{ color: 'var(--color-accent)' }}>分享报告</h3>
