@@ -8,6 +8,9 @@ import TodayFortuneModal from '@/components/TodayFortuneModal';
 import PushPermissionModal from '@/components/PushPermissionModal';
 import OnboardingTutorial from '@/components/OnboardingTutorial';
 import DailyFortuneCard from '@/components/DailyFortuneCard';
+import DestinyRings from '@/components/DestinyRings';
+import LoadingProgress from '@/components/LoadingProgress';
+import { STAGE_COMPLETE_PROGRESS, type LoadingStage } from '@/types/loading';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/contexts/UserContext';
@@ -19,12 +22,6 @@ interface Message {
 }
 
 type LoadingStep = 'idle' | 'bazi' | 'ai' | 'report' | 'done';
-
-const LOADING_STEPS: { key: LoadingStep; label: string; icon: string }[] = [
-  { key: 'bazi', label: '八字排盘', icon: '☯' },
-  { key: 'ai', label: 'AI分析', icon: '🔮' },
-  { key: 'report', label: '生成报告', icon: '📜' },
-];
 
 export default function HomePage() {
   const router = useRouter();
@@ -227,16 +224,6 @@ export default function HomePage() {
     generateReport();
   };
 
-  const getStepStatus = (step: LoadingStep): 'completed' | 'active' | 'pending' => {
-    if (loadingStep === 'idle' || loadingStep === 'done') return 'pending';
-    const stepOrder: LoadingStep[] = ['bazi', 'ai', 'report', 'done'];
-    const currentIndex = stepOrder.indexOf(loadingStep);
-    const stepIndex = stepOrder.indexOf(step);
-    if (stepIndex < currentIndex) return 'completed';
-    if (stepIndex === currentIndex) return 'active';
-    return 'pending';
-  };
-
   return (
     <main className="min-h-screen relative overflow-hidden">
       {showOnboarding && <OnboardingTutorial onComplete={handleOnboardingComplete} />}
@@ -367,162 +354,35 @@ export default function HomePage() {
         >
           {loading ? (
             <div className="text-center" role="status" aria-live="polite" aria-label="加载状态">
-              {/* Destiny Ring Animation */}
-              <div className="relative w-40 h-40 mx-auto mb-10">
-                {/* Radial Glow behind ring */}
-                <div
-                  className="absolute inset-0 rounded-full"
-                  style={{
-                    animation: 'glow-pulse 2s ease-in-out infinite',
-                    background: loadingStep === 'bazi'
-                      ? 'radial-gradient(circle, rgba(74, 222, 128, 0.3) 0%, transparent 70%)'
-                      : loadingStep === 'ai'
-                      ? 'radial-gradient(circle, rgba(239, 68, 68, 0.3) 0%, transparent 70%)'
-                      : loadingStep === 'report'
-                      ? 'radial-gradient(circle, rgba(234, 179, 8, 0.3) 0%, transparent 70%)'
-                      : 'radial-gradient(circle, rgba(196, 30, 58, 0.3) 0%, transparent 70%)',
-                    boxShadow: loadingStep === 'bazi'
-                      ? '0 0 24px rgba(74, 222, 128, 0.3)'
-                      : loadingStep === 'ai'
-                      ? '0 0 24px rgba(239, 68, 68, 0.3)'
-                      : loadingStep === 'report'
-                      ? '0 0 24px rgba(234, 179, 8, 0.3)'
-                      : '0 0 24px rgba(196, 30, 58, 0.3)',
-                  }}
-                />
-                {/* Outer Ring - Clockwise 3s */}
-                <div
-                  className="absolute inset-0 rounded-full border-2 destiny-ring-outer"
-                  style={{
-                    animation: 'destiny-spin 3s linear infinite',
-                    borderColor: 'rgba(196, 30, 58, 0.4)',
-                  }}
-                />
-                {/* Middle Ring - Counter-clockwise 2s */}
-                <div
-                  className="absolute inset-3 rounded-full border-2 destiny-ring-middle"
-                  style={{
-                    animation: 'destiny-spin 2s linear infinite reverse',
-                    borderColor: 'rgba(212, 175, 55, 0.5)',
-                  }}
-                />
-                {/* Inner Ring - Pulse */}
-                <div
-                  className="absolute inset-6 rounded-full border destiny-ring-inner"
-                  style={{
-                    animation: 'destiny-pulse 1.5s ease-in-out infinite',
-                    borderColor: 'rgba(240, 198, 116, 0.4)',
-                    background: 'radial-gradient(circle, rgba(196, 30, 58, 0.1) 0%, transparent 70%)',
-                  }}
-                />
-                {/* Center ☯ Symbol */}
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span
-                    className="text-4xl"
-                    style={{
-                      animation: 'destiny-pulse 1.5s ease-in-out infinite',
-                      textShadow: '0 0 20px rgba(196, 30, 58, 0.8)',
-                    }}
-                  >
-                    ☯
-                  </span>
-                </div>
-              </div>
+              {/* Destiny Rings Animation */}
+              <DestinyRings stage={loadingStep === 'done' ? 'report' : loadingStep as 'bazi' | 'ai' | 'report'} size={160} />
 
               {/* Atmospheric Chinese Text */}
               {(loadingStep === 'bazi' || loadingStep === 'ai' || loadingStep === 'report') && (
-                <p className="text-lg mb-8 tracking-widest" style={{ color: 'var(--color-accent)' }}>
+                <p className="text-lg mb-6 tracking-widest" style={{ color: 'var(--color-accent)' }}>
                   {loadingStep === 'bazi' && '天干地支，五行流转'}
                   {loadingStep === 'ai' && '命盘已现，解读命运'}
                   {loadingStep === 'report' && '命数已定，报告将成'}
                 </p>
               )}
 
-              {/* Five Element Step Progress */}
-              <div className="mb-8">
-                <div className="flex items-center justify-center gap-2 mb-4">
-                  {LOADING_STEPS.map((step, index) => {
-                    const status = getStepStatus(step.key);
-                    // Element colors: wood → fire → earth (cycling through five elements)
-                    const elementColors = [
-                      { bg: 'rgba(74, 222, 128, 0.15)', text: 'var(--color-loading-wood)', ring: 'rgba(74, 222, 128, 0.4)' },
-                      { bg: 'rgba(239, 68, 68, 0.15)', text: 'var(--color-loading-fire)', ring: 'rgba(239, 68, 68, 0.4)' },
-                      { bg: 'rgba(234, 179, 8, 0.15)', text: 'var(--color-loading-earth)', ring: 'rgba(234, 179, 8, 0.4)' },
-                    ];
-                    const colorIdx = index % elementColors.length;
-                    const colors = elementColors[colorIdx];
-
-                    return (
-                      <div key={step.key} className="flex items-center">
-                        <div
-                          className="flex items-center gap-2 px-3 py-1.5 rounded-full transition-all duration-300"
-                          style={{
-                            background: status === 'completed' ? 'rgba(80, 200, 120, 0.15)' :
-                                       status === 'active' ? colors.bg : 'rgba(255, 255, 255, 0.05)',
-                            color: status === 'completed' ? 'var(--color-success)' :
-                                   status === 'active' ? colors.text : 'var(--color-text-muted)',
-                            boxShadow: status === 'active' ? `0 0 12px ${colors.ring}` : 'none',
-                            border: status === 'active' ? `1px solid ${colors.ring}` : '1px solid transparent',
-                          }}
-                        >
-                          <span className="text-sm">{step.icon}</span>
-                          <span className="text-xs font-medium">{step.label}</span>
-                          {status === 'completed' && (
-                            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                            </svg>
-                          )}
-                        </div>
-                        {index < LOADING_STEPS.length - 1 && (
-                          <div
-                            className="w-8 h-0.5 mx-1 transition-all duration-300"
-                            style={{
-                              background: status === 'completed' ? 'rgba(80, 200, 120, 0.5)' : 'rgba(255, 255, 255, 0.1)',
-                            }}
-                          />
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Shimmer Progress Bar */}
+              {/* Stage Progress with Fixed Percentages */}
               {(loadingStep === 'bazi' || loadingStep === 'ai' || loadingStep === 'report') && (
-                <div className="mb-6 mx-auto" style={{ width: '200px' }}>
-                  <div
-                    className="rounded-full overflow-hidden"
-                    style={{ background: 'rgba(255, 255, 255, 0.1)', height: '3px' }}
-                  >
-                    <div
-                      className="rounded-full shimmer-bar"
-                      style={{
-                        background: 'linear-gradient(90deg, var(--color-primary), var(--color-accent))',
-                        backgroundSize: '200% 100%',
-                        animation: 'shimmer 2s linear infinite',
-                        height: '100%',
-                        width: loadingStep === 'bazi' ? '30%' : loadingStep === 'ai' ? '60%' : '90%',
-                        transition: 'width 0.5s ease',
-                      }}
-                    />
-                  </div>
+                <div className="mb-6">
+                  <LoadingProgress
+                    stage={loadingStep as LoadingStage}
+                    progress={STAGE_COMPLETE_PROGRESS[loadingStep as LoadingStage]}
+                  />
                 </div>
               )}
 
               {/* Status Text */}
               {(loadingStep === 'bazi' || loadingStep === 'ai' || loadingStep === 'report') && (
-                <>
-                  <p className="text-lg mb-2" style={{ color: 'var(--color-text)' }}>
-                    {loadingStep === 'bazi' && '正在解析出生信息...'}
-                    {loadingStep === 'ai' && 'AI 命理师分析中...'}
-                    {loadingStep === 'report' && '正在生成命盘报告...'}
-                  </p>
-                  <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>
-                    {loadingStep === 'bazi' && '八字排盘中，请稍候...'}
-                    {loadingStep === 'ai' && '解读命运蓝图...'}
-                    {loadingStep === 'report' && '命盘整合中...'}
-                  </p>
-                </>
+                <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>
+                  {loadingStep === 'bazi' && '八字排盘中，请稍候...'}
+                  {loadingStep === 'ai' && '解读命运蓝图...'}
+                  {loadingStep === 'report' && '命盘整合中...'}
+                </p>
               )}
 
               {/* Cancel Button */}

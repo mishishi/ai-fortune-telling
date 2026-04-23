@@ -1,8 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-
-export type LoadingStage = 'bazi' | 'ai' | 'report';
+import type { LoadingStage } from '@/types/loading';
 
 interface LoadingProgressProps {
   stage: LoadingStage;
