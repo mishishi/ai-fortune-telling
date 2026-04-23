@@ -3,6 +3,8 @@
 import { ShareCardData } from '../types';
 import GlowEffect from '../effects/GlowEffect';
 import ParticleEffect from '../effects/ParticleEffect';
+import { polarToCartesian } from '../utils/polarToCartesian';
+import { BAGUA_SYMBOLS, ZODIAC_ANIMALS } from '../constants/bagua';
 
 const DIMENSIONS = [
   { key: 'career', label: '事业', color: '#e74c3c', angle: 90 },
@@ -11,21 +13,6 @@ const DIMENSIONS = [
   { key: 'health', label: '健康', color: '#2ecc71', angle: 306 },
   { key: 'mentor', label: '贵人', color: '#3498db', angle: 18 },
 ];
-
-function polarToCartesian(cx: number, cy: number, radius: number, angleInDegrees: number) {
-  const angleInRadians = ((angleInDegrees - 90) * Math.PI) / 180;
-  return {
-    x: cx + radius * Math.cos(angleInRadians),
-    y: cy + radius * Math.sin(angleInRadians),
-  };
-}
-
-function describeArc(cx: number, cy: number, radius: number, startAngle: number, endAngle: number) {
-  const start = polarToCartesian(cx, cy, radius, endAngle);
-  const end = polarToCartesian(cx, cy, radius, startAngle);
-  const largeArcFlag = endAngle - startAngle <= 180 ? '0' : '1';
-  return `M ${start.x} ${start.y} A ${radius} ${radius} 0 ${largeArcFlag} 0 ${end.x} ${end.y}`;
-}
 
 function SvgRadarChart({ scores, size = 280 }: { scores: Record<string, number>; size?: number }) {
   const cx = size / 2;
@@ -138,6 +125,193 @@ function SvgRadarChart({ scores, size = 280 }: { scores: Record<string, number>;
   );
 }
 
+// Ornate border decoration component
+function OrnateBorder() {
+  return (
+    <svg
+      width="460"
+      height="520"
+      viewBox="0 0 460 520"
+      style={{
+        position: 'absolute',
+        top: -20,
+        left: -20,
+        pointerEvents: 'none',
+        zIndex: 0,
+      }}
+    >
+      {/* Outer golden border */}
+      <rect
+        x="10"
+        y="10"
+        width="440"
+        height="500"
+        fill="none"
+        stroke="url(#goldGradient)"
+        strokeWidth="3"
+        rx="8"
+      />
+
+      {/* Inner decorative border */}
+      <rect
+        x="18"
+        y="18"
+        width="424"
+        height="484"
+        fill="none"
+        stroke="rgba(212, 175, 55, 0.3)"
+        strokeWidth="1"
+        strokeDasharray="4 2"
+        rx="6"
+      />
+
+      {/* Corner ornaments - top left */}
+      <g transform="translate(10, 10)">
+        <path d="M 0 40 Q 0 0 40 0" fill="none" stroke="#d4af37" strokeWidth="2" />
+        <circle cx="8" cy="8" r="3" fill="#d4af37" />
+        <circle cx="20" cy="5" r="2" fill="#d4af37" opacity="0.6" />
+        <circle cx="5" cy="20" r="2" fill="#d4af37" opacity="0.6" />
+      </g>
+
+      {/* Corner ornaments - top right */}
+      <g transform="translate(450, 10) scale(-1, 1)">
+        <path d="M 0 40 Q 0 0 40 0" fill="none" stroke="#d4af37" strokeWidth="2" />
+        <circle cx="8" cy="8" r="3" fill="#d4af37" />
+        <circle cx="20" cy="5" r="2" fill="#d4af37" opacity="0.6" />
+        <circle cx="5" cy="20" r="2" fill="#d4af37" opacity="0.6" />
+      </g>
+
+      {/* Corner ornaments - bottom left */}
+      <g transform="translate(10, 510) scale(1, -1)">
+        <path d="M 0 40 Q 0 0 40 0" fill="none" stroke="#d4af37" strokeWidth="2" />
+        <circle cx="8" cy="8" r="3" fill="#d4af37" />
+        <circle cx="20" cy="5" r="2" fill="#d4af37" opacity="0.6" />
+        <circle cx="5" cy="20" r="2" fill="#d4af37" opacity="0.6" />
+      </g>
+
+      {/* Corner ornaments - bottom right */}
+      <g transform="translate(450, 510) scale(-1, -1)">
+        <path d="M 0 40 Q 0 0 40 0" fill="none" stroke="#d4af37" strokeWidth="2" />
+        <circle cx="8" cy="8" r="3" fill="#d4af37" />
+        <circle cx="20" cy="5" r="2" fill="#d4af37" opacity="0.6" />
+        <circle cx="5" cy="20" r="2" fill="#d4af37" opacity="0.6" />
+      </g>
+
+      {/* Side decorative elements - left */}
+      <g transform="translate(10, 260)">
+        <line x1="0" y1="-60" x2="0" y2="60" stroke="#d4af37" strokeWidth="1" opacity="0.4" />
+        <circle cx="0" cy="-40" r="2" fill="#d4af37" opacity="0.5" />
+        <circle cx="0" cy="0" r="3" fill="#d4af37" />
+        <circle cx="0" cy="40" r="2" fill="#d4af37" opacity="0.5" />
+      </g>
+
+      {/* Side decorative elements - right */}
+      <g transform="translate(450, 260)">
+        <line x1="0" y1="-60" x2="0" y2="60" stroke="#d4af37" strokeWidth="1" opacity="0.4" />
+        <circle cx="0" cy="-40" r="2" fill="#d4af37" opacity="0.5" />
+        <circle cx="0" cy="0" r="3" fill="#d4af37" />
+        <circle cx="0" cy="40" r="2" fill="#d4af37" opacity="0.5" />
+      </g>
+
+      {/* Top center ornament */}
+      <g transform="translate(230, 10)">
+        <path d="M -20 0 L 0 -15 L 20 0" fill="none" stroke="#d4af37" strokeWidth="1.5" />
+        <circle cx="0" cy="-8" r="3" fill="#d4af37" />
+      </g>
+
+      {/* Bottom center ornament */}
+      <g transform="translate(230, 510)">
+        <path d="M -20 0 L 0 15 L 20 0" fill="none" stroke="#d4af37" strokeWidth="1.5" />
+        <circle cx="0" cy="8" r="3" fill="#d4af37" />
+      </g>
+
+      {/* Gradient definitions */}
+      <defs>
+        <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#d4af37" />
+          <stop offset="50%" stopColor="#f0c674" />
+          <stop offset="100%" stopColor="#d4af37" />
+        </linearGradient>
+      </defs>
+    </svg>
+  );
+}
+
+// BaGua decoration ring
+function BaGuaRing() {
+  const radius = 200;
+  const centerX = 210;
+  const centerY = 240;
+
+  return (
+    <svg
+      width="460"
+      height="520"
+      viewBox="0 0 460 520"
+      style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        pointerEvents: 'none',
+        zIndex: 1,
+      }}
+    >
+      {/* Outer ring */}
+      <circle
+        cx={centerX}
+        cy={centerY}
+        r={radius + 30}
+        fill="none"
+        stroke="rgba(212, 175, 55, 0.15)"
+        strokeWidth="1"
+        strokeDasharray="2 4"
+      />
+
+      {/* BaGua symbols positioned around the circle */}
+      {BAGUA_SYMBOLS.map((symbol, i) => {
+        const angle = (i * 45 - 90) * (Math.PI / 180);
+        const x = centerX + (radius + 45) * Math.cos(angle);
+        const y = centerY + (radius + 45) * Math.sin(angle);
+        return (
+          <text
+            key={i}
+            x={x}
+            y={y}
+            textAnchor="middle"
+            dominantBaseline="middle"
+            fill="rgba(212, 175, 55, 0.4)"
+            fontSize="14"
+            fontFamily="serif"
+            style={{ filter: 'drop-shadow(0 0 4px rgba(212, 175, 55, 0.3))' }}
+          >
+            {symbol}
+          </text>
+        );
+      })}
+
+      {/* Inner ring with zodiac animals */}
+      {ZODIAC_ANIMALS.map((animal, i) => {
+        const angle = (i * 30 - 90) * (Math.PI / 180);
+        const x = centerX + (radius - 15) * Math.cos(angle);
+        const y = centerY + (radius - 15) * Math.sin(angle);
+        return (
+          <text
+            key={i}
+            x={x}
+            y={y}
+            textAnchor="middle"
+            dominantBaseline="middle"
+            fill="rgba(212, 175, 55, 0.25)"
+            fontSize="9"
+          >
+            {animal}
+          </text>
+        );
+      })}
+    </svg>
+  );
+}
+
 interface StarfieldTemplateProps {
   data: ShareCardData;
 }
@@ -147,6 +321,7 @@ export default function StarfieldTemplate({ data }: StarfieldTemplateProps) {
 
   return (
     <div
+      className="starfield-card"
       style={{
         width: 420,
         minHeight: 480,
@@ -160,11 +335,30 @@ export default function StarfieldTemplate({ data }: StarfieldTemplateProps) {
         overflow: 'hidden',
       }}
     >
+      {/* Animated gradient overlay */}
+      <div
+        className="gradient-overlay"
+        style={{
+          position: 'absolute',
+          inset: 0,
+          background: 'linear-gradient(45deg, rgba(212,175,55,0.05) 0%, transparent 50%, rgba(212,175,55,0.05) 100%)',
+          animation: 'gradientShift 4s ease-in-out infinite',
+          pointerEvents: 'none',
+          zIndex: 0,
+        }}
+      />
+
+      {/* Ornate border decoration */}
+      <OrnateBorder />
+
+      {/* BaGua ring decoration */}
+      <BaGuaRing />
+
       {/* 粒子效果 */}
       <ParticleEffect count={5} />
 
       {/* 顶部标题 */}
-      <div style={{ textAlign: 'center', marginBottom: 20, position: 'relative' }}>
+      <div style={{ textAlign: 'center', marginBottom: 20, position: 'relative', zIndex: 2 }}>
         <div style={{ fontSize: 11, color: '#d4af37', marginBottom: 6, letterSpacing: 3 }}>
           ✦ AI 命理分析报告
         </div>
@@ -177,13 +371,13 @@ export default function StarfieldTemplate({ data }: StarfieldTemplateProps) {
       </div>
 
       {/* 雷达图区域 */}
-      <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
+      <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', marginBottom: 20, zIndex: 2 }}>
         <GlowEffect color="#d4af37" size={260} />
         <SvgRadarChart scores={data.radarScores} size={240} />
       </div>
 
       {/* 进度条 */}
-      <div style={{ marginBottom: 20, padding: '0 10px' }}>
+      <div style={{ marginBottom: 20, padding: '0 10px', position: 'relative', zIndex: 2 }}>
         {DIMENSIONS.map(dim => {
           const score = data.radarScores[dim.key as keyof typeof data.radarScores] || 0;
           const fillWidth = (score / 100) * 100;
@@ -219,6 +413,8 @@ export default function StarfieldTemplate({ data }: StarfieldTemplateProps) {
             borderRadius: 12,
             padding: 14,
             marginBottom: 16,
+            position: 'relative',
+            zIndex: 2,
           }}
         >
           <div style={{ fontSize: 11, color: '#d4af37', marginBottom: 6, letterSpacing: 1 }}>整体运势</div>
@@ -229,12 +425,20 @@ export default function StarfieldTemplate({ data }: StarfieldTemplateProps) {
       )}
 
       {/* 水印 */}
-      <div style={{ position: 'absolute', bottom: 12, left: 16, fontSize: 8, color: 'rgba(212,175,55,0.6)' }}>
+      <div style={{ position: 'absolute', bottom: 12, left: 16, fontSize: 8, color: 'rgba(212,175,55,0.6)', zIndex: 2 }}>
         ✦ 星河命盘
       </div>
-      <div style={{ position: 'absolute', bottom: 12, right: 16, fontSize: 10, color: 'rgba(255,255,255,0.5)', fontStyle: 'italic' }}>
+      <div style={{ position: 'absolute', bottom: 12, right: 16, fontSize: 10, color: 'rgba(255,255,255,0.5)', fontStyle: 'italic', zIndex: 2 }}>
         ai-fortune.app
       </div>
+
+      {/* CSS animations for this template */}
+      <style>{`
+        @keyframes gradientShift {
+          0%, 100% { opacity: 0.3; transform: translateX(-5%) translateY(-5%); }
+          50% { opacity: 0.6; transform: translateX(5%) translateY(5%); }
+        }
+      `}</style>
     </div>
   );
 }

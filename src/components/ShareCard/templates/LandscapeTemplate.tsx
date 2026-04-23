@@ -1,10 +1,8 @@
 'use client';
 
 import { ShareCardData } from '../types';
-
-// BaGua (八卦) symbols for decoration
-const BAGUA_SYMBOLS = ['☰', '☱', '☲', '☳', '☴', '☵', '☶', '☷'];
-const ZODIAC_ANIMALS = ['鼠', '牛', '虎', '兔', '龙', '蛇', '马', '羊', '猴', '鸡', '狗', '猪'];
+import { polarToCartesian } from '../utils/polarToCartesian';
+import { BAGUA_SYMBOLS, ZODIAC_ANIMALS } from '../constants/bagua';
 
 const DIMENSIONS = [
   { key: 'career', label: '事业', color: '#2c2c2c', angle: 90 },
@@ -13,14 +11,6 @@ const DIMENSIONS = [
   { key: 'health', label: '健康', color: '#2c2c2c', angle: 306 },
   { key: 'mentor', label: '贵人', color: '#2c2c2c', angle: 18 },
 ];
-
-function polarToCartesian(cx: number, cy: number, radius: number, angleInDegrees: number) {
-  const angleInRadians = ((angleInDegrees - 90) * Math.PI) / 180;
-  return {
-    x: cx + radius * Math.cos(angleInRadians),
-    y: cy + radius * Math.sin(angleInRadians),
-  };
-}
 
 function SvgRadarChart({ scores, size = 280 }: { scores: Record<string, number>; size?: number }) {
   const cx = size / 2;
