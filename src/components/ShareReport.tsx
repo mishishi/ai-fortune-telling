@@ -3,6 +3,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { useToast } from '@/contexts/ToastContext';
 import { toPng } from 'html-to-image';
 import ShareReportCard from './ShareReportCard';
+import ShareReportModal from './ShareCard/ShareReportModal';
 
 interface ShareReportProps {
   reportId: string;
@@ -152,71 +153,46 @@ export default function ShareReport({
         分享报告
       </button>
 
-      {/* Modal Overlay */}
-      {showModal && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center"
-          onClick={() => setShowModal(false)}
-        >
-          {/* Backdrop */}
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+      {/* Share Report Modal */}
+      <ShareReportModal
+        data={{
+          name,
+          gender,
+          birthYear,
+          radarScores,
+          overall,
+          zodiac,
+          element,
+          createdAt,
+        }}
+        open={showModal}
+        onClose={() => setShowModal(false)}
+        onCopyLink={handleCopyLink}
+        onGenerateImage={handleGenerateImage}
+        generating={generating}
+      />
 
-          {/* Modal */}
-          <div
-            className="relative z-10 w-72 rounded-2xl p-6 text-center"
-            style={{
-              background: 'var(--color-surface)',
-              border: '1px solid rgba(212,175,55,0.2)',
-              boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h3
-              className="text-lg font-bold mb-1"
-              style={{ color: 'var(--color-accent)' }}
-            >
-              分享报告
-            </h3>
-            <p className="text-gray-400 text-xs mb-6">
-              与好友分享你的命盘分析
-            </p>
-
-            <div className="flex flex-col gap-3">
-              <button
-                onClick={handleCopyLink}
-                className="w-full py-4 rounded-xl font-medium text-sm transition-all hover:scale-105 active:scale-95"
-                style={{
-                  background: 'linear-gradient(135deg, var(--color-accent), var(--color-accent-hover))',
-                  color: 'var(--color-bg)',
-                  boxShadow: 'var(--shadow-glow-accent)',
-                }}
-              >
-                复制链接
-              </button>
-
-              <button
-                onClick={handleGenerateImage}
-                disabled={generating}
-                className="w-full py-4 rounded-xl font-medium text-sm transition-all hover:scale-105 active:scale-95 disabled:opacity-50"
-                style={{
-                  background: generating ? 'rgba(196,30,58,0.3)' : 'rgba(196,30,58,0.2)',
-                  color: 'var(--color-primary)',
-                  border: '1px solid rgba(196,30,58,0.4)',
-                }}
-              >
-                {generating ? '生成中...' : '生成分享图片'}
-              </button>
-            </div>
-
-            <button
-              onClick={() => setShowModal(false)}
-              className="mt-4 text-gray-500 hover:text-gray-300 text-xs transition-colors"
-            >
-              取消
-            </button>
-          </div>
-        </div>
-      )}
+      <style jsx global>{`
+        @keyframes pulse {
+          0%, 100% { opacity: 0.3; transform: translate(-50%, -50%) scale(1); }
+          50% { opacity: 0.6; transform: translate(-50%, -50%) scale(1.05); }
+        }
+        @keyframes shimmer {
+          0% { background-position: -200% 0; }
+          100% { background-position: 200% 0; }
+        }
+        @keyframes shooting-star {
+          0% { transform: translate(0, 0); opacity: 0.8; }
+          70% { opacity: 0.8; }
+          100% { transform: translate(-100px, 100px); opacity: 0; }
+        }
+        .is-animating {
+          animation-play-state: running;
+        }
+        .particle {
+          animation-play-state: running;
+        }
+      `}</style>
     </>
   );
 }
