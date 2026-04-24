@@ -165,11 +165,14 @@ export default function HomePage() {
     setFormVisible(false);
 
     try {
-      // Step 1: Calculate BaZi
+      // Step 1: Calculate BaZi - show for 1.5s minimum so user sees it
       setLoadingStep('bazi');
+      await new Promise(resolve => setTimeout(resolve, 1500));
 
       // Step 2: AI Analysis
       setLoadingStep('ai');
+      await new Promise(resolve => setTimeout(resolve, 500)); // Brief delay before fetch
+
       const baziRes = await fetch('/api/ai/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -183,8 +186,9 @@ export default function HomePage() {
       }
       const result = await baziRes.json();
 
-      // Step 3: Save report
+      // Step 3: Save report - show for 1s minimum so user sees it
       setLoadingStep('report');
+      await new Promise(resolve => setTimeout(resolve, 1000));
       // Use logged-in user's ID if available, otherwise 'anonymous'
       const reportUserId = user?.userId || 'anonymous';
       const saveRes = await fetch('/api/reports', {
