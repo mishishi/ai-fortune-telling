@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import DailyQuestionModal from './DailyQuestionModal';
 
 interface DailyFortuneData {
   hasReport: boolean;
@@ -30,6 +31,7 @@ export default function DailyFortuneCard({ userId }: DailyFortuneCardProps) {
   const [data, setData] = useState<DailyFortuneData | null>(null);
   const [loading, setLoading] = useState(true);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [showQuestionModal, setShowQuestionModal] = useState(false);
 
   useEffect(() => {
     const fetchDailyFortune = async () => {
@@ -317,6 +319,36 @@ export default function DailyFortuneCard({ userId }: DailyFortuneCardProps) {
             </div>
           </div>
 
+          {/* Daily Question Button */}
+          {data.hasReport && (
+            <div
+              className="mx-5 mb-4 p-4 rounded-xl"
+              style={{
+                background: 'rgba(212, 175, 55, 0.08)',
+                border: '1px solid rgba(212, 175, 55, 0.2)',
+              }}
+            >
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">🎱</span>
+                <div className="flex-1">
+                  <div className="text-sm font-medium text-white">今日一问</div>
+                  <div className="text-xs" style={{ color: 'var(--color-text-muted)' }}>每天可问1个决策问题</div>
+                </div>
+                <button
+                  onClick={() => setShowQuestionModal(true)}
+                  className="px-4 py-2 rounded-lg text-sm font-medium"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(212, 175, 55, 0.1))',
+                    color: 'var(--color-accent)',
+                    border: '1px solid rgba(212, 175, 55, 0.3)',
+                  }}
+                >
+                  立即提问
+                </button>
+              </div>
+            </div>
+          )}
+
           {/* Footer CTA */}
           {data.reportId && (
             <div className="px-5 pb-8">
@@ -365,6 +397,12 @@ export default function DailyFortuneCard({ userId }: DailyFortuneCardProps) {
           今日运势
         </span>
       </button>
+
+      <DailyQuestionModal
+        open={showQuestionModal}
+        onClose={() => setShowQuestionModal(false)}
+        userId={userId}
+      />
     </div>
   );
 }
