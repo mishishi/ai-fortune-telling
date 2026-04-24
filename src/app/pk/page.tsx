@@ -1,7 +1,7 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import PKChallengeCard from '@/components/PKChallengeCard';
 
 interface ChallengerData {
@@ -13,7 +13,7 @@ interface ChallengerData {
   element: string;
 }
 
-export default function PKPage() {
+function PKPageContent() {
   const searchParams = useSearchParams();
   const challengerId = searchParams.get('from');
   const [challenger, setChallenger] = useState<ChallengerData | null>(null);
@@ -61,5 +61,17 @@ export default function PKPage() {
         生成我的运势报告
       </a>
     </div>
+  );
+}
+
+function LoadingFallback() {
+  return <div className="min-h-screen bg-[#1a1525] flex items-center justify-center text-white">加载中...</div>;
+}
+
+export default function PKPage() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <PKPageContent />
+    </Suspense>
   );
 }

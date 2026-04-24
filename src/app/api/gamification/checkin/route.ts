@@ -260,7 +260,6 @@ export async function PATCH(request: NextRequest) {
   // Find the most recent checked-in date to start counting from
   const todayDate = new Date(today);
   const yesterdayDate = new Date(getYesterdayDate());
-  const repairDateObj = new Date(repairDate);
 
   let startDate: Date;
   if (checkedInDates.has(today)) {

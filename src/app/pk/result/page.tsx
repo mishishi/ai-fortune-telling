@@ -1,7 +1,7 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import RadarChart from '@/components/RadarChart';
 import PKResultCard from '@/components/PKResultCard';
 
@@ -11,7 +11,7 @@ interface PKResultData {
   result: { winner: string; winDimensions: string[]; loseDimensions: string[]; summary: string };
 }
 
-export default function PKResultPage() {
+function PKResultContent() {
   const searchParams = useSearchParams();
   const from = searchParams.get('from');
   const birthdate = searchParams.get('birthdate');
@@ -89,5 +89,17 @@ export default function PKResultPage() {
         </a>
       </div>
     </div>
+  );
+}
+
+function LoadingFallback() {
+  return <div className="min-h-screen bg-[#1a1525] flex items-center justify-center text-white">加载中...</div>;
+}
+
+export default function PKResultPage() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <PKResultContent />
+    </Suspense>
   );
 }
