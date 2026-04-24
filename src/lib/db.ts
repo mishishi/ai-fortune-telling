@@ -122,6 +122,44 @@ export function getDb() {
         CREATE INDEX IF NOT EXISTS idx_daily_questions_userId ON daily_questions(userId);
       `);
     } catch (e) { console.error('Migration daily_questions table failed:', e); }
+
+    // Migration: create predictions table if not exist
+    try {
+      db.exec(`
+        CREATE TABLE IF NOT EXISTS predictions (
+          id TEXT PRIMARY KEY,
+          user_id TEXT NOT NULL,
+          report_id TEXT NOT NULL,
+          dimension TEXT NOT NULL CHECK(dimension IN ('career','love','wealth','health','mentor')),
+          prediction TEXT NOT NULL,
+          timeframe_start TEXT NOT NULL,
+          timeframe_end TEXT NOT NULL,
+          status TEXT DEFAULT 'pending' CHECK(status IN ('pending','accurate','inaccurate')),
+          feedback_note TEXT,
+          created_at TEXT DEFAULT (datetime('now')),
+          FOREIGN KEY (user_id) REFERENCES users(id)
+        );
+        CREATE INDEX IF NOT EXISTS idx_predictions_user_id ON predictions(user_id);
+        CREATE INDEX IF NOT EXISTS idx_predictions_report_id ON predictions(report_id);
+      `);
+    } catch (e) { console.error('Migration predictions table failed:', e); }
+
+    // Migration: create user_prediction_profiles table if not exist
+    try {
+      db.exec(`
+        CREATE TABLE IF NOT EXISTS user_prediction_profiles (
+          user_id TEXT PRIMARY KEY,
+          career_accuracy REAL DEFAULT 0,
+          love_accuracy REAL DEFAULT 0,
+          wealth_accuracy REAL DEFAULT 0,
+          health_accuracy REAL DEFAULT 0,
+          mentor_accuracy REAL DEFAULT 0,
+          total_predictions INTEGER DEFAULT 0,
+          last_feedback_at TEXT,
+          FOREIGN KEY (user_id) REFERENCES users(id)
+        );
+      `);
+    } catch (e) { console.error('Migration user_prediction_profiles table failed:', e); }
   }
   return db;
 }
