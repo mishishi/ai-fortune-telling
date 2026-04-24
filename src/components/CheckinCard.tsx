@@ -348,10 +348,13 @@ export default function CheckinCard() {
         />
       )}
 
-      <MilestoneModal
-        isOpen={showMilestoneModal}
-        onClose={() => setShowMilestoneModal(false)}
-      />
+      {/* MilestoneModal - only render when explicitly opened via click */}
+      {status && showMilestoneModal && (
+        <MilestoneModal
+          isOpen={showMilestoneModal}
+          onClose={() => setShowMilestoneModal(false)}
+        />
+      )}
     </>
   );
 }
