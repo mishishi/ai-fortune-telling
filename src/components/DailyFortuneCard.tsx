@@ -371,6 +371,12 @@ export default function DailyFortuneCard({ userId }: DailyFortuneCardProps) {
           )}
         </div>
         </div>
+
+        <DailyQuestionModal
+          open={showQuestionModal}
+          onClose={() => setShowQuestionModal(false)}
+          userId={userId}
+        />
       </>
     );
   }
