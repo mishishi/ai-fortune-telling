@@ -143,8 +143,8 @@ function OrnateBorder() {
     >
       <svg
         width="420"
-        height="480"
-        viewBox="0 0 420 480"
+        height="850"
+        viewBox="0 0 420 850"
         style={{ display: 'block' }}
       >
       {/* Outer golden border with neon glow */}
@@ -152,7 +152,7 @@ function OrnateBorder() {
         x="8"
         y="8"
         width="404"
-        height="464"
+        height="834"
         fill="none"
         stroke="url(#neonGoldGradient)"
         strokeWidth="2"
@@ -165,7 +165,7 @@ function OrnateBorder() {
         x="14"
         y="14"
         width="392"
-        height="452"
+        height="822"
         fill="none"
         stroke="rgba(0,255,255,0.25)"
         strokeWidth="1"
@@ -190,7 +190,7 @@ function OrnateBorder() {
       </g>
 
       {/* Corner ornaments - bottom left */}
-      <g transform="translate(8, 472) scale(1, -1)">
+      <g transform="translate(8, 842) scale(1, -1)">
         <path d="M 0 30 Q 0 0 30 0" fill="none" stroke="#00ffff" strokeWidth="1.5" style={{ filter: 'drop-shadow(0 0 4px rgba(0,255,255,0.8))' }} />
         <circle cx="6" cy="6" r="2.5" fill="#ff00ff" style={{ filter: 'drop-shadow(0 0 6px rgba(255,0,255,0.8))' }} />
         <circle cx="15" cy="4" r="1.5" fill="#00ffff" opacity="0.6" style={{ filter: 'drop-shadow(0 0 3px rgba(0,255,255,0.6))' }} />
@@ -198,7 +198,7 @@ function OrnateBorder() {
       </g>
 
       {/* Corner ornaments - bottom right */}
-      <g transform="translate(412, 472) scale(-1, -1)">
+      <g transform="translate(412, 842) scale(-1, -1)">
         <path d="M 0 30 Q 0 0 30 0" fill="none" stroke="#00ffff" strokeWidth="1.5" style={{ filter: 'drop-shadow(0 0 4px rgba(0,255,255,0.8))' }} />
         <circle cx="6" cy="6" r="2.5" fill="#ff00ff" style={{ filter: 'drop-shadow(0 0 6px rgba(255,0,255,0.8))' }} />
         <circle cx="15" cy="4" r="1.5" fill="#00ffff" opacity="0.6" style={{ filter: 'drop-shadow(0 0 3px rgba(0,255,255,0.6))' }} />
@@ -206,7 +206,7 @@ function OrnateBorder() {
       </g>
 
       {/* Side decorative elements - left */}
-      <g transform="translate(8, 240)">
+      <g transform="translate(8, 425)">
         <line x1="0" y1="-40" x2="0" y2="40" stroke="rgba(0,255,255,0.5)" strokeWidth="1" style={{ filter: 'drop-shadow(0 0 3px rgba(0,255,255,0.6))' }} />
         <circle cx="0" cy="-30" r="2" fill="#00ffff" opacity="0.5" style={{ filter: 'drop-shadow(0 0 3px rgba(0,255,255,0.6))' }} />
         <circle cx="0" cy="0" r="2.5" fill="#ff00ff" style={{ filter: 'drop-shadow(0 0 6px rgba(255,0,255,0.8))' }} />
@@ -214,7 +214,7 @@ function OrnateBorder() {
       </g>
 
       {/* Side decorative elements - right */}
-      <g transform="translate(412, 240)">
+      <g transform="translate(412, 425)">
         <line x1="0" y1="-40" x2="0" y2="40" stroke="rgba(0,255,255,0.5)" strokeWidth="1" style={{ filter: 'drop-shadow(0 0 3px rgba(0,255,255,0.6))' }} />
         <circle cx="0" cy="-30" r="2" fill="#00ffff" opacity="0.5" style={{ filter: 'drop-shadow(0 0 3px rgba(0,255,255,0.6))' }} />
         <circle cx="0" cy="0" r="2.5" fill="#ff00ff" style={{ filter: 'drop-shadow(0 0 6px rgba(255,0,255,0.8))' }} />
@@ -228,7 +228,7 @@ function OrnateBorder() {
       </g>
 
       {/* Bottom center ornament */}
-      <g transform="translate(210, 472)">
+      <g transform="translate(210, 842)">
         <path d="M -15 0 L 0 10 L 15 0" fill="none" stroke="#00ffff" strokeWidth="1" style={{ filter: 'drop-shadow(0 0 4px rgba(0,255,255,0.8))' }} />
         <circle cx="0" cy="5" r="2" fill="#ff00ff" style={{ filter: 'drop-shadow(0 0 6px rgba(255,0,255,0.8))' }} />
       </g>
@@ -252,7 +252,7 @@ interface NeonTemplateProps {
 
 // BaGua decoration ring for NeonTemplate
 function NeonBaGuaRing() {
-  // Scale down to fit within 420x480 viewBox
+  // Scale down to fit within 420x850 viewBox
   const scale = 0.85;
   const radius = 200 * scale;
   const centerX = 210;
@@ -272,8 +272,8 @@ function NeonBaGuaRing() {
     >
       <svg
         width="420"
-        height="480"
-        viewBox="0 0 420 480"
+        height="850"
+        viewBox="0 0 420 850"
         style={{ display: 'block' }}
       >
       {/* Outer ring with neon glow */}
@@ -341,8 +341,8 @@ export default function NeonTemplate({ data }: NeonTemplateProps) {
     <div
       style={{
         width: 420,
-        minHeight: 480,
-        padding: 32,
+        minHeight: 850,
+        padding: 24,
         background: 'linear-gradient(135deg, #0a0a0f 0%, #0f0a1a 50%, #0a0a0f 100%)',
         fontFamily: 'system-ui, -apple-system, sans-serif',
         color: '#fff',

@@ -141,8 +141,8 @@ function OrnateBorder() {
     >
       <svg
         width="420"
-        height="480"
-        viewBox="0 0 420 480"
+        height="850"
+        viewBox="0 0 420 850"
         style={{ display: 'block' }}
       >
         {/* Outer golden border */}
@@ -150,7 +150,7 @@ function OrnateBorder() {
           x="8"
           y="8"
           width="404"
-          height="464"
+          height="834"
           fill="none"
           stroke="url(#goldGradient)"
           strokeWidth="2"
@@ -162,7 +162,7 @@ function OrnateBorder() {
           x="14"
           y="14"
           width="392"
-          height="452"
+          height="822"
           fill="none"
           stroke="rgba(212, 175, 55, 0.3)"
           strokeWidth="1"
@@ -187,7 +187,7 @@ function OrnateBorder() {
         </g>
 
         {/* Corner ornaments - bottom left */}
-        <g transform="translate(8, 472) scale(1, -1)">
+        <g transform="translate(8, 842) scale(1, -1)">
           <path d="M 0 30 Q 0 0 30 0" fill="none" stroke="#d4af37" strokeWidth="1.5" />
           <circle cx="6" cy="6" r="2.5" fill="#d4af37" />
           <circle cx="15" cy="4" r="1.5" fill="#d4af37" opacity="0.6" />
@@ -195,7 +195,7 @@ function OrnateBorder() {
         </g>
 
         {/* Corner ornaments - bottom right */}
-        <g transform="translate(412, 472) scale(-1, -1)">
+        <g transform="translate(412, 842) scale(-1, -1)">
           <path d="M 0 30 Q 0 0 30 0" fill="none" stroke="#d4af37" strokeWidth="1.5" />
           <circle cx="6" cy="6" r="2.5" fill="#d4af37" />
           <circle cx="15" cy="4" r="1.5" fill="#d4af37" opacity="0.6" />
@@ -203,7 +203,7 @@ function OrnateBorder() {
         </g>
 
         {/* Side decorative elements - left */}
-        <g transform="translate(8, 240)">
+        <g transform="translate(8, 425)">
           <line x1="0" y1="-40" x2="0" y2="40" stroke="#d4af37" strokeWidth="1" opacity="0.4" />
           <circle cx="0" cy="-30" r="1.5" fill="#d4af37" opacity="0.5" />
           <circle cx="0" cy="0" r="2" fill="#d4af37" />
@@ -211,7 +211,7 @@ function OrnateBorder() {
         </g>
 
         {/* Side decorative elements - right */}
-        <g transform="translate(412, 240)">
+        <g transform="translate(412, 425)">
           <line x1="0" y1="-40" x2="0" y2="40" stroke="#d4af37" strokeWidth="1" opacity="0.4" />
           <circle cx="0" cy="-30" r="1.5" fill="#d4af37" opacity="0.5" />
           <circle cx="0" cy="0" r="2" fill="#d4af37" />
@@ -225,7 +225,7 @@ function OrnateBorder() {
         </g>
 
         {/* Bottom center ornament */}
-        <g transform="translate(210, 472)">
+        <g transform="translate(210, 842)">
           <path d="M -15 0 L 0 10 L 15 0" fill="none" stroke="#d4af37" strokeWidth="1" />
           <circle cx="0" cy="5" r="2" fill="#d4af37" />
         </g>
@@ -245,7 +245,7 @@ function OrnateBorder() {
 
 // BaGua decoration ring
 function BaGuaRing() {
-  // Scale down to fit 420x480 card (card padding is 32 on each side, so inner area is ~356x416)
+  // Scale down to fit 420x850 card
   const scale = 0.85;
   const radius = 200 * scale;
   const centerX = 210;
@@ -254,8 +254,8 @@ function BaGuaRing() {
   return (
     <svg
       width="420"
-      height="480"
-      viewBox="0 0 420 480"
+      height="850"
+      viewBox="0 0 420 850"
       style={{
         position: 'absolute',
         top: 0,
@@ -332,7 +332,8 @@ export default function StarfieldTemplate({ data }: StarfieldTemplateProps) {
       className="starfield-card"
       style={{
         width: 420,
-        padding: 32,
+        minHeight: 850,
+        padding: 24,
         background: 'linear-gradient(135deg, #1a1525 0%, #2d1f3d 50%, #1a1525 100%)',
         fontFamily: 'system-ui, -apple-system, sans-serif',
         color: '#fff',
