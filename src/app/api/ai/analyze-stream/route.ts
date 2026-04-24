@@ -1,0 +1,172 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { chat, ChatMessage } from '@/lib/minimax';
+import { calculateBaZi, BirthInfo, BaZiResult } from '@/lib/bazi';
+
+const DIMENSION_PROMPTS = {
+  career: `分析此八字的事业运势，输出JSON：
+
+{
+  "career": "事业分析40-60字，分析事业特点、发展阶段、适合的职业",
+  "careerSuggest": "职业推荐40-60字，推荐3-5个最适合的职业方向",
+  "careerScore": 事业分数(0-100)
+}
+
+只输出JSON，不要其他文字。`,
+
+  love: `分析此八字的感情运势，输出JSON：
+
+{
+  "love": "感情分析40-60字，分析感情运势、桃花时期、婚恋状态",
+  "spouseDesc": "配偶特征40-60字，描述未来配偶的外貌、性格、属相特征",
+  "marriageAdvice": "婚恋建议40-60字，给出婚恋建议和相处之道",
+  "loveScore": 感情分数(0-100)
+}
+
+只输出JSON，不要其他文字。`,
+
+  wealth: `分析此八字的财运运势，输出JSON：
+
+{
+  "wealth": "财运分析40-60字，分析财运特点、赚钱方式、理财建议",
+  "wealthScore": 财运分数(0-100)
+}
+
+只输出JSON，不要其他文字。`,
+
+  health: `分析此八字的健康运势，输出JSON：
+
+{
+  "health": "健康分析40-60字，分析健康运势和养生建议",
+  "healthScore": 健康分数(0-100)
+}
+
+只输出JSON，不要其他文字。`,
+
+  mentor: `分析此八字的贵人运势，输出JSON：
+
+{
+  "mentorDirection": "贵人方位40-60字，分析最旺的贵人方位和有利方向",
+  "mentorScore": 贵人分数(0-100)
+}
+
+只输出JSON，不要其他文字。`,
+};
+
+function parseJsonResponse(response: string): Record<string, any> {
+  let jsonStr = response;
+  const codeBlockMatch = response.match(/```json\s*([\s\S]*?)\s*```/);
+  if (codeBlockMatch) {
+    jsonStr = codeBlockMatch[1];
+  } else {
+    const jsonMatch = response.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      jsonStr = jsonMatch[0];
+    }
+  }
+  jsonStr = jsonStr.replace(/,(\s*[}\]])/g, '$1');
+  return JSON.parse(jsonStr);
+}
+
+export async function POST(request: NextRequest) {
+  const encoder = new TextEncoder();
+
+  const stream = new ReadableStream({
+    async start(controller) {
+      const sendEvent = (event: string, data: any) => {
+        controller.enqueue(encoder.encode(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`));
+      };
+
+      try {
+        const body = await request.json();
+        const { birthData, userFocus } = body;
+
+        if (!birthData) {
+          sendEvent('error', { error: 'birthData is required' });
+          controller.close();
+          return;
+        }
+
+        // Calculate BaZi
+        let baziResult: BaZiResult;
+        const birthInfo: BirthInfo = {
+          year: birthData.year,
+          month: birthData.month,
+          day: birthData.day,
+          hour: birthData.hour,
+          minute: birthData.minute || 0,
+          gender: birthData.gender,
+          province: birthData.province || '',
+        };
+        baziResult = calculateBaZi(birthInfo);
+
+        const completeBazi = {
+          bazi: baziResult.bazi,
+          nanYin: baziResult.nanYin,
+          dayMaster: baziResult.dayMaster,
+          tenGods: baziResult.tenGods,
+        };
+
+        // Send BaZi ready immediately
+        sendEvent('bazi', { baziData: baziResult });
+
+        // Make parallel AI calls for each dimension
+        const dimensionKeys = ['career', 'love', 'wealth', 'health', 'mentor'] as const;
+        const aiPromises = dimensionKeys.map(async (key) => {
+          const start = Date.now();
+          const messages: ChatMessage[] = [
+            { role: 'system', content: '你是一位专业的八字命理师。' },
+            { role: 'user', content: `分析此八字（${JSON.stringify(completeBazi)}）\n关注：${key}\n\n${DIMENSION_PROMPTS[key]}` },
+          ];
+          const response = await chat(messages);
+          const parsed = parseJsonResponse(response);
+          console.log(`[Stream] ${key} done in ${Date.now() - start}ms`);
+          return { key, data: parsed, score: parsed[`${key}Score`] || parsed.score || 0 };
+        });
+
+        // Stream results as they complete
+        const results: Record<string, any> = {};
+        const radarScores: Record<string, number> = {};
+
+        // Start all promises and stream as they resolve
+        Promise.all(aiPromises).then((allResults) => {
+          // Once all complete, send final
+          for (const r of allResults) {
+            results[r.key] = r.data;
+            radarScores[r.key] = r.score;
+          }
+          sendEvent('complete', {
+            baziData: baziResult,
+            radarScores,
+            analysis: results,
+          });
+          controller.close();
+        }).catch((err) => {
+          console.error('AI analysis error:', err);
+          sendEvent('error', { error: String(err) });
+          controller.close();
+        });
+
+        // Stream individual results as they come in (for better UX)
+        for (const promise of aiPromises) {
+          promise.then(({ key, data, score }) => {
+            radarScores[key] = score;
+            results[key] = data;
+            sendEvent('dimension', { key, data, score });
+          }).catch(() => {});
+        }
+      } catch (error) {
+        console.error('Stream error:', error);
+        sendEvent('error', { error: String(error) });
+        controller.close();
+      }
+    },
+  });
+
+  return new Response(stream, {
+    headers: {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache',
+      'Connection': 'keep-alive',
+    },
+  });
+}

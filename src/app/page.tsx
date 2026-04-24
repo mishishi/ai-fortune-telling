@@ -42,6 +42,8 @@ export default function HomePage() {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showPushModal, setShowPushModal] = useState(false);
   const [aiProgressHint, setAiProgressHint] = useState<AIProgressStep>('analyzing');
+  const [partialRadarScores, setPartialRadarScores] = useState<Record<string, number>>({});
+  const [partialAnalysis, setPartialAnalysis] = useState<Record<string, string>>({});
   const roundCountRef = useRef(0);
 
   // Check localStorage on mount to show onboarding if not completed
@@ -166,51 +168,94 @@ export default function HomePage() {
     setShowModal(false);
     setFormVisible(false);
 
+    // Reset progressive display state
+    setPartialRadarScores({});
+    setPartialAnalysis({});
+
     try {
-      // Step 1: Calculate BaZi client-side (instant, no API call needed)
       setLoadingStep('bazi');
-      const birthInfo: BirthInfo = {
-        year: birthData.year,
-        month: birthData.month,
-        day: birthData.day,
-        hour: birthData.hour,
-        minute: birthData.minute || 0,
-        gender: birthData.gender as 'male' | 'female',
-        province: birthData.province || '',
-      };
-      const clientBaziData = calculateBaZi(birthInfo);
 
-      // Step 2: AI Analysis - send pre-calculated baziData to skip server calculation
-      setLoadingStep('ai');
+      // Connect to streaming endpoint
+      const response = await fetch('/api/ai/analyze-stream', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ birthData, userFocus }),
+      });
 
-      // Progress hints during AI API call
-      const progressSteps: AIProgressStep[] = ['analyzing', 'career', 'love', 'wealth', 'health', 'mentor', 'fortune', 'yearly'];
+      if (!response.ok) {
+        throw new Error('分析请求失败');
+      }
+
+      const reader = response.body?.getReader();
+      if (!reader) {
+        throw new Error('无法读取响应流');
+      }
+
+      const decoder = new TextDecoder();
+      let buffer = '';
+      let done = false;
+      let finalData: any = null;
+
+      // Progress hints during streaming
+      const progressSteps: AIProgressStep[] = ['analyzing', 'career', 'love', 'wealth', 'health', 'mentor'];
       let hintIndex = 0;
       const hintInterval = setInterval(() => {
         hintIndex = (hintIndex + 1) % progressSteps.length;
         setAiProgressHint(progressSteps[hintIndex]);
       }, 2000);
-      setAiProgressHint(progressSteps[0]);
+      setAiProgressHint('analyzing');
 
-      const baziRes = await fetch('/api/ai/analyze', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ birthData, baziData: clientBaziData, userFocus }),
-      });
+      while (!done) {
+        const { value, done: doneReading } = await reader.read();
+        done = doneReading;
+        if (value) {
+          buffer += decoder.decode(value, { stream: !done });
+
+          // Process complete events: look for "event: TYPE\ndata: {...}\n\n"
+          // Parse line by line, pairing event lines with their data lines
+          const lines = buffer.split('\n');
+          buffer = lines.pop() || ''; // Keep incomplete line in buffer
+
+          let i = 0;
+          while (i < lines.length) {
+            const line = lines[i];
+            if (line.startsWith('event: ')) {
+              const eventType = line.slice(7);
+              const dataLine = lines[i + 1];
+              if (dataLine?.startsWith('data: ')) {
+                try {
+                  const data = JSON.parse(dataLine.slice(6));
+                  if (eventType === 'bazi') {
+                    setLoadingStep('ai');
+                  } else if (eventType === 'dimension') {
+                    setPartialRadarScores(prev => ({ ...prev, [data.key]: data.score }));
+                    setPartialAnalysis(prev => ({ ...prev, ...data.data }));
+                  } else if (eventType === 'complete') {
+                    finalData = data;
+                  } else if (eventType === 'error') {
+                    throw new Error(data.error || '分析失败');
+                  }
+                } catch (e) {
+                  console.error('Failed to parse SSE data:', e);
+                }
+                i += 2; // Skip both event and data lines
+                continue;
+              }
+            }
+            i++;
+          }
+        }
+      }
+
       clearInterval(hintInterval);
 
-      if (!baziRes.ok) {
-        const errData = await baziRes.json().catch(() => ({}));
-        console.error('Analyze API error:', errData);
-        const errorMsg = errData?.detail?.message || errData?.error || '分析失败，请重试';
-        throw new Error(`分析失败: ${errorMsg} | 详情: ${JSON.stringify(errData?.detail || {})}`);
+      if (!finalData) {
+        throw new Error('未能获取完整分析结果');
       }
-      const result = await baziRes.json();
 
-      // Step 3: Save report - show briefly
+      // Step 3: Save report
       setLoadingStep('report');
 
-      // Use logged-in user's ID if available, otherwise 'anonymous'
       const reportUserId = user?.userId || 'anonymous';
       const saveRes = await fetch('/api/reports', {
         method: 'POST',
@@ -220,9 +265,9 @@ export default function HomePage() {
           name: birthData.name,
           gender: birthData.gender,
           birthData: birthData,
-          baziData: result.baziData || clientBaziData,
-          aiAnalysis: result.analysis || {},
-          radarScores: result.radarScores || {},
+          baziData: finalData.baziData,
+          aiAnalysis: finalData.analysis || {},
+          radarScores: finalData.radarScores || {},
         }),
       });
       if (!saveRes.ok) {
@@ -230,19 +275,15 @@ export default function HomePage() {
       }
       const { id } = await saveRes.json();
 
-      // Done
       setLoadingStep('done');
 
       // Check if this is a PK flow
       const pkChallengerId = sessionStorage.getItem('pkChallengerId');
       if (pkChallengerId) {
-        // Clear PK context
         sessionStorage.removeItem('pkChallengerId');
-        // Redirect to PK result page
         const birthdate = `${birthData.year}-${String(birthData.month).padStart(2, '0')}-${String(birthData.day).padStart(2, '0')}`;
         router.push(`/pk/result?from=${pkChallengerId}&birthdate=${birthdate}&gender=${birthData.gender}`);
       } else {
-        // Navigate to report page
         router.push(`/report/${id}`);
       }
     } catch (error) {
@@ -383,6 +424,30 @@ export default function HomePage() {
                     progress={STAGE_COMPLETE_PROGRESS[loadingStep as LoadingStage]}
                     aiHint={aiProgressHint}
                   />
+                </div>
+              )}
+
+              {/* Progressive Results - shown as dimensions complete */}
+              {loadingStep === 'ai' && Object.keys(partialRadarScores).length > 0 && (
+                <div className="mb-6 px-4 py-3 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10" style={{ maxWidth: 360, margin: '0 auto 24px' }}>
+                  <p className="text-xs mb-3" style={{ color: 'var(--color-accent)' }}>实时解析进度</p>
+                  <div className="grid grid-cols-5 gap-2">
+                    {Object.entries(partialRadarScores).map(([key, score]) => {
+                      const labels: Record<string, string> = { career: '事业', love: '感情', wealth: '财运', health: '健康', mentor: '贵人' };
+                      const colors: Record<string, string> = { career: '#e74c3c', love: '#e91e63', wealth: '#f1c40f', health: '#2ecc71', mentor: '#3498db' };
+                      return (
+                        <div key={key} className="text-center">
+                          <div
+                            className="w-10 h-10 rounded-full mx-auto mb-1 flex items-center justify-center text-sm font-bold text-white"
+                            style={{ background: `linear-gradient(135deg, ${colors[key]}, ${colors[key]}88)`, boxShadow: `0 0 12px ${colors[key]}66` }}
+                          >
+                            {score}
+                          </div>
+                          <span className="text-xs" style={{ color: colors[key] }}>{labels[key]}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               )}
 
