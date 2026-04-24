@@ -161,8 +161,8 @@ function CloudPattern({ position }: { position: 'top-left' | 'top-right' | 'bott
   const transforms: Record<string, string> = {
     'top-left': 'translate(15, 15) scale(1, 1)',
     'top-right': 'translate(405, 15) scale(-1, 1)',
-    'bottom-left': 'translate(15, 465) scale(1, -1)',
-    'bottom-right': 'translate(405, 465) scale(-1, -1)',
+    'bottom-left': 'translate(15, 525) scale(1, -1)',
+    'bottom-right': 'translate(405, 525) scale(-1, -1)',
   };
 
   return (
@@ -184,19 +184,19 @@ function WaterWaveDecoration() {
     <g opacity="0.3">
       {/* Wave layers */}
       <path
-        d="M 0 470 Q 30 460 60 470 T 120 470 T 180 470 T 240 470 T 300 470 T 360 470 T 420 470"
+        d="M 0 530 Q 30 520 60 530 T 120 530 T 180 530 T 240 530 T 300 530 T 360 530 T 420 530"
         fill="none"
         stroke={INK_LIGHT}
         strokeWidth="1.5"
       />
       <path
-        d="M 0 478 Q 40 468 80 478 T 160 478 T 240 478 T 320 478 T 400 478 T 420 478"
+        d="M 0 538 Q 40 528 80 538 T 160 538 T 240 538 T 320 538 T 400 538 T 420 538"
         fill="none"
         stroke={INK_LIGHT}
         strokeWidth="1"
       />
       <path
-        d="M 0 485 Q 35 477 70 485 T 140 485 T 210 485 T 280 485 T 350 485 T 420 485"
+        d="M 0 545 Q 35 537 70 545 T 140 545 T 210 545 T 280 545 T 350 545 T 420 545"
         fill="none"
         stroke={INK_LIGHT}
         strokeWidth="0.7"
@@ -210,9 +210,9 @@ function MountainSilhouette() {
   return (
     <g opacity="0.25">
       {/* Far mountains */}
-      <polygon points="0,480 60,380 120,420 180,350 240,400 300,340 360,390 420,360 420,480" fill={INK_DARK} />
+      <polygon points="0,540 60,440 120,480 180,410 240,460 300,400 360,450 420,420 420,540" fill={INK_DARK} />
       {/* Near mountains with more detail */}
-      <polygon points="0,480 40,420 80,450 140,390 200,440 260,400 320,430 380,410 420,430 420,480" fill={INK_DARK} opacity="0.7" />
+      <polygon points="0,540 40,480 80,510 140,450 200,500 260,460 320,490 380,470 420,490 420,540" fill={INK_DARK} opacity="0.7" />
     </g>
   );
 }
@@ -235,7 +235,7 @@ function VermillionSeal() {
 function LandscapeBaGuaRing() {
   const radius = 180;
   const centerX = 210;
-  const centerY = 260;
+  const centerY = 290;
 
   return (
     <div
@@ -251,8 +251,8 @@ function LandscapeBaGuaRing() {
     >
       <svg
         width="420"
-        height="480"
-        viewBox="0 0 420 480"
+        height="540"
+        viewBox="0 0 420 540"
         style={{ display: 'block' }}
       >
       {/* Mountain silhouette background */}
@@ -345,8 +345,8 @@ function OrnateBorder() {
     >
       <svg
         width="420"
-        height="480"
-        viewBox="0 0 420 480"
+        height="540"
+        viewBox="0 0 420 540"
         style={{ display: 'block' }}
       >
       <defs>
@@ -363,7 +363,7 @@ function OrnateBorder() {
         x="8"
         y="8"
         width="404"
-        height="464"
+        height="524"
         fill="none"
         stroke="url(#borderGradient)"
         strokeWidth="1.5"
@@ -375,7 +375,7 @@ function OrnateBorder() {
         x="14"
         y="14"
         width="392"
-        height="452"
+        height="512"
         fill="none"
         stroke={INK_LIGHT}
         strokeWidth="0.5"
@@ -401,7 +401,7 @@ function OrnateBorder() {
       </g>
 
       {/* Corner ornaments - bottom left */}
-      <g transform="translate(8, 472) scale(1, -1)" opacity="0.35">
+      <g transform="translate(8, 532) scale(1, -1)" opacity="0.35">
         <path d="M 0 30 Q 0 0 30 0" fill="none" stroke={INK_LIGHT} strokeWidth="1.5" />
         <circle cx="6" cy="6" r="2.5" fill={INK_LIGHT} />
         <circle cx="16" cy="4" r="1.5" fill={INK_LIGHT} />
@@ -409,7 +409,7 @@ function OrnateBorder() {
       </g>
 
       {/* Corner ornaments - bottom right */}
-      <g transform="translate(412, 472) scale(-1, -1)" opacity="0.35">
+      <g transform="translate(412, 532) scale(-1, -1)" opacity="0.35">
         <path d="M 0 30 Q 0 0 30 0" fill="none" stroke={INK_LIGHT} strokeWidth="1.5" />
         <circle cx="6" cy="6" r="2.5" fill={INK_LIGHT} />
         <circle cx="16" cy="4" r="1.5" fill={INK_LIGHT} />
@@ -417,7 +417,7 @@ function OrnateBorder() {
       </g>
 
       {/* Side decorative elements - left */}
-      <g transform="translate(8, 260)" opacity="0.25">
+      <g transform="translate(8, 270)" opacity="0.25">
         <line x1="0" y1="-50" x2="0" y2="50" stroke={INK_LIGHT} strokeWidth="0.75" />
         <circle cx="0" cy="-30" r="1.5" fill={INK_LIGHT} />
         <circle cx="0" cy="0" r="2" fill={INK_LIGHT} />
@@ -425,7 +425,7 @@ function OrnateBorder() {
       </g>
 
       {/* Side decorative elements - right */}
-      <g transform="translate(412, 260)" opacity="0.25">
+      <g transform="translate(412, 270)" opacity="0.25">
         <line x1="0" y1="-50" x2="0" y2="50" stroke={INK_LIGHT} strokeWidth="0.75" />
         <circle cx="0" cy="-30" r="1.5" fill={INK_LIGHT} />
         <circle cx="0" cy="0" r="2" fill={INK_LIGHT} />
@@ -439,7 +439,7 @@ function OrnateBorder() {
       </g>
 
       {/* Bottom center ornament */}
-      <g transform="translate(210, 472)" opacity="0.3">
+      <g transform="translate(210, 532)" opacity="0.3">
         <path d="M -15 0 L 0 10 L 15 0" fill="none" stroke={INK_LIGHT} strokeWidth="1" />
         <circle cx="0" cy="5" r="2" fill={INK_LIGHT} />
       </g>
@@ -455,8 +455,8 @@ export default function LandscapeTemplate({ data }: LandscapeTemplateProps) {
     <div
       style={{
         width: 420,
-        minHeight: 480,
-        padding: 32,
+        minHeight: 540,
+        padding: 28,
         background: 'linear-gradient(145deg, #2d2d2d 0%, #252525 50%, #1a1a1a 100%)',
         fontFamily: 'system-ui, -apple-system, sans-serif',
         color: INK_DARK,
