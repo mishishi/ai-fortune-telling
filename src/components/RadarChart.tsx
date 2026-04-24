@@ -46,13 +46,13 @@ export default function RadarChart({ scores, size = 280, color = 'rgba(212, 175,
   const innerRadius = outerRadius * 0.2;
 
   const scorePoints = DIMENSIONS.map(dim => {
-    const score = scores[dim.key as keyof typeof scores] || 0;
+    const score = scores[dim.key as keyof RadarChartProps['scores']] || 0;
     const radius = innerRadius + (outerRadius - innerRadius) * (score / 100);
     return polarToCartesian(cx, cy, radius, dim.angle);
   });
 
   const opponentPoints = opponentScores ? DIMENSIONS.map(dim => {
-    const score = opponentScores[dim.key as keyof typeof opponentScores] || 0;
+    const score = opponentScores[dim.key as keyof RadarChartProps['scores']] || 0;
     const radius = innerRadius + (outerRadius - innerRadius) * (score / 100);
     return polarToCartesian(cx, cy, radius, dim.angle);
   }) : null;
@@ -79,14 +79,14 @@ export default function RadarChart({ scores, size = 280, color = 'rgba(212, 175,
           stroke="rgba(255,255,255,0.1)" strokeWidth="1" />
       ))}
       {opponentPath && <path d={opponentPath} fill={opponentColor} stroke={opponentColor} strokeWidth="2" />}
-      <path d={fillPath} fill={color} stroke={color.replace('0.3', '0.8')} strokeWidth="2" />
+      <path d={fillPath} fill={color} stroke={color.replace(/[\d.]+$/, '0.8')} strokeWidth="2" />
       {scorePoints.map((point, i) => (
         <circle key={i} cx={point.x} cy={point.y} r="4" fill="#d4af37" />
       ))}
       {DIMENSIONS.map(dim => {
         const labelRadius = outerRadius + 20;
         const pos = polarToCartesian(cx, cy, labelRadius, dim.angle);
-        const score = scores[dim.key as keyof typeof scores] || 0;
+        const score = scores[dim.key as keyof RadarChartProps['scores']] || 0;
         return (
           <g key={dim.key}>
             <text x={pos.x} y={pos.y} textAnchor="middle" dominantBaseline="middle"

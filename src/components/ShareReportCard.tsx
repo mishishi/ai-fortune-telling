@@ -1,6 +1,6 @@
 'use client';
 
-import RadarChart from './RadarChart';
+import RadarChart, { DIMENSIONS } from './RadarChart';
 
 // Enhanced share card with SVG radar chart for better image generation
 interface ShareReportCardProps {
@@ -18,29 +18,6 @@ interface ShareReportCardProps {
   zodiac?: string;
   element?: string;
   createdAt: string;
-}
-
-const DIMENSIONS = [
-  { key: 'career', label: '事业', color: '#e74c3c', angle: 90 },
-  { key: 'love', label: '感情', color: '#e91e63', angle: 162 },
-  { key: 'wealth', label: '财运', color: '#f1c40f', angle: 234 },
-  { key: 'health', label: '健康', color: '#2ecc71', angle: 306 },
-  { key: 'mentor', label: '贵人', color: '#3498db', angle: 18 },
-];
-
-function polarToCartesian(cx: number, cy: number, radius: number, angleInDegrees: number) {
-  const angleInRadians = ((angleInDegrees - 90) * Math.PI) / 180;
-  return {
-    x: cx + radius * Math.cos(angleInRadians),
-    y: cy + radius * Math.sin(angleInRadians),
-  };
-}
-
-function describeArc(cx: number, cy: number, radius: number, startAngle: number, endAngle: number) {
-  const start = polarToCartesian(cx, cy, radius, endAngle);
-  const end = polarToCartesian(cx, cy, radius, startAngle);
-  const largeArcFlag = endAngle - startAngle <= 180 ? '0' : '1';
-  return `M ${start.x} ${start.y} A ${radius} ${radius} 0 ${largeArcFlag} 0 ${end.x} ${end.y}`;
 }
 
 export default function ShareReportCard({
