@@ -50,6 +50,27 @@ const DIMENSION_PROMPTS = {
 }
 
 只输出JSON，不要其他文字。`,
+
+  overview: `分析此八字的整体运势，输出JSON：
+
+{
+  "overall": "命局总评40-60字，概括命局特点和整体运势",
+  "overallPlain": "通俗命评40-60字，用简单比喻和直白语言解释命局特点",
+  "fortune": "大运趋势40-60字，解读近5年大运走势",
+  "yearly": "流年预测40-60字，分析今年流年运势",
+  "luckyElements": {
+    "element": "幸运五行30-40字，分析最利的五行",
+    "color": "幸运颜色30-40字，推荐幸运色系",
+    "number": "幸运数字30-40字，推荐吉利数字",
+    "direction": "幸运方位30-40字，推荐有利方向"
+  },
+  "nameSuggestions": {
+    "element": "补救五行30-40字，分析五行旺缺",
+    "suggestions": "起名建议40-60字，提供3-5个名字建议"
+  }
+}
+
+只输出JSON，不要其他文字。`,
 };
 
 function parseJsonResponse(response: string): Record<string, any> {
@@ -110,7 +131,7 @@ export async function POST(request: NextRequest) {
         sendEvent('bazi', { baziData: baziResult });
 
         // Make parallel AI calls for each dimension
-        const dimensionKeys = ['career', 'love', 'wealth', 'health', 'mentor'] as const;
+        const dimensionKeys = ['career', 'love', 'wealth', 'health', 'mentor', 'overview'] as const;
         const aiPromises = dimensionKeys.map(async (key) => {
           const start = Date.now();
           const messages: ChatMessage[] = [
@@ -145,6 +166,15 @@ export async function POST(request: NextRequest) {
             if (dimData.spouseDesc) flatAnalysis.spouseDesc = dimData.spouseDesc;
             if (dimData.marriageAdvice) flatAnalysis.marriageAdvice = dimData.marriageAdvice;
             if (dimData.mentorDirection) flatAnalysis.mentorDirection = dimData.mentorDirection;
+            // Handle overview fields (overall, fortune, yearly, luckyElements, nameSuggestions)
+            if (r.key === 'overview') {
+              if (dimData.overall) flatAnalysis.overall = dimData.overall;
+              if (dimData.overallPlain) flatAnalysis.overallPlain = dimData.overallPlain;
+              if (dimData.fortune) flatAnalysis.fortune = dimData.fortune;
+              if (dimData.yearly) flatAnalysis.yearly = dimData.yearly;
+              if (dimData.luckyElements) flatAnalysis.luckyElements = dimData.luckyElements;
+              if (dimData.nameSuggestions) flatAnalysis.nameSuggestions = dimData.nameSuggestions;
+            }
           }
 
           sendEvent('complete', {
