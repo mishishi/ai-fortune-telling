@@ -10,11 +10,12 @@ import OnboardingTutorial from '@/components/OnboardingTutorial';
 import DestinyRings from '@/components/DestinyRings';
 import LoadingProgress from '@/components/LoadingProgress';
 import DailyFortuneCard from '@/components/DailyFortuneCard';
-import { STAGE_COMPLETE_PROGRESS, type LoadingStage } from '@/types/loading';
+import { STAGE_COMPLETE_PROGRESS, AI_PROGRESS_HINTS, type LoadingStage, type AIProgressStep } from '@/types/loading';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/contexts/UserContext';
 import { useToast } from '@/contexts/ToastContext';
+import { calculateBaZi, BirthInfo } from '@/lib/bazi';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -40,6 +41,7 @@ export default function HomePage() {
   const [showTodayFortune, setShowTodayFortune] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showPushModal, setShowPushModal] = useState(false);
+  const [aiProgressHint, setAiProgressHint] = useState<AIProgressStep>('analyzing');
   const roundCountRef = useRef(0);
 
   // Check localStorage on mount to show onboarding if not completed
@@ -165,19 +167,38 @@ export default function HomePage() {
     setFormVisible(false);
 
     try {
-      // Step 1: Calculate BaZi - show for 1.5s minimum so user sees it
+      // Step 1: Calculate BaZi client-side (instant, no API call needed)
       setLoadingStep('bazi');
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      const birthInfo: BirthInfo = {
+        year: birthData.year,
+        month: birthData.month,
+        day: birthData.day,
+        hour: birthData.hour,
+        minute: birthData.minute || 0,
+        gender: birthData.gender as 'male' | 'female',
+        province: birthData.province || '',
+      };
+      const clientBaziData = calculateBaZi(birthInfo);
 
-      // Step 2: AI Analysis
+      // Step 2: AI Analysis - send pre-calculated baziData to skip server calculation
       setLoadingStep('ai');
-      await new Promise(resolve => setTimeout(resolve, 500)); // Brief delay before fetch
+
+      // Progress hints during AI API call
+      const progressSteps: AIProgressStep[] = ['analyzing', 'career', 'love', 'wealth', 'health', 'mentor', 'fortune', 'yearly'];
+      let hintIndex = 0;
+      const hintInterval = setInterval(() => {
+        hintIndex = (hintIndex + 1) % progressSteps.length;
+        setAiProgressHint(progressSteps[hintIndex]);
+      }, 2000);
+      setAiProgressHint(progressSteps[0]);
 
       const baziRes = await fetch('/api/ai/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ birthData, userFocus }),
+        body: JSON.stringify({ birthData, baziData: clientBaziData, userFocus }),
       });
+      clearInterval(hintInterval);
+
       if (!baziRes.ok) {
         const errData = await baziRes.json().catch(() => ({}));
         console.error('Analyze API error:', errData);
@@ -186,9 +207,9 @@ export default function HomePage() {
       }
       const result = await baziRes.json();
 
-      // Step 3: Save report - show for 1s minimum so user sees it
+      // Step 3: Save report - show briefly
       setLoadingStep('report');
-      await new Promise(resolve => setTimeout(resolve, 1000));
+
       // Use logged-in user's ID if available, otherwise 'anonymous'
       const reportUserId = user?.userId || 'anonymous';
       const saveRes = await fetch('/api/reports', {
@@ -199,7 +220,7 @@ export default function HomePage() {
           name: birthData.name,
           gender: birthData.gender,
           birthData: birthData,
-          baziData: result.baziData || {},
+          baziData: result.baziData || clientBaziData,
           aiAnalysis: result.analysis || {},
           radarScores: result.radarScores || {},
         }),
@@ -360,6 +381,7 @@ export default function HomePage() {
                   <LoadingProgress
                     stage={loadingStep as LoadingStage}
                     progress={STAGE_COMPLETE_PROGRESS[loadingStep as LoadingStage]}
+                    aiHint={aiProgressHint}
                   />
                 </div>
               )}

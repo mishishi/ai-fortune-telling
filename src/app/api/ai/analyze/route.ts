@@ -79,28 +79,36 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'birthData is required' }, { status: 400 });
     }
 
-    // Compute BaZi from birth data
-    const birthInfo: BirthInfo = {
-      year: birthData.year,
-      month: birthData.month,
-      day: birthData.day,
-      hour: birthData.hour,
-      minute: birthData.minute || 0,
-      gender: birthData.gender,
-      province: birthData.province || '',
-    };
-
-    console.log('[AI Analyze] birthInfo:', JSON.stringify(birthInfo));
-
-    const baziStart = Date.now();
+    // Compute BaZi from birth data (or use pre-calculated from client)
     let baziResult: BaZiResult;
-    try {
-      baziResult = calculateBaZi(birthInfo);
-      console.log(`[AI Analyze] BaZi calculation took ${Date.now() - baziStart}ms`);
-    } catch (e) {
-      console.error('BaZi calculation error:', e);
-      const errorDetail = e instanceof Error ? { message: e.message, stack: e.stack } : String(e);
-      return NextResponse.json({ error: '八字排盘失败', detail: errorDetail }, { status: 500 });
+
+    if (body.baziData) {
+      // Use pre-calculated baziData from client (skip calculation)
+      baziResult = body.baziData;
+      console.log('[AI Analyze] Using pre-calculated baziData from client');
+    } else {
+      // Calculate on server if not provided
+      const birthInfo: BirthInfo = {
+        year: birthData.year,
+        month: birthData.month,
+        day: birthData.day,
+        hour: birthData.hour,
+        minute: birthData.minute || 0,
+        gender: birthData.gender,
+        province: birthData.province || '',
+      };
+
+      console.log('[AI Analyze] birthInfo:', JSON.stringify(birthInfo));
+
+      const baziStart = Date.now();
+      try {
+        baziResult = calculateBaZi(birthInfo);
+        console.log(`[AI Analyze] BaZi calculation took ${Date.now() - baziStart}ms`);
+      } catch (e) {
+        console.error('BaZi calculation error:', e);
+        const errorDetail = e instanceof Error ? { message: e.message, stack: e.stack } : String(e);
+        return NextResponse.json({ error: '八字排盘失败', detail: errorDetail }, { status: 500 });
+      }
     }
 
     // Build bazi data for AI (skip fortune lines to reduce token count)

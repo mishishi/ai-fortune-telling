@@ -1,11 +1,13 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import type { LoadingStage } from '@/types/loading';
+import type { LoadingStage, AIProgressStep } from '@/types/loading';
+import { AI_PROGRESS_HINTS } from '@/types/loading';
 
 interface LoadingProgressProps {
   stage: LoadingStage;
   progress: number; // 0-100, represents overall progress
+  aiHint?: AIProgressStep; // AI analysis sub-stage hint
 }
 
 // Stage configuration with fixed percentages and colors
@@ -33,7 +35,7 @@ const STAGE_CONFIG = {
   },
 };
 
-export default function LoadingProgress({ stage, progress }: LoadingProgressProps) {
+export default function LoadingProgress({ stage, progress, aiHint }: LoadingProgressProps) {
   const [displayProgress, setDisplayProgress] = useState(0);
 
   // Animate progress value
@@ -61,6 +63,7 @@ export default function LoadingProgress({ stage, progress }: LoadingProgressProp
   };
 
   const overallProgress = getOverallProgress();
+  const showAiHint = stage === 'ai' && aiHint;
 
   return (
     <div className="flex flex-col items-center gap-4">
@@ -76,6 +79,20 @@ export default function LoadingProgress({ stage, progress }: LoadingProgressProp
       >
         {config.label}
       </div>
+
+      {/* AI Progress Hint */}
+      {showAiHint && (
+        <div
+          className="px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-300 animate-pulse"
+          style={{
+            background: 'rgba(239, 68, 68, 0.1)',
+            color: 'var(--color-loading-fire)',
+            border: '1px solid rgba(239, 68, 68, 0.3)',
+          }}
+        >
+          {AI_PROGRESS_HINTS[aiHint]}
+        </div>
+      )}
 
       {/* Progress Bar Container */}
       <div className="w-64 relative">
