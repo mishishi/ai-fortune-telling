@@ -93,7 +93,7 @@ function SvgRadarChart({ scores, size = 280 }: { scores: Record<string, number>;
 
       {/* Dimension labels */}
       {DIMENSIONS.map(dim => {
-        const labelRadius = outerRadius + 20;
+        const labelRadius = outerRadius + 12;
         const pos = polarToCartesian(cx, cy, labelRadius, dim.angle);
         const score = scores[dim.key] || 0;
         return (

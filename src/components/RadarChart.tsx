@@ -84,7 +84,7 @@ export default function RadarChart({ scores, size = 280, color = 'rgba(212, 175,
         <circle key={i} cx={point.x} cy={point.y} r="4" fill="#d4af37" />
       ))}
       {DIMENSIONS.map(dim => {
-        const labelRadius = outerRadius + 20;
+        const labelRadius = outerRadius + 12;
         const pos = polarToCartesian(cx, cy, labelRadius, dim.angle);
         const score = scores[dim.key as keyof RadarChartProps['scores']] || 0;
         return (
