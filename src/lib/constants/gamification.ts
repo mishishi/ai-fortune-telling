@@ -31,3 +31,7 @@ export const BADGE_DEFINITIONS = {
 // Constants
 export const CHECKIN_POINTS = 5;
 export const MAX_STREAK_LOOKBACK_DAYS = 365;
+
+// 补签提醒阈值
+export const STREAK_WARNING_THRESHOLD = 3;  // 连续3天以上才发送提醒
+export const STREAK_REPAIR_WINDOW_DAYS = 1; // 漏签后1天内可修复
