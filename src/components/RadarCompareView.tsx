@@ -1,6 +1,6 @@
 'use client';
 
-import RadarChartComponent from './RadarChart';
+import RadarChartComponent from './InteractiveRadarChart';
 
 interface Report {
   id: string;

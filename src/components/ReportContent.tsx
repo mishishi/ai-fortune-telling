@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import RadarChartComponent from '@/components/RadarChart';
+import RadarChartComponent from './InteractiveRadarChart';
 import FortuneDisplay from '@/components/FortuneDisplay';
 import { Accordion } from '@/components/ui/Accordion';
 
