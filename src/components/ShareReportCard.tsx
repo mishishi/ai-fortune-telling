@@ -1,5 +1,7 @@
 'use client';
 
+import RadarChart from './RadarChart';
+
 // Enhanced share card with SVG radar chart for better image generation
 interface ShareReportCardProps {
   name: string;
@@ -39,117 +41,6 @@ function describeArc(cx: number, cy: number, radius: number, startAngle: number,
   const end = polarToCartesian(cx, cy, radius, startAngle);
   const largeArcFlag = endAngle - startAngle <= 180 ? '0' : '1';
   return `M ${start.x} ${start.y} A ${radius} ${radius} 0 ${largeArcFlag} 0 ${end.x} ${end.y}`;
-}
-
-function SvgRadarChart({ scores, size = 280 }: { scores: Record<string, number>; size?: number }) {
-  const cx = size / 2;
-  const cy = size / 2;
-  const outerRadius = size * 0.38;
-  const innerRadius = outerRadius * 0.2;
-
-  // Calculate score points
-  const scorePoints = DIMENSIONS.map(dim => {
-    const score = scores[dim.key] || 0;
-    const radius = innerRadius + (outerRadius - innerRadius) * (score / 100);
-    return polarToCartesian(cx, cy, radius, dim.angle);
-  });
-
-  // Axis lines and labels
-  const axisLines = DIMENSIONS.map(dim => {
-    const point = polarToCartesian(cx, cy, outerRadius, dim.angle);
-    return { x1: cx, y1: cy, x2: point.x, y2: point.y };
-  });
-
-  // Grid circles
-  const gridCircles = [0.25, 0.5, 0.75, 1].map(scale => (
-    <circle
-      key={scale}
-      cx={cx}
-      cy={cy}
-      r={innerRadius + (outerRadius - innerRadius) * scale}
-      fill="none"
-      stroke="rgba(255,255,255,0.1)"
-      strokeWidth="1"
-    />
-  ));
-
-  // Score fill polygon
-  const fillPath = scorePoints.length > 0
-    ? `M ${scorePoints.map(p => `${p.x} ${p.y}`).join(' L ')} Z`
-    : '';
-
-  return (
-    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-      {/* Background */}
-      <rect x="0" y="0" width={size} height={size} fill="rgba(26,21,37,1)" />
-      {/* Grid circles */}
-      {gridCircles}
-
-      {/* Axis lines */}
-      {axisLines.map((line, i) => (
-        <line
-          key={i}
-          x1={line.x1}
-          y1={line.y1}
-          x2={line.x2}
-          y2={line.y2}
-          stroke="rgba(255,255,255,0.1)"
-          strokeWidth="1"
-        />
-      ))}
-
-      {/* Score fill */}
-      <path
-        d={fillPath}
-        fill="rgba(212, 175, 55, 0.3)"
-        stroke="rgba(212, 175, 55, 0.8)"
-        strokeWidth="2"
-      />
-
-      {/* Score points */}
-      {scorePoints.map((point, i) => (
-        <circle
-          key={i}
-          cx={point.x}
-          cy={point.y}
-          r="4"
-          fill="#d4af37"
-        />
-      ))}
-
-      {/* Dimension labels */}
-      {DIMENSIONS.map(dim => {
-        const labelRadius = outerRadius + 20;
-        const pos = polarToCartesian(cx, cy, labelRadius, dim.angle);
-        const score = scores[dim.key] || 0;
-        return (
-          <g key={dim.key}>
-            <text
-              x={pos.x}
-              y={pos.y}
-              textAnchor="middle"
-              dominantBaseline="middle"
-              fill={dim.color}
-              fontSize="12"
-              fontWeight="bold"
-            >
-              {dim.label}
-            </text>
-            <text
-              x={pos.x}
-              y={pos.y + 14}
-              textAnchor="middle"
-              dominantBaseline="middle"
-              fill="rgba(255,255,255,0.7)"
-              fontSize="10"
-            >
-              {score}分
-            </text>
-          </g>
-        );
-      })}
-    </svg>
-  );
 }
 
 export default function ShareReportCard({
@@ -193,7 +84,7 @@ export default function ShareReportCard({
 
       {/* Radar Chart */}
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
-        <SvgRadarChart scores={radarScores} size={240} />
+        <RadarChart scores={radarScores} size={240} />
       </div>
 
       {/* Score Bars */}

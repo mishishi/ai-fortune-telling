@@ -1,108 +1,101 @@
+// src/components/RadarChart.tsx
 'use client';
-import { useState } from 'react';
-import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis } from 'recharts';
 
 interface RadarChartProps {
   scores: {
-    career: number;
-    love: number;
-    wealth: number;
-    health: number;
-    mentor: number;
+    career?: number;
+    love?: number;
+    wealth?: number;
+    health?: number;
+    mentor?: number;
   };
-  onDimensionClick?: (dimension: string) => void;
-  activeDimension?: string | null;
+  size?: number;
+  color?: string;        // 雷达图填充色
+  opponentScores?: {    // 对手的雷达图数据，用于叠加对比
+    career?: number;
+    love?: number;
+    wealth?: number;
+    health?: number;
+    mentor?: number;
+  };
+  opponentColor?: string;
 }
 
 const DIMENSIONS = [
-  { key: 'career', label: '事业', angle: 90 },
-  { key: 'love', label: '感情', angle: 162 },
-  { key: 'wealth', label: '财运', angle: 234 },
-  { key: 'health', label: '健康', angle: 306 },
-  { key: 'mentor', label: '贵人', angle: 18 },
+  { key: 'career', label: '事业', color: '#e74c3c', angle: 90 },
+  { key: 'love', label: '感情', color: '#e91e63', angle: 162 },
+  { key: 'wealth', label: '财运', color: '#f1c40f', angle: 234 },
+  { key: 'health', label: '健康', color: '#2ecc71', angle: 306 },
+  { key: 'mentor', label: '贵人', color: '#3498db', angle: 18 },
 ];
 
-const DIMENSION_COLORS: Record<string, string> = {
-  career: 'var(--color-dimension-career)',
-  love: 'var(--color-dimension-love)',
-  wealth: 'var(--color-dimension-wealth)',
-  health: 'var(--color-dimension-health)',
-  mentor: 'var(--color-dimension-mentor)',
-};
-
-export default function RadarChartComponent({
-  scores,
-  onDimensionClick,
-  activeDimension
-}: RadarChartProps) {
-  const [hoveredDimension, setHoveredDimension] = useState<string | null>(null);
-
-  const data = DIMENSIONS.map(d => ({
-    dimension: d.label,
-    value: scores[d.key as keyof typeof scores] || 0,
-    key: d.key,
-  }));
-
-  const handleClick = (e: any) => {
-    if (e && e.activePayload && e.activePayload[0]) {
-      const key = e.activePayload[0].payload.key;
-      onDimensionClick?.(key);
-    }
+function polarToCartesian(cx: number, cy: number, radius: number, angleInDegrees: number) {
+  const angleInRadians = ((angleInDegrees - 90) * Math.PI) / 180;
+  return {
+    x: cx + radius * Math.cos(angleInRadians),
+    y: cy + radius * Math.sin(angleInRadians),
   };
+}
 
-  const ariaLabel = `命盘分析雷达图：事业${scores.career}分、感情${scores.love}分、财运${scores.wealth}分、健康${scores.health}分、贵人${scores.mentor}分`;
+export { DIMENSIONS, polarToCartesian };
+
+export default function RadarChart({ scores, size = 280, color = 'rgba(212, 175, 55, 0.3)', opponentScores, opponentColor = 'rgba(231, 76, 60, 0.3)' }: RadarChartProps) {
+  const cx = size / 2;
+  const cy = size / 2;
+  const outerRadius = size * 0.38;
+  const innerRadius = outerRadius * 0.2;
+
+  const scorePoints = DIMENSIONS.map(dim => {
+    const score = scores[dim.key as keyof typeof scores] || 0;
+    const radius = innerRadius + (outerRadius - innerRadius) * (score / 100);
+    return polarToCartesian(cx, cy, radius, dim.angle);
+  });
+
+  const opponentPoints = opponentScores ? DIMENSIONS.map(dim => {
+    const score = opponentScores[dim.key as keyof typeof opponentScores] || 0;
+    const radius = innerRadius + (outerRadius - innerRadius) * (score / 100);
+    return polarToCartesian(cx, cy, radius, dim.angle);
+  }) : null;
+
+  const axisLines = DIMENSIONS.map(dim => {
+    const point = polarToCartesian(cx, cy, outerRadius, dim.angle);
+    return { x1: cx, y1: cy, x2: point.x, y2: point.y };
+  });
+
+  const gridCircles = [0.25, 0.5, 0.75, 1].map(scale => (
+    <circle key={scale} cx={cx} cy={cy} r={innerRadius + (outerRadius - innerRadius) * scale}
+      fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="1" />
+  ));
+
+  const fillPath = scorePoints.length > 0 ? `M ${scorePoints.map(p => `${p.x} ${p.y}`).join(' L ')} Z` : '';
+  const opponentPath = opponentPoints && opponentPoints.length > 0 ? `M ${opponentPoints.map(p => `${p.x} ${p.y}`).join(' L ')} Z` : '';
 
   return (
-    <div className="relative mx-auto" role="img" aria-label={ariaLabel} style={{ width: 300 }}>
-      <RadarChart
-        width={300}
-        height={300}
-        cx="50%"
-        cy="50%"
-        outerRadius="70%"
-        data={data}
-        onClick={handleClick}
-      >
-        <PolarGrid stroke="rgba(255,255,255,0.1)" />
-        <PolarAngleAxis
-          dataKey="dimension"
-          tick={{ fill: '#9ca3af', fontSize: 13 }}
-        />
-        <PolarRadiusAxis
-          angle={90}
-          domain={[0, 100]}
-          tick={{ fill: '#9ca3af', fontSize: 10 }}
-          tickCount={5}
-        />
-        {DIMENSIONS.map((d) => {
-          const isActive = activeDimension === d.key;
-          const isHovered = hoveredDimension === d.key;
-          const color = DIMENSION_COLORS[d.key];
-
-          return (
-            <Radar
-              key={d.key}
-              name={d.label}
-              dataKey="value"
-              stroke={isActive ? color : isHovered ? color : 'rgba(123,104,238,0.5)'}
-              fill={color}
-              fillOpacity={isActive ? 0.5 : isHovered ? 0.3 : 0.15}
-              strokeWidth={isActive ? 3 : 2}
-              style={{
-                cursor: 'pointer',
-                transition: 'all 0.3s ease',
-              }}
-              onMouseEnter={() => setHoveredDimension(d.key)}
-              onMouseLeave={() => setHoveredDimension(null)}
-            />
-          );
-        })}
-      </RadarChart>
-
-      {/* Click hint */}
-      <p className="text-center text-xs mt-2" style={{ color: 'var(--color-text-muted)' }}>
-        点击雷达图维度查看详细分析
-      </p>
-    </div>
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+      <rect x="0" y="0" width={size} height={size} fill="rgba(26,21,37,1)" />
+      {gridCircles}
+      {axisLines.map((line, i) => (
+        <line key={i} x1={line.x1} y1={line.y1} x2={line.x2} y2={line.y2}
+          stroke="rgba(255,255,255,0.1)" strokeWidth="1" />
+      ))}
+      {opponentPath && <path d={opponentPath} fill={opponentColor} stroke={opponentColor} strokeWidth="2" />}
+      <path d={fillPath} fill={color} stroke={color.replace('0.3', '0.8')} strokeWidth="2" />
+      {scorePoints.map((point, i) => (
+        <circle key={i} cx={point.x} cy={point.y} r="4" fill="#d4af37" />
+      ))}
+      {DIMENSIONS.map(dim => {
+        const labelRadius = outerRadius + 20;
+        const pos = polarToCartesian(cx, cy, labelRadius, dim.angle);
+        const score = scores[dim.key as keyof typeof scores] || 0;
+        return (
+          <g key={dim.key}>
+            <text x={pos.x} y={pos.y} textAnchor="middle" dominantBaseline="middle"
+              fill={dim.color} fontSize="12" fontWeight="bold">{dim.label}</text>
+            <text x={pos.x} y={pos.y + 14} textAnchor="middle" dominantBaseline="middle"
+              fill="rgba(255,255,255,0.7)" fontSize="10">{score}分</text>
+          </g>
+        );
+      })}
+    </svg>
   );
 }
