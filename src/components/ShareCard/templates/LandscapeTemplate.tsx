@@ -6,11 +6,10 @@ import { BAGUA_SYMBOLS, ZODIAC_ANIMALS } from '../constants/bagua';
 
 // 朱砂红印章颜色
 const VERMILLION = '#c41e3a';
-const INK_DARK = '#2c2c2c';
+const INK_DARK = '#1a1a1a';
 const INK_MEDIUM = '#5c5c5c';
 const INK_LIGHT = '#8b7355';
-const MOUNTAIN_PALE = '#d4d4d4';
-const CLOUD_COLOR = 'rgba(255, 255, 255, 0.7)';
+const PAPER_BG = '#f5f0e8';
 
 const DIMENSIONS = [
   { key: 'career', label: '事业', color: '#4a7c59', angle: 90 },
@@ -182,7 +181,7 @@ function CloudPattern({ position }: { position: 'top-left' | 'top-right' | 'bott
 // Water wave decoration for bottom
 function WaterWaveDecoration() {
   return (
-    <g opacity="0.15">
+    <g opacity="0.3">
       {/* Wave layers */}
       <path
         d="M 0 470 Q 30 460 60 470 T 120 470 T 180 470 T 240 470 T 300 470 T 360 470 T 420 470"
@@ -209,7 +208,7 @@ function WaterWaveDecoration() {
 // Mountain silhouette decoration for background
 function MountainSilhouette() {
   return (
-    <g opacity="0.08">
+    <g opacity="0.25">
       {/* Far mountains */}
       <polygon points="0,480 60,380 120,420 180,350 240,400 300,340 360,390 420,360 420,480" fill={INK_DARK} />
       {/* Near mountains with more detail */}
@@ -460,7 +459,7 @@ export default function LandscapeTemplate({ data }: LandscapeTemplateProps) {
         width: 420,
         minHeight: 480,
         padding: 32,
-        background: 'linear-gradient(145deg, #f8f6f1 0%, #f0ebe3 40%, #e8e2d8 100%)',
+        background: 'linear-gradient(145deg, #2d2d2d 0%, #252525 50%, #1a1a1a 100%)',
         fontFamily: 'system-ui, -apple-system, sans-serif',
         color: INK_DARK,
         boxSizing: 'border-box',
@@ -477,7 +476,7 @@ export default function LandscapeTemplate({ data }: LandscapeTemplateProps) {
           left: 0,
           right: 0,
           bottom: 0,
-          background: 'radial-gradient(ellipse at 30% 20%, rgba(139, 115, 85, 0.08) 0%, transparent 50%), radial-gradient(ellipse at 70% 80%, rgba(74, 124, 89, 0.06) 0%, transparent 50%)',
+          background: 'radial-gradient(ellipse at 30% 20%, rgba(139, 115, 85, 0.12) 0%, transparent 50%), radial-gradient(ellipse at 70% 80%, rgba(74, 124, 89, 0.08) 0%, transparent 50%)',
           pointerEvents: 'none',
           zIndex: 0,
         }}
@@ -494,10 +493,10 @@ export default function LandscapeTemplate({ data }: LandscapeTemplateProps) {
         <div style={{ fontSize: 11, color: INK_LIGHT, marginBottom: 6, letterSpacing: 4, fontWeight: 500 }}>
           · AI 命理分析报告 ·
         </div>
-        <h2 style={{ fontSize: 26, fontWeight: 'bold', margin: 0, color: INK_DARK, letterSpacing: 3 }}>
+        <h2 style={{ fontSize: 26, fontWeight: 'bold', margin: 0, color: PAPER_BG, letterSpacing: 3 }}>
           {data.name} 的命盘
         </h2>
-        <div style={{ fontSize: 13, color: INK_MEDIUM, marginTop: 6 }}>
+        <div style={{ fontSize: 13, color: '#a0a0a0', marginTop: 6 }}>
           {data.birthYear ? `${data.birthYear}年 · ` : ''}{genderText} · {data.zodiac || '生肖'} · {data.element || '五行'}
         </div>
       </div>
@@ -515,10 +514,10 @@ export default function LandscapeTemplate({ data }: LandscapeTemplateProps) {
           return (
             <div key={dim.key} style={{ marginBottom: 12 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                <span style={{ fontSize: 12, color: INK_DARK, fontWeight: 500 }}>{dim.label}</span>
+                <span style={{ fontSize: 12, color: PAPER_BG, fontWeight: 500 }}>{dim.label}</span>
                 <span style={{ fontSize: 12, fontWeight: 'bold', color: dim.color }}>{score}分</span>
               </div>
-              <div style={{ height: 4, background: 'rgba(139, 115, 85, 0.15)', borderRadius: 2, overflow: 'hidden' }}>
+              <div style={{ height: 4, background: 'rgba(139, 115, 85, 0.25)', borderRadius: 2, overflow: 'hidden' }}>
                 <div
                   style={{
                     width: `${fillWidth}%`,
@@ -537,7 +536,7 @@ export default function LandscapeTemplate({ data }: LandscapeTemplateProps) {
       {data.overall && (
         <div
           style={{
-            background: 'rgba(139, 115, 85, 0.08)',
+            background: 'rgba(139, 115, 85, 0.15)',
             borderLeft: `3px solid ${VERMILLION}`,
             borderRadius: 4,
             padding: '12px 16px',
@@ -545,7 +544,7 @@ export default function LandscapeTemplate({ data }: LandscapeTemplateProps) {
           }}
         >
           <div style={{ fontSize: 10, color: VERMILLION, marginBottom: 4, letterSpacing: 1, fontWeight: 600 }}>整体运势</div>
-          <p style={{ fontSize: 12, color: INK_DARK, margin: 0, lineHeight: 1.8 }}>
+          <p style={{ fontSize: 12, color: PAPER_BG, margin: 0, lineHeight: 1.8 }}>
             {data.overall.length > 80 ? data.overall.slice(0, 80) + '...' : data.overall}
           </p>
         </div>
