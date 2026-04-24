@@ -1,6 +1,98 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { chat, ChatMessage } from '@/lib/minimax';
 import { calculateBaZi, BirthInfo, BaZiResult } from '@/lib/bazi';
+import { getDb } from '@/lib/db';
+import { v4 as uuidv4 } from 'uuid';
+
+function getUserIdFromCookie(request: NextRequest): string | null {
+  const deviceId = request.cookies.get('fortune_device_id')?.value;
+  if (deviceId) return deviceId;
+  const userId = request.cookies.get('user_id')?.value;
+  if (userId) return userId;
+  return null;
+}
+
+interface PredictionRecord {
+  dimension: string;
+  prediction: string;
+  timeframeStart: string;
+  timeframeEnd: string;
+}
+
+function extractPredictions(analysis: Record<string, any>): PredictionRecord[] {
+  const predictions: PredictionRecord[] = [];
+  const now = new Date();
+  const threeMonthsLater = new Date(now);
+  threeMonthsLater.setMonth(threeMonthsLater.getMonth() + 3);
+  const timeframeStart = now.toISOString();
+  const timeframeEnd = threeMonthsLater.toISOString();
+
+  const dimensionFields = ['career', 'love', 'wealth', 'health', 'mentor'] as const;
+
+  for (const dim of dimensionFields) {
+    const text = analysis[dim];
+    if (text && typeof text === 'string') {
+      // Take first ~50 characters as the prediction content
+      const predictionText = text.substring(0, 50);
+      predictions.push({
+        dimension: dim,
+        prediction: predictionText,
+        timeframeStart,
+        timeframeEnd,
+      });
+    }
+  }
+
+  return predictions;
+}
+
+async function storeReportAndPredictions(
+  userId: string,
+  name: string,
+  gender: string,
+  birthData: any,
+  baziData: any,
+  aiAnalysis: any,
+  radarScores: Record<string, number>
+): Promise<string | null> {
+  try {
+    const db = getDb();
+    const reportId = uuidv4();
+    const createdAt = new Date().toISOString();
+
+    // Create report record
+    db.prepare(`
+      INSERT INTO reports (id, userId, name, gender, birthData, baziData, aiAnalysis, radarScores, isFullVersion, unlocked, createdAt)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1, 1, ?)
+    `).run(
+      reportId,
+      userId,
+      name,
+      gender,
+      JSON.stringify(birthData),
+      JSON.stringify(baziData),
+      JSON.stringify(aiAnalysis),
+      JSON.stringify(radarScores),
+      createdAt
+    );
+
+    // Extract and store predictions
+    const predictions = extractPredictions(aiAnalysis);
+    for (const pred of predictions) {
+      const predId = uuidv4();
+      db.prepare(`
+        INSERT INTO predictions (id, user_id, report_id, dimension, prediction, timeframe_start, timeframe_end, status, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', ?)
+      `).run(predId, userId, reportId, pred.dimension, pred.prediction, pred.timeframeStart, pred.timeframeEnd, createdAt);
+    }
+
+    console.log(`Stored report ${reportId} with ${predictions.length} predictions for user ${userId}`);
+    return reportId;
+  } catch (error) {
+    console.error('Error storing report and predictions:', error);
+    return null;
+  }
+}
 
 const DIMENSION_PROMPTS = {
   career: `分析此八字的事业运势，输出JSON：
@@ -100,8 +192,11 @@ export async function POST(request: NextRequest) {
       };
 
       try {
+        // Get userId from cookies
+        const userId = getUserIdFromCookie(request);
+
         const body = await request.json();
-        const { birthData, userFocus } = body;
+        const { birthData, userFocus, name: reportName } = body;
 
         if (!birthData) {
           sendEvent('error', { error: 'birthData is required' });
@@ -183,6 +278,22 @@ export async function POST(request: NextRequest) {
             radarScores,
             analysis: flatAnalysis,
           });
+
+          // Store report and predictions after complete event is sent
+          if (userId) {
+            const reportNameForDb = reportName || `八字分析-${new Date().toLocaleDateString('zh-CN')}`;
+            const genderForDb = birthData.gender || 'unknown';
+            storeReportAndPredictions(
+              userId,
+              reportNameForDb,
+              genderForDb,
+              birthData,
+              baziResult,
+              flatAnalysis,
+              radarScores
+            );
+          }
+
           // Delay close to ensure complete event is fully flushed to client
           setTimeout(() => controller.close(), 500);
         }).catch((err) => {
