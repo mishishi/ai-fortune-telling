@@ -204,15 +204,17 @@ export default function LoadingProgress({ stage, progress, aiHint, startTime, co
       <div
         className="px-4 py-2 rounded-full text-sm font-medium"
         style={{
-          background: stageTransitioning
+          backgroundColor: stageTransitioning ? 'transparent' : config.bgColor,
+          backgroundImage: stageTransitioning
             ? `linear-gradient(90deg, ${config.bgColor}, rgba(255,255,255,0.3), ${config.bgColor})`
-            : config.bgColor,
+            : 'none',
+          backgroundSize: '200% 100%',
+          backgroundPosition: stageTransitioning ? '100% 0' : '0 0',
           color: config.color,
           boxShadow: `0 0 12px ${config.ringColor}`,
           border: `1px solid ${config.ringColor}`,
-          backgroundSize: stageTransitioning ? '200% 100%' : '100% 100%',
           animation: stageTransitioning ? 'stageFlash 0.3s ease-out' : 'none',
-          transition: 'background 0.4s ease, color 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease',
+          transition: 'background-color 0.4s ease, background-image 0.4s ease, color 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease',
         }}
       >
         {config.label}
