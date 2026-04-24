@@ -45,6 +45,7 @@ export default function HomePage() {
   const [aiProgressHint, setAiProgressHint] = useState<AIProgressStep>('analyzing');
   const [partialRadarScores, setPartialRadarScores] = useState<Record<string, number>>({});
   const [partialAnalysis, setPartialAnalysis] = useState<Record<string, any>>({});
+  const [loadingStartTime, setLoadingStartTime] = useState<number | null>(null);
   const roundCountRef = useRef(0);
 
   // Check localStorage on mount to show onboarding if not completed
@@ -156,6 +157,7 @@ export default function HomePage() {
   const handleCancel = () => {
     setLoading(false);
     setLoadingStep('idle');
+    setLoadingStartTime(null);
     setShowModal(false);
     setFormVisible(true);
     setCoveredTopics([]);
@@ -166,6 +168,7 @@ export default function HomePage() {
   const generateReport = async (userFocus?: string) => {
     if (!birthData) return;
     setLoading(true);
+    setLoadingStartTime(Date.now());
     setShowModal(false);
     setFormVisible(false);
 
@@ -406,7 +409,11 @@ export default function HomePage() {
           {loading ? (
             <div className="text-center" role="status" aria-live="polite" aria-label="加载状态">
               {/* Destiny Rings Animation */}
-              <DestinyRings stage={loadingStep === 'done' ? 'report' : loadingStep as 'bazi' | 'ai' | 'report'} size={160} />
+              <DestinyRings
+                stage={loadingStep === 'done' ? 'report' : loadingStep as 'bazi' | 'ai' | 'report'}
+                size={160}
+                progress={STAGE_COMPLETE_PROGRESS[loadingStep === 'done' ? 'report' : loadingStep as LoadingStage]}
+              />
 
               {/* Atmospheric Chinese Text */}
               {(loadingStep === 'bazi' || loadingStep === 'ai' || loadingStep === 'report') && (
@@ -424,6 +431,8 @@ export default function HomePage() {
                     stage={loadingStep as LoadingStage}
                     progress={STAGE_COMPLETE_PROGRESS[loadingStep as LoadingStage]}
                     aiHint={aiProgressHint}
+                    startTime={loadingStartTime || undefined}
+                    completedDimensions={Object.keys(partialRadarScores).length}
                   />
                 </div>
               )}

@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect, useRef } from 'react';
 import WuXingCompass from './WuXingCompass';
 import RadarChart from './RadarChart';
 import type { AIProgressStep } from '@/types/loading';
@@ -29,28 +30,48 @@ const DIMENSION_COLORS: Record<string, string> = {
   overview: '#9b59b6',
 };
 
+const DIMENSION_HINTS: Record<string, string> = {
+  career: '正在分析你的事业格局...',
+  love: '正在测算你的情感姻缘...',
+  wealth: '正在推演你的财富流向...',
+  health: '正在审视你的健康运势...',
+  mentor: '正在寻觅你的命中贵人...',
+};
+
 export default function ProgressiveDisplay({
   partialScores,
   partialAnalysis,
   currentHint,
   completedDimensions,
 }: ProgressiveDisplayProps) {
+  // Track newly completed dimensions for explosion animation
+  const [explodingDimensions, setExplodingDimensions] = useState<Set<string>>(new Set());
+  const prevCompletedRef = useRef<string[]>([]);
+
+  // Detect new completions and trigger explosion
+  useEffect(() => {
+    const prev = prevCompletedRef.current;
+    const newCompleted = completedDimensions.filter(d => d !== 'overview' && !prev.includes(d));
+
+    if (newCompleted.length > 0) {
+      // Add to exploding set
+      setExplodingDimensions(prev => new Set([...prev, ...newCompleted]));
+
+      // Remove after animation completes (600ms)
+      setTimeout(() => {
+        setExplodingDimensions(prev => {
+          const next = new Set(prev);
+          newCompleted.forEach(d => next.delete(d));
+          return next;
+        });
+      }, 600);
+    }
+
+    prevCompletedRef.current = completedDimensions;
+  }, [completedDimensions]);
+
   // Filter out 'overview' from display dimensions
   const displayDimensions = completedDimensions.filter(d => d !== 'overview');
-
-  // Extract keyword preview from analysis
-  const getDimensionPreview = (key: string): string => {
-    if (!partialAnalysis[key]) return '';
-    const data = partialAnalysis[key];
-    if (typeof data === 'string') {
-      // Already a string, return first 20 chars
-      return data.slice(0, 20) + (data.length > 20 ? '...' : '');
-    }
-    if (data[key]) {
-      return String(data[key]).slice(0, 20) + (String(data[key]).length > 20 ? '...' : '');
-    }
-    return '';
-  };
 
   // Determine which dimension is currently being analyzed
   const currentDimensionMap: Partial<Record<AIProgressStep, string>> = {
@@ -62,6 +83,11 @@ export default function ProgressiveDisplay({
     mentor: 'mentor',
   };
   const currentDimension = currentDimensionMap[currentHint] || '';
+
+  // Get hint text for current dimension
+  const hintText = currentHint && currentHint !== 'analyzing'
+    ? DIMENSION_HINTS[currentHint] || `正在解读${DIMENSION_LABELS[currentHint]}...`
+    : null;
 
   return (
     <div className="flex flex-col items-center gap-6">
@@ -85,6 +111,35 @@ export default function ProgressiveDisplay({
             size={200}
           />
         </div>
+
+        {/* Explosion effects */}
+        {Array.from(explodingDimensions).map(key => {
+          const color = DIMENSION_COLORS[key] || '#d4af37';
+          return (
+            <div
+              key={key}
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                animation: 'dimensionExplode 0.6s ease-out forwards',
+              }}
+            >
+              <div
+                className="absolute rounded-full"
+                style={{
+                  top: '50%',
+                  left: '50%',
+                  width: 160,
+                  height: 160,
+                  marginTop: -80,
+                  marginLeft: -80,
+                  border: `3px solid ${color}`,
+                  boxShadow: `0 0 20px ${color}, inset 0 0 20px ${color}44`,
+                  animation: 'explosionRing 0.6s ease-out forwards',
+                }}
+              />
+            </div>
+          );
+        })}
       </div>
 
       {/* Bottom: Completed dimensions with preview */}
@@ -93,29 +148,46 @@ export default function ProgressiveDisplay({
           实时解析进度
         </p>
 
-        {/* Dimension pills */}
+        {/* Latest preview - most recently completed dimension */}
+        {displayDimensions.length > 0 && (
+          <div
+            className="mb-4 px-4 py-3 rounded-xl text-center"
+            style={{
+              background: `linear-gradient(135deg, ${DIMENSION_COLORS[displayDimensions[displayDimensions.length - 1]]}22, rgba(26,21,37,0.8))`,
+              border: `1px solid ${DIMENSION_COLORS[displayDimensions[displayDimensions.length - 1]]}44`,
+              animation: 'fadeInUp 0.4s ease-out',
+            }}
+          >
+            <p className="text-xs mb-1" style={{ color: DIMENSION_COLORS[displayDimensions[displayDimensions.length - 1]] }}>
+              {DIMENSION_LABELS[displayDimensions[displayDimensions.length - 1]]}
+            </p>
+            <p className="text-white text-sm font-medium leading-relaxed">
+              {partialAnalysis[displayDimensions[displayDimensions.length - 1]]?.[displayDimensions[displayDimensions.length - 1]] || '解读中...'}
+            </p>
+          </div>
+        )}
+
+        {/* Dimension pills with scores */}
         <div className="flex flex-wrap justify-center gap-2 mb-4">
           {displayDimensions.map(key => {
             const score = partialScores[key] || 0;
-            const preview = getDimensionPreview(key);
             const color = DIMENSION_COLORS[key] || '#888';
+            const isExploding = explodingDimensions.has(key);
 
             return (
               <div
                 key={key}
-                className="px-3 py-2 rounded-lg text-xs"
+                className="px-3 py-1.5 rounded-lg text-xs"
                 style={{
                   background: `linear-gradient(135deg, ${color}22, ${color}11)`,
                   border: `1px solid ${color}44`,
+                  animation: isExploding ? 'pillPopIn 0.4s ease-out' : 'none',
                 }}
               >
-                <div className="flex items-center gap-1.5 mb-1">
+                <div className="flex items-center gap-1.5">
                   <span style={{ color }}>{DIMENSION_LABELS[key]}</span>
                   <span className="font-bold text-white">{score}分</span>
                 </div>
-                {preview && (
-                  <p className="text-white/50 truncate max-w-32">{preview}</p>
-                )}
               </div>
             );
           })}
@@ -138,12 +210,62 @@ export default function ProgressiveDisplay({
         </div>
 
         {/* Current hint text */}
-        {currentHint && currentHint !== 'analyzing' && (
-          <p className="text-xs text-center" style={{ color: 'rgba(255,255,255,0.4)' }}>
-            正在解读{DIMENSION_LABELS[currentHint] || currentHint}...
+        {hintText && (
+          <p
+            className="text-sm text-center"
+            style={{
+              color: DIMENSION_COLORS[currentHint as string] || 'rgba(255,255,255,0.4)',
+              animation: 'fadeInUp 0.3s ease-out',
+            }}
+          >
+            {hintText}
           </p>
         )}
       </div>
+
+      {/* CSS Animations */}
+      <style jsx>{`
+        @keyframes dimensionExplode {
+          0% { opacity: 1; }
+          100% { opacity: 0; }
+        }
+
+        @keyframes explosionRing {
+          0% {
+            transform: scale(0.5);
+            opacity: 1;
+          }
+          100% {
+            transform: scale(1.5);
+            opacity: 0;
+          }
+        }
+
+        @keyframes pillPopIn {
+          0% {
+            transform: scale(0.8);
+            opacity: 0;
+          }
+          50% {
+            transform: scale(1.1);
+          }
+          100% {
+            transform: scale(1);
+            opacity: 1;
+          }
+        }
+
+        @keyframes fadeInUp {
+          0% {
+            opacity: 0;
+            transform: translateY(8px);
+          }
+          100% {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}</style>
     </div>
   );
 }

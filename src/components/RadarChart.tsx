@@ -71,6 +71,9 @@ export default function RadarChart({ scores, size = 280, color = 'rgba(212, 175,
   const fillPath = scorePoints.length > 0 ? `M ${scorePoints.map(p => `${p.x} ${p.y}`).join(' L ')} Z` : '';
   const opponentPath = opponentPoints && opponentPoints.length > 0 ? `M ${opponentPoints.map(p => `${p.x} ${p.y}`).join(' L ')} Z` : '';
 
+  // Estimate path length for dash animation (rough approximation)
+  const estimatedPathLength = outerRadius * 2.5;
+
   return (
     <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
       <rect x="0" y="0" width={size} height={size} fill="rgba(26,21,37,1)" />
@@ -80,13 +83,29 @@ export default function RadarChart({ scores, size = 280, color = 'rgba(212, 175,
           stroke="rgba(255,255,255,0.1)" strokeWidth="1" />
       ))}
       {opponentPath && <path d={opponentPath} fill={opponentColor} stroke={opponentColor} strokeWidth="2" />}
+
+      {/* Fill path */}
       <path
         d={fillPath}
         fill={color}
-        stroke={color.replace(/[\d.]+$/, '0.8')}
-        strokeWidth="2"
+        stroke="none"
         style={{
           transition: animated ? 'd 0.6s ease-out, fill 0.3s ease-out' : 'none',
+        }}
+      />
+
+      {/* Stroke path with drawing animation */}
+      <path
+        d={fillPath}
+        fill="none"
+        stroke={color.replace(/[\d.]+$/, '0.9')}
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeDasharray={animated ? estimatedPathLength : 'none'}
+        strokeDashoffset={animated ? estimatedPathLength : 0}
+        style={{
+          transition: animated ? 'stroke-dashoffset 0.8s ease-out, d 0.6s ease-out' : 'none',
         }}
       />
       {scorePoints.map((point, i) => (
