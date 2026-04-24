@@ -33,6 +33,34 @@ export async function POST(request: NextRequest) {
   const db = getDb();
   const today = getTodayDate();
   const yesterday = getYesterdayDate();
+  const dayBeforeYesterday = getDateNDaysAgo(2);
+
+  // 检测是否漏签需要自动修复
+  const lastCheckin = db.prepare(
+    'SELECT checkinDate FROM checkins WHERE userId = ? ORDER BY checkinDate DESC LIMIT 1'
+  ).get(userId) as { checkinDate: string } | undefined;
+
+  // 如果上次签到是前天（昨天漏签了），且有补签卡，自动使用
+  if (lastCheckin && lastCheckin.checkinDate === dayBeforeYesterday) {
+    const user = db.prepare('SELECT streakRepairCards FROM users WHERE id = ?').get(userId) as any;
+    if (user && user.streakRepairCards > 0) {
+      // 自动使用补签卡补昨天的签
+      const checkinId = generateId();
+      const now = new Date().toISOString();
+
+      db.transaction(() => {
+        // 补签昨天的记录
+        db.prepare(
+          'INSERT INTO checkins (id, userId, checkinDate, points, isRepair, createdAt) VALUES (?, ?, ?, ?, ?, ?)'
+        ).run(checkinId, userId, yesterday, CHECKIN_POINTS, 1, now);
+
+        // 扣减补签卡
+        db.prepare(
+          'UPDATE users SET streakRepairCards = streakRepairCards - 1 WHERE id = ?'
+        ).run(userId);
+      })();
+    }
+  }
 
   // Check if already checked in today
   const existingCheckin = db.prepare(
