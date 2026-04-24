@@ -279,6 +279,32 @@ export default function HomePage() {
       // If cancelled mid-stream, don't proceed
       if (!loading) return;
 
+      // Process any remaining data in buffer after stream ends
+      if (buffer.trim()) {
+        const lines = buffer.split('\n');
+        let i = 0;
+        while (i < lines.length) {
+          const line = lines[i];
+          if (line.startsWith('event: ')) {
+            const eventType = line.slice(7);
+            const dataLine = lines[i + 1];
+            if (dataLine?.startsWith('data: ')) {
+              try {
+                const data = JSON.parse(dataLine.slice(6));
+                if (eventType === 'complete') {
+                  finalData = data;
+                }
+              } catch (e) {
+                // Ignore parse errors in leftover buffer
+              }
+              i += 2;
+              continue;
+            }
+          }
+          i++;
+        }
+      }
+
       if (!finalData) {
         throw new Error('未能获取完整分析结果');
       }
