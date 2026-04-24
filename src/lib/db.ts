@@ -106,6 +106,23 @@ export function getDb() {
         CREATE INDEX IF NOT EXISTS idx_events_createdAt ON events(createdAt);
       `);
     } catch (e) { console.error('Migration events table failed:', e); }
+
+    // Migration: create daily_questions table if not exist
+    try {
+      db.exec(`
+        CREATE TABLE IF NOT EXISTS daily_questions (
+          id TEXT PRIMARY KEY,
+          userId TEXT NOT NULL,
+          question TEXT NOT NULL,
+          answer TEXT NOT NULL,
+          answerType TEXT NOT NULL,
+          reportId TEXT NOT NULL,
+          createdAt TEXT NOT NULL,
+          UNIQUE(userId, date(createdAt))
+        );
+        CREATE INDEX IF NOT EXISTS idx_daily_questions_userId ON daily_questions(userId);
+      `);
+    } catch (e) { console.error('Migration daily_questions table failed:', e); }
   }
   return db;
 }
