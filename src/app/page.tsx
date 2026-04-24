@@ -9,6 +9,7 @@ import PushPermissionModal from '@/components/PushPermissionModal';
 import OnboardingTutorial from '@/components/OnboardingTutorial';
 import DestinyRings from '@/components/DestinyRings';
 import LoadingProgress from '@/components/LoadingProgress';
+import DailyFortuneCard from '@/components/DailyFortuneCard';
 import { STAGE_COMPLETE_PROGRESS, type LoadingStage } from '@/types/loading';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -244,6 +245,8 @@ export default function HomePage() {
         open={showTodayFortune}
         onClose={() => setShowTodayFortune(false)}
       />
+
+      <DailyFortuneCard userId={user?.userId} />
 
       <PushPermissionModal
         open={showPushModal}
