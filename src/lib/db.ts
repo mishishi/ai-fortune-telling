@@ -117,8 +117,7 @@ export function getDb() {
           answer TEXT NOT NULL,
           answerType TEXT NOT NULL,
           reportId TEXT NOT NULL,
-          createdAt TEXT NOT NULL,
-          UNIQUE(userId, date(createdAt))
+          createdAt TEXT NOT NULL
         );
         CREATE INDEX IF NOT EXISTS idx_daily_questions_userId ON daily_questions(userId);
       `);

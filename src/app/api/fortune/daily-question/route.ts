@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
 
     // Check if already asked today
     const existing = db.prepare(
-      'SELECT * FROM daily_questions WHERE userId = ? AND date(createdAt) = ?'
+      'SELECT * FROM daily_questions WHERE userId = ? AND substr(createdAt, 1, 10) = ?'
     ).get(userId, today) as any;
 
     if (existing) {
