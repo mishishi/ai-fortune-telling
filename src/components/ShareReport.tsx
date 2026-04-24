@@ -7,6 +7,7 @@ import ShareReportModal from './ShareCard/ShareReportModal';
 
 interface ShareReportProps {
   reportId: string;
+  userId: string;
   name: string;
   gender: string;
   birthYear?: number;
@@ -25,6 +26,7 @@ interface ShareReportProps {
 
 export default function ShareReport({
   reportId,
+  userId,
   name,
   gender,
   birthYear,
@@ -48,6 +50,17 @@ export default function ShareReport({
     try {
       await navigator.clipboard.writeText(window.location.href);
       showToast('链接已复制到剪贴板', 'success');
+      setShowModal(false);
+    } catch {
+      showToast('复制失败，请手动复制', 'error');
+    }
+  };
+
+  const handleCopyPKLink = async () => {
+    try {
+      const pkUrl = `${window.location.origin}/pk?from=${userId}`;
+      await navigator.clipboard.writeText(pkUrl);
+      showToast('PK链接已复制，快发给好友挑战！', 'success');
       setShowModal(false);
     } catch {
       showToast('复制失败，请手动复制', 'error');
@@ -168,6 +181,7 @@ export default function ShareReport({
         open={showModal}
         onClose={() => setShowModal(false)}
         onCopyLink={handleCopyLink}
+        onCopyPKLink={handleCopyPKLink}
         onGenerateImage={handleGenerateImage}
         generating={generating}
       />

@@ -208,8 +208,18 @@ export default function HomePage() {
       // Done
       setLoadingStep('done');
 
-      // Navigate to report page
-      router.push(`/report/${id}`);
+      // Check if this is a PK flow
+      const pkChallengerId = sessionStorage.getItem('pkChallengerId');
+      if (pkChallengerId) {
+        // Clear PK context
+        sessionStorage.removeItem('pkChallengerId');
+        // Redirect to PK result page
+        const birthdate = `${birthData.year}-${String(birthData.month).padStart(2, '0')}-${String(birthData.day).padStart(2, '0')}`;
+        router.push(`/pk/result?from=${pkChallengerId}&birthdate=${birthdate}&gender=${birthData.gender}`);
+      } else {
+        // Navigate to report page
+        router.push(`/report/${id}`);
+      }
     } catch (error) {
       console.error('Failed to generate report:', error);
       showToast('生成报告失败，请重试', 'error');

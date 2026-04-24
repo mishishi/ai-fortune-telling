@@ -17,10 +17,11 @@ interface ShareReportModalProps {
   onClose: () => void;
   onGenerateImage: () => void;
   onCopyLink: () => void;
+  onCopyPKLink: () => void;
   generating: boolean;
 }
 
-export default function ShareReportModal({ data, open, onClose, onGenerateImage, onCopyLink, generating }: ShareReportModalProps) {
+export default function ShareReportModal({ data, open, onClose, onGenerateImage, onCopyLink, onCopyPKLink, generating }: ShareReportModalProps) {
   const [selectedTemplate, setSelectedTemplate] = useState<TemplateType>('starfield');
 
   if (!open) return null;
@@ -81,6 +82,13 @@ export default function ShareReportModal({ data, open, onClose, onGenerateImage,
             style={{ background: 'rgba(196,30,58,0.2)', color: 'var(--color-primary)', border: '1px solid rgba(196,30,58,0.4)' }}
           >
             {generating ? '生成中...' : '生成分享图片'}
+          </button>
+          <button
+            onClick={onCopyPKLink}
+            className="w-full py-3 rounded-xl font-medium text-sm"
+            style={{ background: 'rgba(155,89,182,0.2)', color: '#9b59b6', border: '1px solid rgba(155,89,182,0.4)' }}
+          >
+            🎯 发起PK挑战
           </button>
         </div>
 

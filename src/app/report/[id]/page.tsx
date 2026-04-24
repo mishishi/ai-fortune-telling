@@ -281,6 +281,7 @@ export default async function ReportPage({ params }: { params: Promise<{ id: str
       {/* Floating Share Report Button */}
       <ShareReport
         reportId={id}
+        userId={report.userId}
         name={report.name}
         gender={report.gender}
         birthYear={report.year ?? new Date().getFullYear()}
