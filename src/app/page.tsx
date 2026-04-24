@@ -47,6 +47,7 @@ export default function HomePage() {
   const [partialAnalysis, setPartialAnalysis] = useState<Record<string, any>>({});
   const [loadingStartTime, setLoadingStartTime] = useState<number | null>(null);
   const roundCountRef = useRef(0);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   // Check localStorage on mount to show onboarding if not completed
   useEffect(() => {
@@ -162,6 +163,7 @@ export default function HomePage() {
     setFormVisible(true);
     setCoveredTopics([]);
     setShowDoneButton(false);
+    abortControllerRef.current?.abort();
     showToast('已取消生成', 'info');
   };
 
@@ -176,8 +178,8 @@ export default function HomePage() {
     setPartialRadarScores({});
     setPartialAnalysis({});
 
-    // AbortController for cancelling the fetch on user cancel
-    const abortController = new AbortController();
+    // Create AbortController and store in ref for cancellation access
+    abortControllerRef.current = new AbortController();
 
     try {
       setLoadingStep('bazi');
@@ -187,7 +189,7 @@ export default function HomePage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ birthData, userFocus }),
-        signal: abortController.signal,
+        signal: abortControllerRef.current.signal,
       });
 
       if (!response.ok) {
@@ -214,16 +216,23 @@ export default function HomePage() {
       setAiProgressHint('analyzing');
 
       while (!done) {
-        // Check if loading was set to false (user cancelled)
-        // We need to abort the reader in this case
-        const currentLoading = loading;
-        if (!currentLoading) {
-          abortController.abort();
-          reader.cancel();
+        // Check abort signal for cancellation
+        if (abortControllerRef.current?.signal.aborted) {
           break;
         }
 
-        const { value, done: doneReading } = await reader.read();
+        let readResult;
+        try {
+          readResult = await reader.read();
+        } catch (e: any) {
+          // Handle AbortError from reader.cancel() or signal abortion
+          if (e?.name === 'AbortError' || abortControllerRef.current?.signal.aborted) {
+            break;
+          }
+          throw e; // Re-throw other errors
+        }
+
+        const { value, done: doneReading } = readResult;
         done = doneReading;
         if (value) {
           buffer += decoder.decode(value, { stream: !done });
