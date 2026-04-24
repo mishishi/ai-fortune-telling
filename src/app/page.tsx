@@ -7,7 +7,6 @@ import AIQuestionModal from '@/components/AIQuestionModal';
 import TodayFortuneModal from '@/components/TodayFortuneModal';
 import PushPermissionModal from '@/components/PushPermissionModal';
 import OnboardingTutorial from '@/components/OnboardingTutorial';
-import DailyFortuneCard from '@/components/DailyFortuneCard';
 import DestinyRings from '@/components/DestinyRings';
 import LoadingProgress from '@/components/LoadingProgress';
 import { STAGE_COMPLETE_PROGRESS, type LoadingStage } from '@/types/loading';
@@ -274,19 +273,6 @@ export default function HomePage() {
 
             {/* Nav Items */}
             <div className="flex items-center gap-1">
-              {/* Today Fortune - only for logged in users */}
-              {user && (
-                <button
-                  onClick={() => setShowTodayFortune(true)}
-                  className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-[var(--color-accent)] hover:bg-[var(--color-accent)]/10 transition-all"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                  </svg>
-                  <span>今日运势</span>
-                </button>
-              )}
-
               {/* User Status */}
               {user ? (
                 <Link
@@ -329,10 +315,6 @@ export default function HomePage() {
           <p className="text-gray-400 text-center text-lg tracking-wide">
             输入出生信息，开启你的生命密码
           </p>
-        </div>
-
-        <div className="w-full max-w-md mx-auto mb-6">
-          <DailyFortuneCard userId={user?.userId} />
         </div>
 
         {/* Form / Loading */}
