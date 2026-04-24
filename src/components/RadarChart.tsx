@@ -19,6 +19,7 @@ interface RadarChartProps {
     mentor?: number;
   };
   opponentColor?: string;
+  animated?: boolean;    // 是否启用动画
 }
 
 const DIMENSIONS = [
@@ -39,7 +40,7 @@ function polarToCartesian(cx: number, cy: number, radius: number, angleInDegrees
 
 export { DIMENSIONS, polarToCartesian };
 
-export default function RadarChart({ scores, size = 280, color = 'rgba(212, 175, 55, 0.3)', opponentScores, opponentColor = 'rgba(231, 76, 60, 0.3)' }: RadarChartProps) {
+export default function RadarChart({ scores, size = 280, color = 'rgba(212, 175, 55, 0.3)', opponentScores, opponentColor = 'rgba(231, 76, 60, 0.3)', animated = true }: RadarChartProps) {
   const cx = size / 2;
   const cy = size / 2;
   const outerRadius = size * 0.38;
@@ -79,9 +80,26 @@ export default function RadarChart({ scores, size = 280, color = 'rgba(212, 175,
           stroke="rgba(255,255,255,0.1)" strokeWidth="1" />
       ))}
       {opponentPath && <path d={opponentPath} fill={opponentColor} stroke={opponentColor} strokeWidth="2" />}
-      <path d={fillPath} fill={color} stroke={color.replace(/[\d.]+$/, '0.8')} strokeWidth="2" />
+      <path
+        d={fillPath}
+        fill={color}
+        stroke={color.replace(/[\d.]+$/, '0.8')}
+        strokeWidth="2"
+        style={{
+          transition: animated ? 'd 0.6s ease-out, fill 0.3s ease-out' : 'none',
+        }}
+      />
       {scorePoints.map((point, i) => (
-        <circle key={i} cx={point.x} cy={point.y} r="4" fill="#d4af37" />
+        <circle
+          key={i}
+          cx={point.x}
+          cy={point.y}
+          r="4"
+          fill="#d4af37"
+          style={{
+            transition: animated ? 'cx 0.6s ease-out, cy 0.6s ease-out, r 0.3s ease-out' : 'none',
+          }}
+        />
       ))}
       {DIMENSIONS.map(dim => {
         const labelRadius = outerRadius + 12;

@@ -10,6 +10,7 @@ import OnboardingTutorial from '@/components/OnboardingTutorial';
 import DestinyRings from '@/components/DestinyRings';
 import LoadingProgress from '@/components/LoadingProgress';
 import DailyFortuneCard from '@/components/DailyFortuneCard';
+import ProgressiveDisplay from '@/components/ProgressiveDisplay';
 import { STAGE_COMPLETE_PROGRESS, AI_PROGRESS_HINTS, type LoadingStage, type AIProgressStep } from '@/types/loading';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -43,7 +44,7 @@ export default function HomePage() {
   const [showPushModal, setShowPushModal] = useState(false);
   const [aiProgressHint, setAiProgressHint] = useState<AIProgressStep>('analyzing');
   const [partialRadarScores, setPartialRadarScores] = useState<Record<string, number>>({});
-  const [partialAnalysis, setPartialAnalysis] = useState<Record<string, string>>({});
+  const [partialAnalysis, setPartialAnalysis] = useState<Record<string, any>>({});
   const roundCountRef = useRef(0);
 
   // Check localStorage on mount to show onboarding if not completed
@@ -429,25 +430,13 @@ export default function HomePage() {
 
               {/* Progressive Results - shown as dimensions complete */}
               {loadingStep === 'ai' && Object.keys(partialRadarScores).length > 0 && (
-                <div className="mb-6 px-4 py-3 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10" style={{ maxWidth: 360, margin: '0 auto 24px' }}>
-                  <p className="text-xs mb-3" style={{ color: 'var(--color-accent)' }}>实时解析进度</p>
-                  <div className="grid grid-cols-5 gap-2">
-                    {Object.entries(partialRadarScores).map(([key, score]) => {
-                      const labels: Record<string, string> = { career: '事业', love: '感情', wealth: '财运', health: '健康', mentor: '贵人' };
-                      const colors: Record<string, string> = { career: '#e74c3c', love: '#e91e63', wealth: '#f1c40f', health: '#2ecc71', mentor: '#3498db' };
-                      return (
-                        <div key={key} className="text-center">
-                          <div
-                            className="w-10 h-10 rounded-full mx-auto mb-1 flex items-center justify-center text-sm font-bold text-white"
-                            style={{ background: `linear-gradient(135deg, ${colors[key]}, ${colors[key]}88)`, boxShadow: `0 0 12px ${colors[key]}66` }}
-                          >
-                            {score}
-                          </div>
-                          <span className="text-xs" style={{ color: colors[key] }}>{labels[key]}</span>
-                        </div>
-                      );
-                    })}
-                  </div>
+                <div className="mb-6">
+                  <ProgressiveDisplay
+                    partialScores={partialRadarScores}
+                    partialAnalysis={partialAnalysis}
+                    currentHint={aiProgressHint}
+                    completedDimensions={Object.keys(partialRadarScores)}
+                  />
                 </div>
               )}
 
