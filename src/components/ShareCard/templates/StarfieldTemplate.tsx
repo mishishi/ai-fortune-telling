@@ -140,10 +140,9 @@ function OrnateBorder() {
       }}
     >
       <svg
-        width="100%"
-        height="100%"
+        width="420"
+        height="480"
         viewBox="0 0 420 480"
-        preserveAspectRatio="none"
         style={{ display: 'block' }}
       >
         {/* Outer golden border */}
