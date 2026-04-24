@@ -1,0 +1,46 @@
+<h2>PK链接如何传递数据？</h2>
+<p class="subtitle">用户A分享后，用户B打开链接时如何知道这是谁的PK挑战？</p>
+
+<div class="options">
+  <div class="option" data-choice="userid-param" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>用户ID参数</h3>
+      <p>链接格式：/pk?from=userId_A</p>
+      <p>B打开链接时，系统用A的用户ID查出A的报告数据</p>
+      <ul style="margin-top:8px;font-size:13px;color:#888">
+        <li>✓ 实现最简单</li>
+        <li>✓ 可复用现有用户报告</li>
+        <li>✗ 链接暴露用户ID（无隐私风险，只是匿名标识）</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="option" data-choice="pk-token" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>PK Token</h3>
+      <p>创建PK挑战时服务端生成唯一token，链接格式：/pk?challenge=token</p>
+      <p>token关联挑战者和挑战数据，对手填完生日后关联到同一token</p>
+      <ul style="margin-top:8px;font-size:13px;color:#888">
+        <li>✓ 更规范，数据模型清晰</li>
+        <li>✓ 可支持多人围观</li>
+        <li>✗ 需要新建PK表</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="option" data-choice="share-code" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>简短分享码</h3>
+      <p>6位数字/字母分享码，链接格式：/pk/codered</p>
+      <p>用户A生成后保存到数据库，对手输入码或扫码参与</p>
+      <ul style="margin-top:8px;font-size:13px;color:#888">
+        <li>✓ 链接更短更美观</li>
+        <li>✓ 适合海报展示</li>
+        <li>✗ 需要多一步"输入码"</li>
+      </ul>
+    </div>
+  </div>
+</div>

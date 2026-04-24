@@ -134,10 +134,23 @@ export async function POST(request: NextRequest) {
             results[r.key] = r.data;
             radarScores[r.key] = r.score;
           }
+
+          // Transform nested results into flat analysis structure compatible with ReportContent
+          const flatAnalysis: Record<string, any> = {};
+          for (const r of allResults) {
+            const dimData = r.data;
+            // Each dimension returns its key as the analysis field plus additional info
+            if (dimData[r.key]) flatAnalysis[r.key] = dimData[r.key];
+            if (dimData[`${r.key}Suggest`]) flatAnalysis[`${r.key}Suggest`] = dimData[`${r.key}Suggest`];
+            if (dimData.spouseDesc) flatAnalysis.spouseDesc = dimData.spouseDesc;
+            if (dimData.marriageAdvice) flatAnalysis.marriageAdvice = dimData.marriageAdvice;
+            if (dimData.mentorDirection) flatAnalysis.mentorDirection = dimData.mentorDirection;
+          }
+
           sendEvent('complete', {
             baziData: baziResult,
             radarScores,
-            analysis: results,
+            analysis: flatAnalysis,
           });
           controller.close();
         }).catch((err) => {
