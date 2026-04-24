@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import type { LoadingStage, AIProgressStep } from '@/types/loading';
 import { AI_PROGRESS_HINTS } from '@/types/loading';
 
@@ -10,6 +10,11 @@ interface LoadingProgressProps {
   aiHint?: AIProgressStep; // AI analysis sub-stage hint
   startTime?: number; // Loading start timestamp
   completedDimensions?: number; // Number of AI dimensions completed (0-5)
+}
+
+// Easing function for smooth progress interpolation
+function easeOutQuart(t: number): number {
+  return 1 - Math.pow(1 - t, 4);
 }
 
 // Stage configuration with fixed percentages and colors
@@ -52,16 +57,59 @@ function formatRemainingTime(seconds: number): string {
 
 export default function LoadingProgress({ stage, progress, aiHint, startTime, completedDimensions = 0 }: LoadingProgressProps) {
   const [displayProgress, setDisplayProgress] = useState(0);
+  const [animatedProgress, setAnimatedProgress] = useState(0);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const [prevStage, setPrevStage] = useState(stage);
+  const [stageTransitioning, setStageTransitioning] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const animationRef = useRef<number | null>(null);
+  const progressRef = useRef({ from: 0, to: 0, startTime: 0 });
 
-  // Animate progress value
+  // Track stage transitions for flash effect
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setDisplayProgress(progress);
-    }, 100);
-    return () => clearTimeout(timer);
+    if (stage !== prevStage) {
+      setStageTransitioning(true);
+      setPrevStage(stage);
+      const timer = setTimeout(() => setStageTransitioning(false), 300);
+      return () => clearTimeout(timer);
+    }
+  }, [stage, prevStage]);
+
+  // Animate progress value with easing
+  useEffect(() => {
+    const targetProgress = progress;
+    progressRef.current = {
+      from: displayProgress,
+      to: targetProgress,
+      startTime: Date.now(),
+    };
+
+    const duration = 600; // Animation duration in ms
+
+    const animate = () => {
+      const elapsed = Date.now() - progressRef.current.startTime;
+      const t = Math.min(elapsed / duration, 1);
+      const easedT = easeOutQuart(t);
+      const current = progressRef.current.from + (progressRef.current.to - progressRef.current.from) * easedT;
+
+      setAnimatedProgress(Math.round(current));
+
+      if (t < 1) {
+        animationRef.current = requestAnimationFrame(animate);
+      }
+    };
+
+    animationRef.current = requestAnimationFrame(animate);
+
+    return () => {
+      if (animationRef.current) cancelAnimationFrame(animationRef.current);
+    };
   }, [progress]);
+
+  // Update displayProgress from animatedProgress for width transition
+  useEffect(() => {
+    setDisplayProgress(animatedProgress);
+  }, [animatedProgress]);
 
   // Track elapsed time
   useEffect(() => {
@@ -132,33 +180,39 @@ export default function LoadingProgress({ stage, progress, aiHint, startTime, co
 
   const config = STAGE_CONFIG[stage];
 
-  // Calculate overall progress based on stage
-  const getOverallProgress = () => {
+  // Calculate overall progress based on stage - returns 0-100
+  const getOverallProgress = (p: number) => {
     switch (stage) {
       case 'bazi':
-        return Math.round((progress / 100) * 40);
+        return Math.round((p / 100) * 40);
       case 'ai':
-        return 40 + Math.round((progress / 100) * 20);
+        return 40 + Math.round((p / 100) * 20);
       case 'report':
-        return 70 + Math.round((progress / 100) * 30);
+        return 70 + Math.round((p / 100) * 30);
       default:
         return 0;
     }
   };
 
-  const overallProgress = getOverallProgress();
+  // Use animated progress for smooth display
+  const overallProgress = getOverallProgress(progress);
   const showAiHint = stage === 'ai' && aiHint;
 
   return (
     <div className="flex flex-col items-center gap-4">
-      {/* Stage Label */}
+      {/* Stage Label with flash effect on transition */}
       <div
-        className="px-4 py-2 rounded-full text-sm font-medium transition-all duration-300"
+        className="px-4 py-2 rounded-full text-sm font-medium"
         style={{
-          background: config.bgColor,
+          background: stageTransitioning
+            ? `linear-gradient(90deg, ${config.bgColor}, rgba(255,255,255,0.3), ${config.bgColor})`
+            : config.bgColor,
           color: config.color,
           boxShadow: `0 0 12px ${config.ringColor}`,
           border: `1px solid ${config.ringColor}`,
+          backgroundSize: stageTransitioning ? '200% 100%' : '100% 100%',
+          animation: stageTransitioning ? 'stageFlash 0.3s ease-out' : 'none',
+          transition: 'background 0.4s ease, color 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease',
         }}
       >
         {config.label}
@@ -188,12 +242,13 @@ export default function LoadingProgress({ stage, progress, aiHint, startTime, co
             height: '6px',
           }}
         >
-          {/* Progress fill */}
+          {/* Progress fill - uses displayProgress for smooth animation */}
           <div
-            className="h-full rounded-full transition-all duration-500 ease-out relative overflow-hidden"
+            className="h-full rounded-full relative overflow-hidden"
             style={{
-              width: `${overallProgress}%`,
+              width: `${displayProgress}%`,
               background: `linear-gradient(90deg, var(--color-primary), ${config.color})`,
+              transition: 'width 0.3s ease-out, background 0.5s ease-out',
             }}
           >
             {/* Shimmer effect */}
@@ -208,16 +263,17 @@ export default function LoadingProgress({ stage, progress, aiHint, startTime, co
         </div>
       </div>
 
-      {/* Percentage Display with Estimated Time */}
+      {/* Percentage Display with Estimated Time - uses animatedProgress */}
       <div className="text-center">
         <span
           className="text-2xl font-bold tabular-nums"
           style={{
             color: config.color,
             textShadow: `0 0 20px ${config.ringColor}`,
+            transition: 'color 0.4s ease, text-shadow 0.4s ease',
           }}
         >
-          {overallProgress}
+          {animatedProgress}
         </span>
         <span className="text-lg" style={{ color: 'var(--color-text-muted)' }}>%</span>
         {estimatedRemaining && (
@@ -229,6 +285,15 @@ export default function LoadingProgress({ stage, progress, aiHint, startTime, co
           </div>
         )}
       </div>
+
+      {/* CSS Animations */}
+      <style jsx>{`
+        @keyframes stageFlash {
+          0% { filter: brightness(1); }
+          50% { filter: brightness(1.5); }
+          100% { filter: brightness(1); }
+        }
+      `}</style>
     </div>
   );
 }

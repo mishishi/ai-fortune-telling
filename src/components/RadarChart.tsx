@@ -116,7 +116,10 @@ export default function RadarChart({ scores, size = 280, color = 'rgba(212, 175,
           r="4"
           fill="#d4af37"
           style={{
-            transition: animated ? 'cx 0.6s ease-out, cy 0.6s ease-out, r 0.3s ease-out' : 'none',
+            transition: animated ? 'cx 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), cy 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), r 0.3s ease-out' : 'none',
+            // Spring pop-in effect
+            transform: animated ? 'scale(0)' : 'scale(1)',
+            transformOrigin: `${point.x}px ${point.y}px`,
           }}
         />
       ))}

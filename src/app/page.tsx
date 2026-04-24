@@ -176,6 +176,9 @@ export default function HomePage() {
     setPartialRadarScores({});
     setPartialAnalysis({});
 
+    // AbortController for cancelling the fetch on user cancel
+    const abortController = new AbortController();
+
     try {
       setLoadingStep('bazi');
 
@@ -184,6 +187,7 @@ export default function HomePage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ birthData, userFocus }),
+        signal: abortController.signal,
       });
 
       if (!response.ok) {
@@ -210,6 +214,15 @@ export default function HomePage() {
       setAiProgressHint('analyzing');
 
       while (!done) {
+        // Check if loading was set to false (user cancelled)
+        // We need to abort the reader in this case
+        const currentLoading = loading;
+        if (!currentLoading) {
+          abortController.abort();
+          reader.cancel();
+          break;
+        }
+
         const { value, done: doneReading } = await reader.read();
         done = doneReading;
         if (value) {
@@ -240,7 +253,8 @@ export default function HomePage() {
                     throw new Error(data.error || '分析失败');
                   }
                 } catch (e) {
-                  console.error('Failed to parse SSE data:', e);
+                  // Skip malformed SSE data, don't break the stream
+                  console.warn('Skipping malformed SSE data:', e);
                 }
                 i += 2; // Skip both event and data lines
                 continue;
@@ -252,6 +266,9 @@ export default function HomePage() {
       }
 
       clearInterval(hintInterval);
+
+      // If cancelled mid-stream, don't proceed
+      if (!loading) return;
 
       if (!finalData) {
         throw new Error('未能获取完整分析结果');
@@ -290,9 +307,13 @@ export default function HomePage() {
       } else {
         router.push(`/report/${id}`);
       }
-    } catch (error) {
+    } catch (error: any) {
+      // Handle AbortError (user cancelled)
+      if (error?.name === 'AbortError' || error?.message === 'canceled') {
+        return; // Already handled by cancel flow
+      }
       console.error('Failed to generate report:', error);
-      showToast('生成报告失败，请重试', 'error');
+      showToast(error.message || '生成报告失败，请重试', 'error');
       setLoading(false);
       setLoadingStep('idle');
       setFormVisible(true);

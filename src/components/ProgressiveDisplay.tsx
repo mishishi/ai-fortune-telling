@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo, memo } from 'react';
 import WuXingCompass from './WuXingCompass';
 import RadarChart from './RadarChart';
 import type { AIProgressStep } from '@/types/loading';
@@ -38,7 +38,7 @@ const DIMENSION_HINTS: Record<string, string> = {
   mentor: '正在寻觅你的命中贵人...',
 };
 
-export default function ProgressiveDisplay({
+export default memo(function ProgressiveDisplay({
   partialScores,
   partialAnalysis,
   currentHint,
@@ -70,8 +70,25 @@ export default function ProgressiveDisplay({
     prevCompletedRef.current = completedDimensions;
   }, [completedDimensions]);
 
-  // Filter out 'overview' from display dimensions
-  const displayDimensions = completedDimensions.filter(d => d !== 'overview');
+  // Filter out 'overview' from display dimensions (memoized)
+  const displayDimensions = useMemo(
+    () => completedDimensions.filter(d => d !== 'overview'),
+    [completedDimensions]
+  );
+
+  // Memoize particle generation for explosions (stable per key)
+  const explosionParticles = useMemo(() => {
+    const particlesByKey: Record<string, Array<{ angle: number; distance: number; size: number }>> = {};
+    explodingDimensions.forEach(key => {
+      const particles = Array.from({ length: 8 }, (_, i) => ({
+        angle: (i / 8) * 360,
+        distance: 60 + Math.random() * 40,
+        size: 4 + Math.random() * 4,
+      }));
+      particlesByKey[key] = particles;
+    });
+    return particlesByKey;
+  }, [explodingDimensions]);
 
   // Determine which dimension is currently being analyzed
   const currentDimensionMap: Partial<Record<AIProgressStep, string>> = {
@@ -115,6 +132,8 @@ export default function ProgressiveDisplay({
         {/* Explosion effects */}
         {Array.from(explodingDimensions).map(key => {
           const color = DIMENSION_COLORS[key] || '#d4af37';
+          const particles = explosionParticles[key] || [];
+
           return (
             <div
               key={key}
@@ -123,6 +142,7 @@ export default function ProgressiveDisplay({
                 animation: 'dimensionExplode 0.6s ease-out forwards',
               }}
             >
+              {/* Main explosion ring */}
               <div
                 className="absolute rounded-full"
                 style={{
@@ -137,6 +157,28 @@ export default function ProgressiveDisplay({
                   animation: 'explosionRing 0.6s ease-out forwards',
                 }}
               />
+              {/* Particle scattering */}
+              {particles.map((p, i) => (
+                <div
+                  key={`particle-${i}`}
+                  className="absolute rounded-full"
+                  style={{
+                    top: '50%',
+                    left: '50%',
+                    width: p.size,
+                    height: p.size,
+                    marginTop: -p.size / 2,
+                    marginLeft: -p.size / 2,
+                    background: color,
+                    boxShadow: `0 0 6px ${color}`,
+                    animation: `particleScatter 0.6s ease-out forwards`,
+                    animationDelay: `${i * 20}ms`,
+                    // Inline keyframes for particle movement
+                    ['--angle' as string]: `${p.angle}deg`,
+                    ['--distance' as string]: `${p.distance}px`,
+                  }}
+                />
+              ))}
             </div>
           );
         })}
@@ -241,6 +283,17 @@ export default function ProgressiveDisplay({
           }
         }
 
+        @keyframes particleScatter {
+          0% {
+            transform: translate(-50%, -50%) rotate(var(--angle)) translateX(0);
+            opacity: 1;
+          }
+          100% {
+            transform: translate(-50%, -50%) rotate(var(--angle)) translateX(var(--distance));
+            opacity: 0;
+          }
+        }
+
         @keyframes pillPopIn {
           0% {
             transform: scale(0.8);
@@ -268,4 +321,4 @@ export default function ProgressiveDisplay({
       `}</style>
     </div>
   );
-}
+});

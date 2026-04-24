@@ -1,5 +1,7 @@
 'use client';
 
+import { useState, useEffect, useRef } from 'react';
+
 interface WuXingCompassProps {
   currentDimension?: string;  // 当前分析维度
   completedDimensions: string[];  // 已完成的维度
@@ -27,6 +29,20 @@ export default function WuXingCompass({ currentDimension, completedDimensions = 
   const cy = size / 2;
   const outerRadius = size * 0.45;
   const innerRadius = outerRadius * 0.35;
+  const [recentlyCompleted, setRecentlyCompleted] = useState<string | null>(null);
+  const prevCompletedRef = useRef<string[]>([]);
+
+  // Detect newly completed dimensions for glow burst
+  useEffect(() => {
+    const prev = prevCompletedRef.current;
+    const newCompleted = completedDimensions.find(d => !prev.includes(d));
+    if (newCompleted) {
+      setRecentlyCompleted(newCompleted);
+      const timer = setTimeout(() => setRecentlyCompleted(null), 600);
+      return () => clearTimeout(timer);
+    }
+    prevCompletedRef.current = completedDimensions;
+  }, [completedDimensions]);
 
   // Calculate pointer angle
   const currentWuXing = WU_XING.find(w => w.key === currentDimension);
@@ -57,16 +73,30 @@ export default function WuXingCompass({ currentDimension, completedDimensions = 
     return { x1: cx, y1: cy, x2: point.x, y2: point.y, dim };
   });
 
-  // Wuxing positions
+  // Wuxing positions with completion glow
   const wuXingNodes = WU_XING.map(dim => {
     const pos = polarToCartesian(cx, cy, outerRadius * 0.85, dim.angle);
     const isCompleted = completedDimensions.includes(dim.key);
+    const isRecentlyCompleted = recentlyCompleted === dim.key;
     const isCurrent = currentDimension === dim.key;
 
     return (
       <g key={dim.key}>
+        {/* Completion burst glow */}
+        {isRecentlyCompleted && (
+          <circle
+            cx={pos.x}
+            cy={pos.y}
+            r="24"
+            fill={dim.color}
+            opacity="0.6"
+            style={{
+              animation: 'completionBurst 0.6s ease-out forwards',
+            }}
+          />
+        )}
         {/* Glow effect for completed */}
-        {isCompleted && (
+        {isCompleted && !isRecentlyCompleted && (
           <circle
             cx={pos.x}
             cy={pos.y}
@@ -85,7 +115,7 @@ export default function WuXingCompass({ currentDimension, completedDimensions = 
           stroke={dim.color}
           strokeWidth="2"
           style={{
-            transition: 'all 0.4s ease-out',
+            transition: 'all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)',
             filter: isCurrent ? `drop-shadow(0 0 8px ${dim.color})` : 'none',
           }}
         />
@@ -106,11 +136,11 @@ export default function WuXingCompass({ currentDimension, completedDimensions = 
     );
   });
 
-  // Pointer
+  // Pointer with inertia overshoot
   const pointer = pointerAngle >= 0 && (
     <g
       style={{
-        transition: 'transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)',
+        transition: 'transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)',
         transformOrigin: `${cx}px ${cy}px`,
         transform: `rotate(${pointerAngle}deg)`,
       }}
@@ -161,6 +191,20 @@ export default function WuXingCompass({ currentDimension, completedDimensions = 
 
       {/* Center circle */}
       <circle cx={cx} cy={cy} r="8" fill="rgba(212, 175, 55, 0.3)" stroke="#d4af37" strokeWidth="2" />
+
+      {/* CSS Animations */}
+      <style>{`
+        @keyframes completionBurst {
+          0% {
+            transform: scale(0.5);
+            opacity: 0.8;
+          }
+          100% {
+            transform: scale(2);
+            opacity: 0;
+          }
+        }
+      `}</style>
     </svg>
   );
 }
