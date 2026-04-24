@@ -94,7 +94,9 @@ export async function POST(request: NextRequest) {
   const stream = new ReadableStream({
     async start(controller) {
       const sendEvent = (event: string, data: any) => {
-        controller.enqueue(encoder.encode(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`));
+        // JSON.stringify produces single-line output by default
+        const jsonStr = JSON.stringify(data);
+        controller.enqueue(encoder.encode(`event: ${event}\ndata: ${jsonStr}\n\n`));
       };
 
       try {
@@ -140,7 +142,6 @@ export async function POST(request: NextRequest) {
           ];
           const response = await chat(messages);
           const parsed = parseJsonResponse(response);
-          console.log(`[Stream] ${key} done in ${Date.now() - start}ms`);
           return { key, data: parsed, score: parsed[`${key}Score`] || parsed.score || 0 };
         });
 
@@ -182,21 +183,40 @@ export async function POST(request: NextRequest) {
             radarScores,
             analysis: flatAnalysis,
           });
-          controller.close();
+          // Delay close to ensure complete event is fully flushed to client
+          setTimeout(() => controller.close(), 500);
         }).catch((err) => {
           console.error('AI analysis error:', err);
-          sendEvent('error', { error: String(err) });
-          controller.close();
+          try {
+            sendEvent('error', { error: String(err) });
+          } catch (e) {
+            console.error('Failed to send error event:', e);
+          }
+          // Don't close immediately - let the error event be flushed
+          setTimeout(() => controller.close(), 500);
         });
 
         // Stream individual results as they come in (for better UX)
-        for (const promise of aiPromises) {
-          promise.then(({ key, data, score }) => {
-            radarScores[key] = score;
-            results[key] = data;
-            sendEvent('dimension', { key, data, score });
-          }).catch(() => {});
-        }
+        // Attach handlers FIRST, then let Promise.all track completion
+        aiPromises.forEach((promise, idx) => {
+          const key = dimensionKeys[idx];
+          promise
+            .then(({ key, data, score }) => {
+              radarScores[key] = score;
+              results[key] = data;
+              sendEvent('dimension', { key, data, score });
+            })
+            .catch((err) => {
+              try {
+                sendEvent('error', { error: `维度${key}分析失败` });
+              } catch {}
+            });
+        });
+
+        // Send a ping event to verify stream connectivity
+        setTimeout(() => {
+          sendEvent('ping', { timestamp: Date.now() });
+        }, 500);
       } catch (error) {
         console.error('Stream error:', error);
         sendEvent('error', { error: String(error) });

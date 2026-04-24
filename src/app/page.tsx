@@ -235,7 +235,8 @@ export default function HomePage() {
         const { value, done: doneReading } = readResult;
         done = doneReading;
         if (value) {
-          buffer += decoder.decode(value, { stream: !done });
+          const decoded = decoder.decode(value, { stream: !done });
+          buffer += decoded;
 
           // Process complete events: look for "event: TYPE\ndata: {...}\n\n"
           // Parse line by line, pairing event lines with their data lines
@@ -243,14 +244,42 @@ export default function HomePage() {
           buffer = lines.pop() || ''; // Keep incomplete line in buffer
 
           let i = 0;
+          // Helper to extract JSON from a potentially multi-line data field
+          const extractJsonFromData = (dataPart: string, startIdx: number, totalLines: string[]): any => {
+            // If it parses directly, return
+            try {
+              return JSON.parse(dataPart);
+            } catch {}
+
+            // Otherwise, accumulate lines until we have valid JSON or reach the end
+            let jsonStr = dataPart;
+            for (let j = startIdx + 1; j < totalLines.length; j++) {
+              const nextLine = totalLines[j];
+              // Stop if we hit another event line
+              if (nextLine.startsWith('event: ') || nextLine.startsWith('data: ')) {
+                break;
+              }
+              jsonStr += '\n' + nextLine;
+              try {
+                return JSON.parse(jsonStr);
+              } catch {}
+            }
+            return null;
+          };
+
           while (i < lines.length) {
             const line = lines[i];
             if (line.startsWith('event: ')) {
               const eventType = line.slice(7);
               const dataLine = lines[i + 1];
               if (dataLine?.startsWith('data: ')) {
+                const dataContent = dataLine.slice(6);
+                let data = null;
                 try {
-                  const data = JSON.parse(dataLine.slice(6));
+                  data = extractJsonFromData(dataContent, i + 1, lines);
+                } catch {}
+
+                if (data) {
                   if (eventType === 'bazi') {
                     setLoadingStep('ai');
                   } else if (eventType === 'dimension') {
@@ -261,9 +290,6 @@ export default function HomePage() {
                   } else if (eventType === 'error') {
                     throw new Error(data.error || '分析失败');
                   }
-                } catch (e) {
-                  // Skip malformed SSE data, don't break the stream
-                  console.warn('Skipping malformed SSE data:', e);
                 }
                 i += 2; // Skip both event and data lines
                 continue;
@@ -276,32 +302,31 @@ export default function HomePage() {
 
       clearInterval(hintInterval);
 
-      // If cancelled mid-stream, don't proceed
-      if (!loading) return;
+      // If we already have finalData from complete event, proceed regardless of loading state
+      // (loading may have been set to false but we still have the data)
+      if (!finalData) {
+        // No complete event received yet - check if cancelled
+        if (!loading) {
+          return;
+        }
 
-      // Process any remaining data in buffer after stream ends
-      if (buffer.trim()) {
-        const lines = buffer.split('\n');
-        let i = 0;
-        while (i < lines.length) {
-          const line = lines[i];
-          if (line.startsWith('event: ')) {
-            const eventType = line.slice(7);
-            const dataLine = lines[i + 1];
-            if (dataLine?.startsWith('data: ')) {
+        // Process any remaining data in buffer after stream ends
+        if (buffer.trim()) {
+          // Look for the complete event - it should be the last event in the stream
+          // Pattern: event: complete\ndata: JSON\n\n
+          const completeEventMatch = buffer.match(/event: complete\ndata: ([\s\S]*?)(?=\n\n|$)/);
+          if (completeEventMatch) {
+            const dataContent = completeEventMatch[1];
+            try {
+              finalData = JSON.parse(dataContent);
+            } catch (e) {
+              // Try to fix trailing commas
               try {
-                const data = JSON.parse(dataLine.slice(6));
-                if (eventType === 'complete') {
-                  finalData = data;
-                }
-              } catch (e) {
-                // Ignore parse errors in leftover buffer
-              }
-              i += 2;
-              continue;
+                const fixed = dataContent.replace(/,(\s*[}\]])/g, '$1');
+                finalData = JSON.parse(fixed);
+              } catch {}
             }
           }
-          i++;
         }
       }
 
