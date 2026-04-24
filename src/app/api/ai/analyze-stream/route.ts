@@ -60,31 +60,34 @@ async function storeReportAndPredictions(
     const reportId = uuidv4();
     const createdAt = new Date().toISOString();
 
-    // Create report record
-    db.prepare(`
-      INSERT INTO reports (id, userId, name, gender, birthData, baziData, aiAnalysis, radarScores, isFullVersion, unlocked, createdAt)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1, 1, ?)
-    `).run(
-      reportId,
-      userId,
-      name,
-      gender,
-      JSON.stringify(birthData),
-      JSON.stringify(baziData),
-      JSON.stringify(aiAnalysis),
-      JSON.stringify(radarScores),
-      createdAt
-    );
-
-    // Extract and store predictions
+    // Extract predictions before transaction so we know the count
     const predictions = extractPredictions(aiAnalysis);
-    for (const pred of predictions) {
-      const predId = uuidv4();
+
+    // Wrap in transaction for atomicity
+    db.transaction(() => {
       db.prepare(`
-        INSERT INTO predictions (id, user_id, report_id, dimension, prediction, timeframe_start, timeframe_end, status, created_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', ?)
-      `).run(predId, userId, reportId, pred.dimension, pred.prediction, pred.timeframeStart, pred.timeframeEnd, createdAt);
-    }
+        INSERT INTO reports (id, userId, name, gender, birthData, baziData, aiAnalysis, radarScores, isFullVersion, unlocked, createdAt)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1, 1, ?)
+      `).run(
+        reportId,
+        userId,
+        name,
+        gender,
+        JSON.stringify(birthData),
+        JSON.stringify(baziData),
+        JSON.stringify(aiAnalysis),
+        JSON.stringify(radarScores),
+        createdAt
+      );
+
+      for (const pred of predictions) {
+        const predId = uuidv4();
+        db.prepare(`
+          INSERT INTO predictions (id, user_id, report_id, dimension, prediction, timeframe_start, timeframe_end, status, created_at)
+          VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', ?)
+        `).run(predId, userId, reportId, pred.dimension, pred.prediction, pred.timeframeStart, pred.timeframeEnd, createdAt);
+      }
+    })();
 
     console.log(`Stored report ${reportId} with ${predictions.length} predictions for user ${userId}`);
     return reportId;
@@ -291,7 +294,10 @@ export async function POST(request: NextRequest) {
               baziResult,
               flatAnalysis,
               radarScores
-            );
+            ).catch((err) => console.error('storeReportAndPredictions error:', err))
+             .then((reportId) => {
+               if (!reportId) console.warn(`Failed to store report for user ${userId}`);
+             });
           }
 
           // Delay close to ensure complete event is fully flushed to client

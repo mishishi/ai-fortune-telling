@@ -47,14 +47,23 @@ export async function GET(request: NextRequest) {
     let success = 0, fail = 0;
 
     for (const pred of duePredictions) {
+      let sub;
+      try {
+        sub = JSON.parse(pred.pushSubscription);
+      } catch {
+        console.error(`Invalid pushSubscription for prediction ${pred.id}`);
+        fail++;
+        continue;
+      }
+
       try {
         const content = generateVerificationReminderContent(pred.dimension);
-        const sub = JSON.parse(pred.pushSubscription);
 
         const res = await fetch(sub.endpoint, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'TTL': '86400' },
           body: JSON.stringify({ title: content.title, body: content.body, url: '/predictions' }),
+          signal: AbortSignal.timeout(5000),
         });
 
         if (res.ok) {

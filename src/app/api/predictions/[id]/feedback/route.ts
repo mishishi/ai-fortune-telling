@@ -6,8 +6,8 @@ function getUserIdFromCookie(request: NextRequest): string | null {
   const deviceId = request.cookies.get('fortune_device_id')?.value;
   if (deviceId) return deviceId;
 
-  // Try user_id cookie if exists (logged in users)
-  const userId = request.cookies.get('user_id')?.value;
+  // Try fortune_user_id cookie if exists (logged in users)
+  const userId = request.cookies.get('fortune_user_id')?.value;
   if (userId) return userId;
 
   return null;
@@ -57,9 +57,9 @@ export async function PUT(
     const now = new Date().toISOString();
     db.prepare(`
       UPDATE predictions
-      SET status = ?, feedback_note = ?, updated_at = ?
+      SET status = ?, feedback_note = ?
       WHERE id = ?
-    `).run(status, feedbackNote || null, now, id);
+    `).run(status, feedbackNote || null, id);
 
     // Get the prediction's dimension
     const updatedPrediction = db.prepare('SELECT * FROM predictions WHERE id = ?').get(id) as {

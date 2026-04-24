@@ -204,7 +204,7 @@ export default memo(function ProgressiveDisplay({
               {DIMENSION_LABELS[displayDimensions[displayDimensions.length - 1]]}
             </p>
             <p className="text-white text-sm font-medium leading-relaxed">
-              {partialAnalysis[displayDimensions[displayDimensions.length - 1]]?.[displayDimensions[displayDimensions.length - 1]] || '解读中...'}
+              {partialAnalysis[displayDimensions[displayDimensions.length - 1]]?.[displayDimensions[displayDimensions.length - 1]]?.slice(0, 30) || '解读中...'}
             </p>
           </div>
         )}

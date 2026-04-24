@@ -7,8 +7,8 @@ function getUserIdFromCookie(request: NextRequest): string | null {
   const deviceId = request.cookies.get('fortune_device_id')?.value;
   if (deviceId) return deviceId;
 
-  // Try user_id cookie if exists (logged in users)
-  const userId = request.cookies.get('user_id')?.value;
+  // Try fortune_user_id cookie if exists (logged in users)
+  const userId = request.cookies.get('fortune_user_id')?.value;
   if (userId) return userId;
 
   return null;
@@ -52,12 +52,29 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  // Validate Content-Type
+  const contentType = request.headers.get('content-type');
+  if (!contentType || !contentType.includes('application/json')) {
+    return new NextResponse('Content-Type must be application/json', { status: 400 });
+  }
+
+  const userId = getUserIdFromCookie(request);
+  if (!userId) {
+    return new NextResponse('Unauthorized', { status: 401 });
+  }
+
   try {
     const body = await request.json();
-    const { userId, reportId, dimension, prediction, timeframeStart } = body;
+    const { reportId, dimension, prediction, timeframeStart } = body;
 
-    if (!userId || !reportId || !dimension || !prediction || !timeframeStart) {
+    if (!reportId || !dimension || !prediction || !timeframeStart) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    }
+
+    // Validate timeframeStart is a valid date
+    const startDate = new Date(timeframeStart);
+    if (isNaN(startDate.getTime())) {
+      return NextResponse.json({ error: 'Invalid timeframeStart date' }, { status: 400 });
     }
 
     // Validate dimension
@@ -70,7 +87,6 @@ export async function POST(request: NextRequest) {
     const id = uuidv4();
 
     // Calculate timeframe_end: timeframe_start + 3 months (default prediction window)
-    const startDate = new Date(timeframeStart);
     const endDate = new Date(startDate);
     endDate.setMonth(endDate.getMonth() + 3);
 
