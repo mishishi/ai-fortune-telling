@@ -11,6 +11,20 @@ function generateDailyContent(date: Date) {
   };
 }
 
+function generateStreakWarningContent(currentStreak: number) {
+  return {
+    title: '🔥 连续签到别断了！',
+    body: `明天记得签到，你的连续 ${currentStreak} 天就要达成了～`,
+  };
+}
+
+function generateStreakBrokenContent(remainingCards: number) {
+  return {
+    title: '💔 连续签到已中断',
+    body: `别灰心，你还有 ${remainingCards} 张补签卡，点击修复连续签到`,
+  };
+}
+
 export async function POST(request: NextRequest) {
   const authHeader = request.headers.get('authorization') ?? '';
   const token = `Bearer ${process.env.CRON_SECRET}`;
@@ -21,9 +35,21 @@ export async function POST(request: NextRequest) {
   }
 
   try {
+    const body = await request.json().catch(() => ({}));
+    const { type } = body;
+
+    // 根据 type 生成不同内容
+    let content;
+    if (type === 'streak_warning') {
+      content = generateStreakWarningContent(body.currentStreak || 5);
+    } else if (type === 'streak_broken') {
+      content = generateStreakBrokenContent(body.remainingCards || 1);
+    } else {
+      content = generateDailyContent(new Date());
+    }
+
     const db = getDb();
     const users = db.prepare('SELECT id, pushSubscription FROM users WHERE pushEnabled = 1 AND pushSubscription IS NOT NULL').all() as { id: string; pushSubscription: string }[];
-    const content = generateDailyContent(new Date());
     let success = 0, fail = 0;
 
     for (const user of users) {
