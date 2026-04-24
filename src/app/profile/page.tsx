@@ -11,6 +11,7 @@ import CustomDropdown from '@/components/ui/CustomDropdown';
 import BirthDatePicker from '@/components/BirthForm/BirthDatePicker';
 import CheckinCard from '@/components/CheckinCard';
 import BadgeWall from '@/components/BadgeWall';
+import PredictionVerifier from '@/components/PredictionVerifier';
 
 interface BirthData {
   year: number;
@@ -397,6 +398,11 @@ export default function ProfilePage() {
       {/* Badge Wall */}
       <div className="mb-6">
         <BadgeWall />
+      </div>
+
+      {/* Prediction Verification */}
+      <div className="mb-6 glass-card rounded-[var(--radius-lg)] p-5">
+        <PredictionVerifier />
       </div>
 
       {/* Settings Section */}

@@ -15,14 +15,14 @@ function getUserIdFromCookie(request: NextRequest): string | null {
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const userId = getUserIdFromCookie(request);
   if (!userId) {
     return new NextResponse('Unauthorized', { status: 401 });
   }
 
-  const { id } = params;
+  const { id } = await params;
 
   // Validate Content-Type
   const contentType = request.headers.get('content-type');
