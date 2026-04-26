@@ -139,6 +139,16 @@
   --font-display: "Noto Serif SC", "Times New Roman", serif;
 }
 
+/* Mobile responsive font sizes */
+@media (max-width: 640px) {
+  :root {
+    --font-size-display: 2.5rem;   /* 40px - 移动端减小 */
+    --font-size-h1: 1.875rem;      /* 30px */
+    --font-size-h2: 1.5rem;        /* 24px */
+    --font-size-h3: 1.25rem;       /* 20px */
+  }
+}
+
 @theme inline {
   --color-primary: var(--color-primary);
   --color-secondary: var(--color-secondary);

@@ -68,7 +68,7 @@ export default function DailyFortuneCard({ userId }: DailyFortuneCardProps) {
   if (loading) {
     return (
       <div
-        className="fixed top-20 right-6 z-50 w-14 h-14 rounded-full animate-pulse"
+        className="fixed bottom-24 left-6 z-50 w-14 h-14 rounded-full animate-pulse sm:fixed sm:top-20 sm:right-6 sm:bottom-auto sm:left-auto"
         style={{
           background: 'linear-gradient(135deg, rgba(26, 21, 37, 0.95) 0%, rgba(45, 31, 61, 0.9) 100%)',
           border: '1px solid rgba(212, 175, 55, 0.2)',
@@ -86,7 +86,7 @@ export default function DailyFortuneCard({ userId }: DailyFortuneCardProps) {
   if (!data || !data.hasReport) {
     return (
       <div
-        className="fixed top-20 right-6 z-50"
+        className="fixed bottom-24 left-6 z-50 sm:fixed sm:top-20 sm:right-6 sm:bottom-auto sm:left-auto"
       >
         <button
           onClick={() => {
@@ -383,7 +383,7 @@ export default function DailyFortuneCard({ userId }: DailyFortuneCardProps) {
 
   // Floating button (collapsed state)
   return (
-    <div className="fixed top-20 right-6 z-50">
+    <div className="fixed bottom-24 left-6 z-50 sm:fixed sm:top-20 sm:right-6 sm:bottom-auto sm:left-auto">
       <button
         onClick={() => setIsExpanded(true)}
         className="w-16 h-16 rounded-full flex flex-col items-center justify-center transition-transform hover:scale-110 active:scale-95"

@@ -467,7 +467,7 @@ export default function HomePage() {
       </header>
 
       {/* Main Content */}
-      <div className="relative z-10 flex flex-col items-center justify-center min-h-[calc(100vh-80px)] px-4 py-8">
+      <div className="relative z-10 flex flex-col items-center justify-center min-h-[calc(100vh-80px-64px)] px-4 py-8 sm:min-h-[calc(100vh-80px)]">
         {/* Hero Section */}
         <div className="text-center mb-8">
           <h1

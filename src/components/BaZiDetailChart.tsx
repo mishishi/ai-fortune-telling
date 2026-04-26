@@ -66,6 +66,9 @@ export default function BaZiDetailChart({
   const [yearlyFortune, setYearlyFortune] = useState<FortuneLine[]>([]);
   const [constellation, setConstellation] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState<'tenGods' | 'hiddenStems' | 'fortune' | 'constellation'>('tenGods');
+  const [effectiveSize, setEffectiveSize] = useState(size || 400);
+  const [fortunePage, setFortunePage] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     // 计算大运
@@ -96,6 +99,22 @@ export default function BaZiDetailChart({
     ]);
   }, [monthPillar, gender, birthYear, birthMonth, birthDay]);
 
+  // Responsive sizing
+  useEffect(() => {
+    const getSize = () => {
+      if (window.innerWidth < 480) return 280;
+      if (window.innerWidth < 768) return 340;
+      return size || 400;
+    };
+    const update = () => {
+      setEffectiveSize(getSize());
+      setIsMobile(window.innerWidth < 768);
+    };
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, [size]);
+
   // 计算十神
   const dayStemIndex = dayPillar.stemIndex;
   const tenGods = {
@@ -120,9 +139,9 @@ export default function BaZiDetailChart({
     { key: 'hour', label: '时', data: hourPillar, tenGod: tenGods.hour, hidden: hiddenStems.hour, constellation: constellation[3] },
   ];
 
-  const center = size / 2;
-  const outerRadius = size * 0.45;
-  const innerRadius = size * 0.25;
+  const center = effectiveSize / 2;
+  const outerRadius = effectiveSize * 0.45;
+  const innerRadius = effectiveSize * 0.25;
   const pillarWidth = (outerRadius - innerRadius) / 4;
 
   // 创建四方形布局
@@ -140,7 +159,7 @@ export default function BaZiDetailChart({
         {(['tenGods', 'hiddenStems', 'fortune', 'constellation'] as const).map((tab) => (
           <button
             key={tab}
-            onClick={() => setActiveTab(tab)}
+            onClick={() => { setActiveTab(tab); if (tab === 'fortune') setFortunePage(0); }}
             className={`px-3 py-1.5 rounded-lg text-xs transition-all ${
               activeTab === tab
                 ? 'bg-[var(--color-accent)] text-white'
@@ -156,8 +175,8 @@ export default function BaZiDetailChart({
       </div>
 
       {/* Main Chart */}
-      <div className="relative" style={{ width: size, height: size }}>
-        <svg width={size} height={size} className="animate-ring-in">
+      <div className="relative" style={{ width: effectiveSize, height: effectiveSize }}>
+        <svg width={effectiveSize} height={effectiveSize} className="animate-ring-in">
           {/* 外圈装饰 */}
           <circle
             cx={center}
@@ -181,19 +200,41 @@ export default function BaZiDetailChart({
 
           {/* 四柱信息 */}
           {pillars.map((pillar, index) => {
-            const angle = index * 90;
-            const rad = (angle - 90) * Math.PI / 180;
-            const x = center + (innerRadius + (outerRadius - innerRadius) / 2) * Math.cos(rad);
-            const y = center + (innerRadius + (outerRadius - innerRadius) / 2) * Math.sin(rad);
+            // 移动端缩小尺寸和字体
+            const scale = isMobile ? 0.8 : 1;
+            const boxW = 100 * scale;
+            const boxH = 80 * scale;
+            const fontStem = 20 * scale;
+            const fontBranch = 18 * scale;
+            const fontExtra = 10 * scale;
+            const offsetX = boxW / 2;
+            const offsetY = boxH / 2 - 5 * scale;
+
+            // 使用象限定位，确保不超出边界
+            const ringMidRadius = innerRadius + (outerRadius - innerRadius) / 2;
+            let x, y;
+            if (index === 0) { // 年 - 上
+              x = center - offsetX;
+              y = center - ringMidRadius - offsetY;
+            } else if (index === 1) { // 月 - 右
+              x = center + ringMidRadius - offsetX;
+              y = center - offsetY;
+            } else if (index === 2) { // 日 - 下
+              x = center - offsetX;
+              y = center + ringMidRadius - offsetY;
+            } else { // 时 - 左
+              x = center - ringMidRadius - offsetX;
+              y = center - offsetY;
+            }
 
             return (
-              <g key={pillar.key} transform={`translate(${x - 50}, ${y - 40})`}>
+              <g key={pillar.key} transform={`translate(${x}, ${y})`}>
                 {/* 背景 */}
                 <rect
                   x="0"
                   y="0"
-                  width="100"
-                  height="80"
+                  width={boxW}
+                  height={boxH}
                   rx="8"
                   fill={pillar.key === 'day' ? 'rgba(212, 175, 55, 0.15)' : 'rgba(255, 255, 255, 0.05)'}
                   stroke={ELEMENT_COLORS[pillar.data.element]}
@@ -201,32 +242,32 @@ export default function BaZiDetailChart({
                 />
 
                 {/* 天干 */}
-                <text x="50" y="25" textAnchor="middle" fill={ELEMENT_COLORS[pillar.data.element]} fontSize="20" fontWeight="bold">
+                <text x={offsetX} y={offsetY - 5 * scale} textAnchor="middle" fill={ELEMENT_COLORS[pillar.data.element]} fontSize={fontStem} fontWeight="bold">
                   {pillar.data.stem}
                 </text>
 
                 {/* 地支 */}
-                <text x="50" y="48" textAnchor="middle" fill="white" fontSize="18">
+                <text x={offsetX} y={offsetY + 15 * scale} textAnchor="middle" fill="white" fontSize={fontBranch}>
                   {pillar.data.branch}
                 </text>
 
                 {/* 十神或藏干 */}
                 {activeTab === 'tenGods' && pillar.tenGod !== '日主' && (
-                  <text x="50" y="68" textAnchor="middle" fill={TEN_GOD_COLORS[pillar.tenGod]} fontSize="10">
+                  <text x={offsetX} y={offsetY + 32 * scale} textAnchor="middle" fill={TEN_GOD_COLORS[pillar.tenGod]} fontSize={fontExtra}>
                     {pillar.tenGod}
                   </text>
                 )}
 
                 {/* 藏干 */}
                 {activeTab === 'hiddenStems' && (
-                  <text x="50" y="68" textAnchor="middle" fill="#a78bfa" fontSize="9">
+                  <text x={offsetX} y={offsetY + 32 * scale} textAnchor="middle" fill="#a78bfa" fontSize={fontExtra - 1}>
                     {pillar.hidden.map(h => HEAVENLY_STEMS[h.stem]).join(' ')}
                   </text>
                 )}
 
                 {/* 星宿 */}
                 {activeTab === 'constellation' && (
-                  <text x="50" y="68" textAnchor="middle" fill="#fbbf24" fontSize="10">
+                  <text x={offsetX} y={offsetY + 32 * scale} textAnchor="middle" fill="#fbbf24" fontSize={fontExtra}>
                     {pillar.constellation}宿
                   </text>
                 )}
@@ -313,20 +354,60 @@ export default function BaZiDetailChart({
         {activeTab === 'fortune' && (
           <div className="space-y-2">
             <div className="text-center text-sm text-gray-400 mb-2">大运 (每步10年)</div>
-            <div className="flex flex-wrap justify-center gap-2">
-              {fortuneLines.slice(0, 8).map((line, i) => (
-                <div
-                  key={i}
-                  className="text-center p-2 rounded-lg bg-white/5 min-w-[60px]"
-                  style={{ borderLeft: `3px solid ${ELEMENT_COLORS[ELEMENTS[line.element] as Element]}` }}
-                >
-                  <div className="text-xs text-gray-400">{line.age}岁</div>
-                  <div className="text-sm font-medium text-white">
-                    {getStem(line.stem)}{getBranch(line.branch)}
-                  </div>
+
+            {isMobile ? (
+              <>
+                <div className="flex justify-center gap-2">
+                  {fortuneLines.slice(fortunePage * 2, fortunePage * 2 + 2).map((line, i) => (
+                    <div
+                      key={i}
+                      className="text-center p-2 rounded-lg bg-white/5"
+                      style={{
+                        minWidth: '70px',
+                        borderLeft: `3px solid ${ELEMENT_COLORS[ELEMENTS[line.element] as Element]}`,
+                      }}
+                    >
+                      <div className="text-xs text-gray-400">{line.age}岁</div>
+                      <div className="text-sm font-medium text-white">
+                        {getStem(line.stem)}{getBranch(line.branch)}
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+                {/* Pagination dots */}
+                <div className="flex justify-center gap-2 mt-3">
+                  {[0, 1, 2, 3].map((page) => (
+                    <button
+                      key={page}
+                      onClick={() => setFortunePage(page)}
+                      className={`w-2 h-2 rounded-full transition-all ${
+                        fortunePage === page ? 'bg-[var(--color-accent)] w-4' : 'bg-white/30'
+                      }`}
+                      aria-label={`第${page + 1}页`}
+                    />
+                  ))}
+                </div>
+              </>
+            ) : (
+              <div className="flex flex-wrap justify-center gap-2">
+                {fortuneLines.slice(0, 8).map((line, i) => (
+                  <div
+                    key={i}
+                    className="text-center p-2 rounded-lg bg-white/5"
+                    style={{
+                      minWidth: '70px',
+                      borderLeft: `3px solid ${ELEMENT_COLORS[ELEMENTS[line.element] as Element]}`,
+                    }}
+                  >
+                    <div className="text-xs text-gray-400">{line.age}岁</div>
+                    <div className="text-sm font-medium text-white">
+                      {getStem(line.stem)}{getBranch(line.branch)}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
             <div className="text-center text-xs text-gray-500 mt-3">
               流年: {yearlyFortune[0] && `${getStem(yearlyFortune[0].stem)}${getBranch(yearlyFortune[0].branch)}`} · 明年: {yearlyFortune[1] && `${getStem(yearlyFortune[1].stem)}${getBranch(yearlyFortune[1].branch)}`}
             </div>

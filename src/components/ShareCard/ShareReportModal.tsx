@@ -41,7 +41,7 @@ export default function ShareReportModal({ data, open, onClose, onGenerateImage,
     <div className="fixed inset-0 z-[110] flex items-center justify-center" onClick={onClose}>
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
       <div
-        className="relative z-10 w-full max-w-lg p-6 rounded-2xl overflow-y-auto"
+        className="relative z-10 w-full max-w-lg p-4 sm:p-6 rounded-2xl overflow-y-auto"
         style={{ background: 'var(--color-surface)', border: '1px solid rgba(212,175,55,0.2)', maxHeight: '90vh' }}
         onClick={e => e.stopPropagation()}
       >
@@ -62,8 +62,10 @@ export default function ShareReportModal({ data, open, onClose, onGenerateImage,
         </div>
 
         {/* 预览 */}
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
-          {renderTemplate()}
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 24, overflow: 'hidden', maxHeight: '75vh' }}>
+          <div className="share-template-preview">
+            {renderTemplate()}
+          </div>
         </div>
 
         {/* 操作按钮 */}
@@ -96,6 +98,22 @@ export default function ShareReportModal({ data, open, onClose, onGenerateImage,
           取消
         </button>
       </div>
+
+      <style jsx>{`
+        .share-template-preview {
+          transform-origin: center top;
+        }
+        @media (max-width: 480px) {
+          .share-template-preview {
+            transform: scale(0.8);
+          }
+        }
+        @media (max-width: 380px) {
+          .share-template-preview {
+            transform: scale(0.7);
+          }
+        }
+      `}</style>
     </div>
   );
 }

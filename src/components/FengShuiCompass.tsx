@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 // 八卦名称
 const BAGUA = ['乾', '兑', '离', '震', '巽', '坎', '艮', '坤'];
@@ -25,9 +25,24 @@ interface FengShuiCompassProps {
 
 export default function FengShuiCompass({ birthElement = '木', size = 320 }: FengShuiCompassProps) {
   const [selectedDirection, setSelectedDirection] = useState<string | null>(null);
-  const center = size / 2;
-  const outerRadius = size * 0.45;
-  const innerRadius = size * 0.2;
+  const [effectiveSize, setEffectiveSize] = useState(size || 320);
+
+  // Responsive sizing
+  useEffect(() => {
+    const getSize = () => {
+      if (window.innerWidth < 480) return 240;
+      if (window.innerWidth < 768) return 280;
+      return size || 320;
+    };
+    const update = () => setEffectiveSize(getSize());
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, [size]);
+
+  const center = effectiveSize / 2;
+  const outerRadius = effectiveSize * 0.45;
+  const innerRadius = effectiveSize * 0.2;
 
   const directions = ['北', '东北', '东', '东南', '南', '西南', '西', '西北'];
   const directionAngles: Record<string, number> = {
@@ -73,8 +88,8 @@ export default function FengShuiCompass({ birthElement = '木', size = 320 }: Fe
 
   return (
     <div className="flex flex-col items-center">
-      <div className="relative" style={{ width: size, height: size }}>
-        <svg width={size} height={size}>
+      <div className="relative" style={{ width: effectiveSize, height: effectiveSize }}>
+        <svg width={effectiveSize} height={effectiveSize}>
           {/* 外圈装饰 */}
           <circle cx={center} cy={center} r={outerRadius + 15} fill="none" stroke="rgba(212, 175, 55, 0.2)" strokeWidth="1" strokeDasharray="4 4" />
 

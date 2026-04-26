@@ -1,5 +1,5 @@
 'use client';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 interface FortuneLine {
   age: number;
@@ -29,13 +29,23 @@ const ELEMENT_COLORS = [
 export default function Timeline({ baziData, onFortuneSelect }: TimelineProps) {
   const fortuneLines = baziData.fortuneLines || [];
   const [startIndex, setStartIndex] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Responsive visible count
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  const visibleCount = isMobile ? 2 : 4;
 
   if (fortuneLines.length === 0) {
     return <p className="text-gray-500 text-center">暂无大运数据</p>;
   }
 
-  const visibleCount = 4; // Show 4 items at a time on desktop
   const canScrollLeft = startIndex > 0;
   const canScrollRight = startIndex + visibleCount < fortuneLines.length;
 
